@@ -2,7 +2,7 @@ name := "rzepaw-commons"
 
 version := "0.1-SNAPSHOT"
 
-scalaVersion := "2.11"
+scalaVersion := "2.11.0"
 
 libraryDependencies += "commons-lang" % "commons-lang" % "2.5"
 
