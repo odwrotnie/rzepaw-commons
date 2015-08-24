@@ -2,7 +2,7 @@ name := "rzepaw-commons"
 
 version := "0.1-SNAPSHOT"
 
-scalaVersion := "2.11.1"
+scalaVersion := "2.11.2"
 
 libraryDependencies += "commons-lang" % "commons-lang" % "2.5"
 
@@ -22,7 +22,7 @@ libraryDependencies += "org.ocpsoft.prettytime" % "prettytime" % "3.2.7.Final"
 
 libraryDependencies += "io.github.cloudify" %% "spdf" % "1.3.1"
 
-libraryDependencies += "org.scala-lang" % "scala-actors" % "2.11.1"
+libraryDependencies += "org.scala-lang" % "scala-actors" % "2.11.2"
 
 libraryDependencies += "org.apache.commons" % "commons-email" % "1.3.3"
 
