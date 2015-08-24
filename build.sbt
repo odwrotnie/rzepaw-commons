@@ -14,11 +14,15 @@ libraryDependencies += "javax.activation" % "activation" % "1.1.1"
 
 libraryDependencies += "net._01001111" % "jlorem" % "1.3"
 
+libraryDependencies += "org.scalatest" %% "scalatest" % "2.1.7"
+
 libraryDependencies += "com.googlecode.sli4j" % "sli4j-slf4j-logback" % "2.0"
 
 libraryDependencies += "org.ocpsoft.prettytime" % "prettytime" % "3.2.7.Final"
 
 libraryDependencies += "io.github.cloudify" %% "spdf" % "1.3.1"
+
+libraryDependencies += "org.scala-lang" % "scala-actors" % "2.11.7"
 
 libraryDependencies += "org.apache.commons" % "commons-email" % "1.3.3"
 
