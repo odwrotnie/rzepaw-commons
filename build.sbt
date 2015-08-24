@@ -4,6 +4,8 @@ version := "0.1-SNAPSHOT"
 
 scalaVersion := "2.11.7"
 
+libraryDependencies += "org.scala-lang" % "scala-library" % "2.11.7"
+
 libraryDependencies += "commons-lang" % "commons-lang" % "2.5"
 
 libraryDependencies += "joda-time" % "joda-time" % "2.3"
