@@ -1,0 +1,219 @@
+package commons.date
+
+import java.sql.Timestamp
+
+import commons.date.DateUtil.TimePlace
+import org.joda.time._
+import org.joda.time.base._
+import org.joda.time.format._
+import org.ocpsoft.prettytime.PrettyTime
+
+import scala.util.Try
+
+object DateUtil {
+
+  val DATE_FORMAT = "dd/MM/YYYY"
+  val HOUR_FORMAT = "HH:mm"
+  val TIME_FORMAT = s"$DATE_FORMAT $HOUR_FORMAT"
+  
+  val DATE_PATTERN = DateTimeFormat.forPattern(DATE_FORMAT)
+  val HOUR_PATTERN = DateTimeFormat.forPattern(HOUR_FORMAT)
+  val TIME_PATTERN = DateTimeFormat.forPattern(TIME_FORMAT)
+
+//  val fullCalendar = "YYYY-MM-dd'T'HH:mm:ss'Z'"
+//  def fullCalendarF(date: AbstractInstant): String = format(date, fullCalendar)
+
+//  val dateFormatStringJoda = "dd/MM/yyyy"
+//  val dateFormatStringJQuery = "dd/MM/yyyy" // Must correspond to dateFormatStringJoda
+//  val dateFormatStringComma = "yyyy,MM,dd"
+//  val dateFormat = DateTimeFormat.forPattern(dateFormatStringJoda)
+
+//  val dateTimeFormatStringJoda = dateFormatStringJoda + " " + HOUR_FORMAT
+//  val dateTimeFormatStringJQuery = dateFormatStringJQuery + " " + HOUR_FORMAT
+//  val dateTimeFormat = DateTimeFormat.forPattern(dateTimeFormatStringJQuery)
+
+  val timeFormatStringJQuery = "hh:mm"
+
+  def now: DateTime = new DateTime()
+  def nowDateOnly: DateTime = now.withTimeAtStartOfDay
+  def nowString = formatTime(now)
+  def todayString = formatDate(now)
+  private val pt = new PrettyTime
+  def humanReadable(date: AbstractInstant) = pt.format(date.toDate)
+
+  def format(date: AbstractInstant, format: String): String = DateTimeFormat.forPattern(format).print(date)
+
+  def formatHour(date: AbstractInstant): String = HOUR_PATTERN.print(date)
+  def formatHour(date: java.util.Date): String = formatHour(new DateTime(date))
+  def formatDate(date: AbstractInstant): String = DATE_PATTERN.print(date)
+  def formatDate(date: java.util.Date): String = formatDate(new DateTime(date))
+  def formatTime(date: AbstractInstant): String = TIME_PATTERN.print(date)
+  def formatTime(date: java.util.Date): String = formatTime(new DateTime(date))
+
+  def getDate(l: Long): DateTime = new DateTime(new java.util.Date(l))
+  def parseDate(s: String): Option[DateTime] = Try(DATE_PATTERN.parseDateTime(s).withTimeAtStartOfDay()).toOption
+  def parseDateTime(s: String): Option[DateTime] = Try(TIME_PATTERN.parseDateTime(s)).toOption
+
+  def daysBetween(start: AbstractInstant, end: AbstractInstant) = Days.daysBetween(start, end).getDays()
+  def daysTill(date: AbstractInstant) = daysBetween(now, date)
+
+  def getDayNumber(date: AbstractInstant) = date.toDateTime().getDayOfMonth()
+  def getMonthName(date: AbstractInstant) = DateTimeFormat.forPattern("MMMM").print(date)
+  def getYear(date: AbstractInstant) = DateTimeFormat.forPattern("yyyy").print(date)
+
+  object TimePlace extends Enumeration {
+    case class V(name: String) extends Val(name)
+    val PAST = V("past")
+    val CURRENT = V("current")
+    val FUTURE = V("future")
+  }
+}
+
+abstract class DateInterval[DI <: DateInterval[DI]](val meta: DateIntervalMeta[DI]) {
+
+  this: DI =>
+
+  def start: ReadableInstant
+  lazy val startDT = new DateTime(start)
+  lazy val startTimestamp = new Timestamp(start.getMillis)
+  def end: ReadableInstant
+  lazy val endDT = new DateTime(end)
+  lazy val endTimestamp = new Timestamp(end.getMillis)
+
+  def next = meta.apply(endDT)
+  def nextStream: Stream[DI] = {
+    def s(di: DI): Stream[DI] = Stream.cons(di.next, s(di.next))
+    s(this)
+  }
+  def nextInclusiveStream: Stream[DI] = {
+    def s(di: DI): Stream[DI] = Stream.cons(di, s(di.next))
+    s(this)
+  }
+  def next(n: Int) = nextStream.take(n).toList
+  def nextInclusive(n: Int) = nextInclusiveStream.take(n).toList
+
+  def prev = meta.apply(startDT.minusMillis(1))
+  def prevStream: Stream[DI] = {
+    def s(di: DI): Stream[DI] = Stream.cons(di.prev, s(di.prev))
+    s(this)
+  }
+  def prev(n: Int) = prevStream.take(n).toList
+
+  def period = new Period(start, end)
+  def interval = new Interval(start, end)
+
+  def isPast = end.isBefore(DateUtil.now)
+  def isCurrent = interval.contains(DateUtil.now)
+  def isFuture = start.isAfter(DateUtil.now)
+  def timePlace: DateUtil.TimePlace.V = (isCurrent, isPast) match {
+    case (true, _) => TimePlace.CURRENT
+    case (_, true) => TimePlace.PAST
+    case (false, false) => TimePlace.FUTURE
+  }
+
+  def contains(di: DI) =
+    (this.start.isBefore(di.start) || this.start.equals(di.start)) &&
+      (this.end.isAfter(di.end) || this.start.equals(di.end))
+
+  override def toString = intervalString
+  def intervalString = "<%s - %s)".format(
+    DateUtil.formatTime(startDT),
+    DateUtil.formatTime(endDT))
+}
+
+trait DateIntervalMeta[DI <: DateInterval[DI]] {
+  def apply(dt: DateTime): DI
+  def current = apply(DateTime.now)
+}
+
+// YEAR
+
+object Year
+  extends DateIntervalMeta[Year] {
+}
+
+case class Year(dt: DateTime)
+  extends DateInterval[Year](Year) {
+  lazy val start = dt.withDayOfYear(1).withTimeAtStartOfDay()
+  lazy val end = start plusYears 1
+
+  lazy val firstDay = Day(start)
+  lazy val days: Stream[Day] = firstDay
+    .nextInclusiveStream
+    .takeWhile(d => d.start.isBefore(end))
+  lazy val firstWeek = Week(start)
+  lazy val weeks: Stream[Week] = firstWeek
+    .nextInclusiveStream
+    .takeWhile(w => w.start.isBefore(end))
+  lazy val firstMonth = Month(start)
+  lazy val months: Stream[Month] = firstMonth
+    .nextInclusiveStream
+    .takeWhile(m => m.start.isBefore(end))
+
+  override def toString =
+    "%s %s" format (start.monthOfYear.getAsShortText, start.yearOfEra.getAsText)
+}
+
+// MONTH
+
+object Month
+  extends DateIntervalMeta[Month] {
+}
+
+case class Month(dt: DateTime)
+  extends DateInterval[Month](Month) {
+  lazy val start = dt.withDayOfMonth(1).withTimeAtStartOfDay()
+  lazy val end = start plusMonths 1
+
+  lazy val firstDay = Day(start)
+  lazy val firstWeek = Week(start)
+  lazy val weeks: Stream[Week] = firstWeek
+    .nextInclusiveStream
+    .takeWhile(w => w.start.isBefore(end))
+
+  override def toString =
+    "%s %s" format (start.monthOfYear.getAsShortText, start.yearOfEra.getAsText)
+}
+
+// WEEK
+
+object Week extends DateIntervalMeta[Week]
+
+case class Week(dt: DateTime)
+  extends DateInterval[Week](Week) {
+  lazy val start = dt.withDayOfWeek(DateTimeConstants.MONDAY).withTimeAtStartOfDay()
+  lazy val end = start plusWeeks 1
+
+  lazy val firstDay = Day(start)
+  def days = firstDay :: firstDay.next(6)
+}
+
+// DAY
+
+object Day extends DateIntervalMeta[Day]
+
+case class Day(dt: DateTime)
+  extends DateInterval[Day](Day) {
+  lazy val start = dt.withTimeAtStartOfDay
+  lazy val end = start plusDays 1
+
+  def dayOfMonth = start.getDayOfMonth
+  def month = Month(start)
+  def firstHour = Hour(start)
+  def hours = firstHour.nextInclusive(24)
+
+  override def toString = "%s - %s/%s/%s" format (start.dayOfWeek.getAsText,
+    start.getYear, start.getMonthOfYear, start.getDayOfMonth)
+}
+
+// HOUR
+
+object Hour extends DateIntervalMeta[Hour]
+
+case class Hour(dt: DateTime)
+  extends DateInterval[Hour](Hour) {
+  lazy val start = dt.withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0)
+  lazy val end = start plusHours 1
+
+  override def toString = DateUtil.formatHour(start)
+}
