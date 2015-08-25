@@ -6,13 +6,11 @@ scalaVersion := "2.11.7"
 
 libraryDependencies += "org.scala-lang" % "scala-library" % "2.11.7"
 
-libraryDependencies += "commons-lang" % "commons-lang" % "2.5"
+libraryDependencies += "commons-lang" % "commons-lang" % "2.6"
 
-libraryDependencies += "joda-time" % "joda-time" % "2.3"
+libraryDependencies += "joda-time" % "joda-time" % "2.8.2"
 
-libraryDependencies += "net.databinder.dispatch" %% "dispatch-core" % "0.11.1"
-
-libraryDependencies += "javax.activation" % "activation" % "1.1.1"
+libraryDependencies += "net.databinder.dispatch" %% "dispatch-core" % "0.11.3"
 
 libraryDependencies += "net._01001111" % "jlorem" % "1.3"
 
