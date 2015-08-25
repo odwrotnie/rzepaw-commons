@@ -4,6 +4,14 @@ version := "0.1-SNAPSHOT"
 
 scalaVersion := "2.11.7"
 
+autoScalaLibrary := false
+
+
+
+net.virtualvoid.sbt.graph.Plugin.graphSettings
+
+
+
 libraryDependencies += "org.scala-lang" % "scala-library" % "2.11.7"
 
 libraryDependencies += "commons-lang" % "commons-lang" % "2.6"
@@ -29,8 +37,6 @@ libraryDependencies += "org.apache.commons" % "commons-email" % "1.3.3"
 libraryDependencies += "commons-net" % "commons-net" % "3.3"
 
 libraryDependencies += "com.github.lalyos" % "jfiglet" % "0.0.7"
-
-libraryDependencies += "com.andersen-gott" %% "scravatar" % "1.0.3"
 
 libraryDependencies += "org.apache.poi" % "poi" % "3.10-FINAL"
 
