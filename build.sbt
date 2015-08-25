@@ -2,7 +2,7 @@ name := "rzepaw-commons"
 
 version := "0.1-SNAPSHOT"
 
-scalaVersion := "2.11.7"
+scalaVersion := "x"
 
 
 net.virtualvoid.sbt.graph.Plugin.graphSettings
