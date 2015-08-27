@@ -30,7 +30,6 @@ case class IMAPServer(server: String,
   }
 
   val folder: Option[Folder] = Try {
-    debug(s"Connect to $server with u:$username and p:$password")
     store.connect(server, username, password)
     val f = store.getFolder(folderName)
     f.open(Folder.READ_WRITE)
@@ -42,13 +41,14 @@ case class IMAPServer(server: String,
     store.close()
   }
 
-  def messages: List[EmailIn] = Try {
-    val messages = folder.get.getMessages()
-    debug(s"Folder ($folder) messages: ${ messages.size }")
-    messages.map(m => EmailIn(m.asInstanceOf[IMAPMessage])).reverse.toList
-  }.toOption.getOrElse {
-    debug(s"No messages in folder $folder")
-    Nil
+  def messages: List[EmailIn] = folder match {
+    case Some(folder) =>
+      val messages = folder.getMessages()
+      debug(s"Folder ($folder) messages: ${ messages.size }")
+      messages.map(m => EmailIn(m.asInstanceOf[IMAPMessage])).reverse.toList
+    case _ =>
+      warn(s"Authentication error for: $username or no folder named: $folderName")
+      Nil
   }
 
   def messagesUnseen: List[EmailIn] = messages.filterNot(_.seen)

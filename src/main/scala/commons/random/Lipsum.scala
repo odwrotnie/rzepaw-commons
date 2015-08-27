@@ -18,5 +18,11 @@ object Lipsum {
     generate(r + min)
   }
 
+  def email = {
+    def word = loremIpsum.words(1)
+    def domain = Rand.one(Seq("pl", "com", "net", "de", "me"))
+    s"$word@$word.$domain"
+  }
+
   def digits(n: Int) = (1 to n).map(Random.nextInt).mkString("")
 }

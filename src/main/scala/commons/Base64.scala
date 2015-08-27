@@ -3,6 +3,7 @@ package commons
 // https://github.com/tototoshi/scala-base64
 
 object Base64 {
+
   val encodeTable = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 
   def encode(fromBytes: Seq[Byte]) : String = {
