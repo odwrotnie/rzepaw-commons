@@ -47,3 +47,5 @@ libraryDependencies += "org.apache.poi" % "poi-ooxml-schemas" % "3.10-FINAL"
 libraryDependencies += "org.apache.poi" % "poi-excelant" % "3.10-FINAL"
 
 libraryDependencies += "org.apache.poi" % "poi-scratchpad" % "3.10-FINAL"
+
+libraryDependencies += "com.typesafe.slick" %% "slick" % "3.0.0"
