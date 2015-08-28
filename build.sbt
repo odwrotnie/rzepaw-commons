@@ -5,6 +5,7 @@ lazy val root = (project in file(".")).
     scalaVersion := "2.11.7"
   )
 
+
 net.virtualvoid.sbt.graph.Plugin.graphSettings
 
 
