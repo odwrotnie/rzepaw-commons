@@ -1,12 +1,11 @@
-name := "rzepaw-commons"
-
-version := "0.1-SNAPSHOT"
-
-scalaVersion := "2.11.7"
-
+lazy val root = (project in file(".")).
+  settings(
+    name := "rzepaw-commons",
+    version := "0.1-SNAPSHOT",
+    scalaVersion := "2.11.7"
+  )
 
 net.virtualvoid.sbt.graph.Plugin.graphSettings
-
 
 
 libraryDependencies += "org.scala-lang" % "scala-library" % "2.11.7"
