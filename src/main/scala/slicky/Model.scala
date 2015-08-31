@@ -8,8 +8,14 @@ import driver.api._
 
 abstract class Model[M <: Model[M]](val meta: MetaModel[M]) {
 
+  this: M =>
+
   def id: Option[ID]
   def id_=(i: Option[ID]): Unit
+
+  def save = meta.save(this)
+  def update = meta.update(this)
+  def delete = meta.delete(this)
 }
 
 abstract class MetaModel[M <: Model[M]]

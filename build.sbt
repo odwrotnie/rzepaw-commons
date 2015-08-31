@@ -1,4 +1,4 @@
-lazy val root = (project in file(".")).
+lazy val rzepawCommons = (project in file(".")).
   settings(
     name := "rzepaw-commons",
     version := "0.1-SNAPSHOT",
@@ -49,4 +49,8 @@ libraryDependencies += "org.apache.poi" % "poi-excelant" % "3.10-FINAL"
 
 libraryDependencies += "org.apache.poi" % "poi-scratchpad" % "3.10-FINAL"
 
+// SLICKY
+
 libraryDependencies += "com.typesafe.slick" %% "slick" % "3.0.0"
+
+libraryDependencies += "com.wix" %% "accord-core" % "0.5"
