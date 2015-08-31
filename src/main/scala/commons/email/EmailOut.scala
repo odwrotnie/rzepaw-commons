@@ -42,6 +42,9 @@ case class EmailOut(smtp: SMTPServer)
 
   def send {
 
+    require(text.isDefined)
+    require(text.get.nonEmpty)
+
     date = DateTime.now()
 
     val format =
