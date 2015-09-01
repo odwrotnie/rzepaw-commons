@@ -29,10 +29,14 @@ object Rand {
     }
   }
 
+  // BOOLEAN
+
   def trueFalse(trues: Float = 1, falses: Float = 1) = {
     val trueProbability: Float = trues.toFloat / (trues + falses)
     Random.nextFloat() < trueProbability
   }
+
+  // DATE
 
   def dateBetween(start: DateTime, end: DateTime) =
     start.plusSeconds(Random.nextInt(Seconds.secondsBetween(start, end).getSeconds))
