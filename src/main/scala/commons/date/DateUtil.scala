@@ -20,18 +20,6 @@ object DateUtil {
   val HOUR_PATTERN = DateTimeFormat.forPattern(HOUR_FORMAT)
   val TIME_PATTERN = DateTimeFormat.forPattern(TIME_FORMAT)
 
-//  val fullCalendar = "YYYY-MM-dd'T'HH:mm:ss'Z'"
-//  def fullCalendarF(date: AbstractInstant): String = format(date, fullCalendar)
-
-//  val dateFormatStringJoda = "dd/MM/yyyy"
-//  val dateFormatStringJQuery = "dd/MM/yyyy" // Must correspond to dateFormatStringJoda
-//  val dateFormatStringComma = "yyyy,MM,dd"
-//  val dateFormat = DateTimeFormat.forPattern(dateFormatStringJoda)
-
-//  val dateTimeFormatStringJoda = dateFormatStringJoda + " " + HOUR_FORMAT
-//  val dateTimeFormatStringJQuery = dateFormatStringJQuery + " " + HOUR_FORMAT
-//  val dateTimeFormat = DateTimeFormat.forPattern(dateTimeFormatStringJQuery)
-
   val timeFormatStringJQuery = "hh:mm"
 
   def now: DateTime = new DateTime()
@@ -67,6 +55,16 @@ object DateUtil {
     val CURRENT = V("current")
     val FUTURE = V("future")
   }
+
+  lazy val MILLISECONDS_IN_SECOND = 1000
+  lazy val SECONDS_IN_MINUTE = 60
+  lazy val MILLISECONDS_IN_MINUTE = MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE
+  lazy val MINUTES_IN_HOUR = 60
+  lazy val SECONDS_IN_HOUR = SECONDS_IN_MINUTE * MINUTES_IN_HOUR
+  lazy val MILLISECONDS_IN_HOUR = MILLISECONDS_IN_MINUTE * MINUTES_IN_HOUR
+  def durationSeconds(count: Int) = new Duration(count * MILLISECONDS_IN_SECOND)
+  def durationMinute(count: Int) = new Duration(count * MILLISECONDS_IN_MINUTE)
+  def durationHour(count: Int) = new Duration(count * MILLISECONDS_IN_HOUR)
 }
 
 abstract class DateInterval[DI <: DateInterval[DI]](val meta: DateIntervalMeta[DI]) {
@@ -214,6 +212,18 @@ case class Hour(dt: DateTime)
   extends DateInterval[Hour](Hour) {
   lazy val start = dt.withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0)
   lazy val end = start plusHours 1
+
+  override def toString = DateUtil.formatHour(start)
+}
+
+// MINUTE
+
+object Minute extends DateIntervalMeta[Minute]
+
+case class Minute(dt: DateTime)
+  extends DateInterval[Minute](Minute) {
+  lazy val start = dt.withSecondOfMinute(0).withMillisOfSecond(0)
+  lazy val end = start plusMinutes 1
 
   override def toString = DateUtil.formatHour(start)
 }
