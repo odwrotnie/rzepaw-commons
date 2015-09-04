@@ -9,7 +9,7 @@ abstract class IdEntity[IE <: IdEntity[IE]](meta: IdEntityMeta[IE])
   extends IdentEntity[ID, IE](meta) {
   self: IE =>
   def id: Option[ID]
-  def id_=(i: Option[ID]): Unit
+  def withId(id: ID): IE
   override def ident: ID = id.get
 }
 
@@ -24,9 +24,9 @@ abstract class IdEntityMeta[IE <: IdEntity[IE]]
     val newIE = beforeInsert(ie)
     val idAction = (table returning table.map(_.id)) += ie
     idAction.map { id: ID =>
-      newIE.id = Some(id)
-      afterInsert(newIE)
-      newIE
+      val withId = newIE.withId(id)
+      afterInsert(withId)
+      withId
     }
   }
 

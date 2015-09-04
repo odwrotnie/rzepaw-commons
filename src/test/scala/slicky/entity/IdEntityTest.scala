@@ -29,13 +29,15 @@ class IdEntityTest
     in1.save
     assert(IdName.byIdent(1).await.get.name == "ONE")
 
-
+    in1.copy()
   }
 }
 
 case class IdName(var name: String,
-                  var id: Option[ID] = None)
-  extends IdEntity[IdName](IdName)
+                  id: Option[ID] = None)
+  extends IdEntity[IdName](IdName) {
+  override def withId(id: ID) = this.copy(id = this.id)
+}
 
 object IdName
   extends IdEntityMeta[IdName] {
