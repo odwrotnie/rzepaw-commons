@@ -11,21 +11,28 @@ class IdEntityTest
   with Logger {
 
   dbAwait {
-    NumberNameMeta.table.schema.create
+    IdName.table.schema.create
   }
 
   test("Insert entity") {
 
+    val in1 = IdName("one").save.await
+    val in2 = IdName("two").save.await
+    val in3 = IdName("three").save.await
+
+    //
+
+    assert(IdName.stream.toList.size == 3)
   }
 }
 
 case class IdName(name: String,
-                  var id: Option[ID])
-  extends IdEntity[IdName](NumberNameMeta) {
+                  var id: Option[ID] = None)
+  extends IdEntity[IdName](IdName) {
 }
 
 
-object NumberNameMeta
+object IdName
   extends IdEntityMeta[IdName] {
 
   val table = TableQuery[Tbl]

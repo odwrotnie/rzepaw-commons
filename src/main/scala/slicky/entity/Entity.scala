@@ -21,6 +21,8 @@ abstract class EntityMeta[E <: Entity[E]] {
     afterInsert(e)
   }
 
+  def stream: Stream[E] = streamify(table)
+
   // BEFORE
   def beforeInsert(e: E): E = e
 
