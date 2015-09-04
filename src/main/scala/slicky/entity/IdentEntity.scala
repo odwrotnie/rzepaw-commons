@@ -33,6 +33,7 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
     }
   } map { e =>
     afterInsert(e)
+    e
   }
 
   def update(ident: IDENT, ie: IE): Future[IE] = dbFuture {
@@ -40,6 +41,7 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
     byIdentQuery(ident).update(newIE) map { rows =>
       require(rows == 1)
       afterUpdate(newIE)
+      newIE
     }
   }
 
@@ -48,8 +50,14 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
   def save(ie: IE): Future[IE] = {
     val newIE = beforeSave(ie)
     byIdent(ie.ident).flatMap {
-      case Some(ie) => update(ie.ident, newIE).map(_ => afterSave(newIE))
-      case None => insert(newIE).map(_ => afterSave(newIE))
+      case Some(ie) => update(ie.ident, newIE).map { _ =>
+        afterSave(newIE)
+        newIE
+      }
+      case None => insert(newIE).map { _ =>
+        afterSave(newIE)
+        newIE
+      }
     }
   }
 
@@ -58,6 +66,7 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
     byIdentQuery(ie.ident).delete map { rows =>
       require(rows == 1)
       afterDelete(newIE)
+      newIE
     }
   }
 
@@ -67,7 +76,7 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
   def beforeDelete(e: IE): IE = e
 
   // AFTER
-  def afterSave(e: IE): IE = e
-  def afterUpdate(e: IE): IE = e
-  def afterDelete(e: IE): IE = e
+  def afterSave(e: IE): Unit = Unit
+  def afterUpdate(e: IE): Unit = Unit
+  def afterDelete(e: IE): Unit = Unit
 }

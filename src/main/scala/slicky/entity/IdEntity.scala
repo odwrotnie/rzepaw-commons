@@ -26,14 +26,21 @@ abstract class IdEntityMeta[IE <: IdEntity[IE]]
     idAction.map { id: ID =>
       newIE.id = Some(id)
       afterInsert(newIE)
+      newIE
     }
   }
 
   override def save(ie: IE): Future[IE] = {
     val newIE = beforeSave(ie)
     ie.id match {
-      case Some(id) => update(ie.ident, newIE).map(_ => afterSave(newIE))
-      case _ => insert(newIE).map(_ => afterSave(newIE))
+      case Some(id) => update(ie.ident, newIE).map { _ =>
+        afterSave(newIE)
+        newIE
+      }
+      case _ => insert(newIE).map { _ =>
+        afterSave(newIE)
+        newIE
+      }
     }
   }
 }

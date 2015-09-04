@@ -19,6 +19,7 @@ abstract class EntityMeta[E <: Entity[E]] {
     (table += newE).named(s"Insert $e") map(i => newE)
   } map { e =>
     afterInsert(e)
+    e
   }
 
   def stream: Stream[E] = streamify(table)
@@ -27,5 +28,5 @@ abstract class EntityMeta[E <: Entity[E]] {
   def beforeInsert(e: E): E = e
 
   // AFTER
-  def afterInsert(e: E): E = e
+  def afterInsert(e: E): Unit = Unit
 }

@@ -19,21 +19,31 @@ class IdEntityTest
     val in1 = IdName("one").save.await
     val in2 = IdName("two").save.await
     val in3 = IdName("three").save.await
-
-    //
-
     assert(IdName.stream.toList.size == 3)
+
+    IdName.stream.foreach { e =>
+      println(" - " + e)
+    }
+
+    in1.name = "ONE"
+    in1.save
+    assert(IdName.byIdent(1).await.get.name == "ONE")
+
+
   }
 }
 
-case class IdName(name: String,
+case class IdName(var name: String,
                   var id: Option[ID] = None)
-  extends IdEntity[IdName](IdName) {
-}
-
+  extends IdEntity[IdName](IdName)
 
 object IdName
   extends IdEntityMeta[IdName] {
+
+//  override def beforeSave(in: IdName): IdName = {
+//    in.name = in.name + " BEFORE_SAVE"
+//    in
+//  }
 
   val table = TableQuery[Tbl]
 
