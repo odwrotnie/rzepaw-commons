@@ -60,4 +60,14 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
       afterDelete(newIE)
     }
   }
+
+  // BEFORE
+  def beforeSave(e: IE): IE = e
+  def beforeUpdate(e: IE): IE = e
+  def beforeDelete(e: IE): IE = e
+
+  // AFTER
+  def afterSave(e: IE): IE = e
+  def afterUpdate(e: IE): IE = e
+  def afterDelete(e: IE): IE = e
 }

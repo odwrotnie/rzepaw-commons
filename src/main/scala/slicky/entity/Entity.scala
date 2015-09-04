@@ -23,13 +23,7 @@ abstract class EntityMeta[E <: Entity[E]] {
 
   // BEFORE
   def beforeInsert(e: E): E = e
-  def beforeSave(e: E): E = e
-  def beforeUpdate(e: E): E = e
-  def beforeDelete(e: E): E = e
 
   // AFTER
   def afterInsert(e: E): E = e
-  def afterSave(e: E): E = e
-  def afterUpdate(e: E): E = e
-  def afterDelete(e: E): E = e
 }
