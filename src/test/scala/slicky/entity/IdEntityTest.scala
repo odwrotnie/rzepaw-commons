@@ -38,6 +38,7 @@ class IdEntityTest
 case class IdName(var name: String,
                   id: Option[ID] = None)
   extends IdEntity[IdName](IdName) {
+
   override def withId(id: ID) = this.copy(id = Some(id))
 }
 
