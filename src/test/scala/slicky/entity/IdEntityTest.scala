@@ -32,8 +32,6 @@ class IdEntityTest
     in1.name = "ONE"
     assert(in1.update.await.name == "ONE")
     assert(IdName.byIdent(1).await.get.name == "ONE")
-
-    in1.copy()
   }
 }
 

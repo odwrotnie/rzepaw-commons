@@ -1,50 +1,57 @@
-//package slicky.entity
-//
-//import commons.logger._
-//import org.scalatest.FunSuite
-//import slicky.Slicky._
-//import driver.api._
-//
-//// sbt "~rzepawCommons/testOnly slicky.entity.EntityTest"
-//class IdentEntityTest
-//  extends FunSuite
-//  with Logger {
-//
-//  dbAwait {
-//    XYName.table.schema.create
-//  }
-//
-//  test("Insert entity") {
-//
-//    val in1 = XYName("one", 1).insert.await
-//    val in2 = XYName("two", 2).insert.await
-//    val in3 = XYName("three", 3).insert.await
-//    assert(XYName.stream.toList.size == 3)
-//
-//    XYName.stream.foreach { e =>
-//      println(" - " + e)
-//    }
-//  }
-//}
-//
-//case class XYName(var x: Int, var y: String, var name: String)
-//  extends IdentEntity[(Int, Int), XYName](XYName) {
-//  def ident = (x, y)
-//}
-//
-//object XYName
-//  extends IdentEntityMeta[(Int, Int), XYName] {
-//
-//  val table = TableQuery[Tbl]
-//
-//  class Tbl(tag: Tag)
-//    extends Table[XYName](tag, "NAME") {
-//
-//    def x = column[String]("X")
-//    def y = column[String]("Y")
-//    def name = column[String]("NAME")
-//
-//    def * = (x, y, name) <>
-//      ((XYName.apply _).tupled, XYName.unapply)
-//  }
-//}
+package slicky.entity
+
+import commons.logger._
+import org.scalatest.FunSuite
+import slicky.Slicky._
+import driver.api._
+
+// sbt "~rzepawCommons/testOnly slicky.entity.EntityTest"
+class IdentEntityTest
+  extends FunSuite
+  with Logger {
+
+  dbAwait {
+    XYName.table.schema.create
+  }
+
+  test("Insert entity") {
+
+    val xyn1 = XYName(1, 1, "one").insert.await
+    assert(XYName.byIdent((1, 1)).await.get.name == "one")
+
+    val xyn2 = XYName(2, 2, "two").save.await
+    assert(XYName.byIdent((1, 1)).await.get.name == "two")
+
+    val xyn3 = XYName(3, 3, "three").save.await
+    assert(XYName.stream.toList.size == 3)
+
+    XYName.stream.foreach { e =>
+      println(" - " + e)
+    }
+  }
+}
+
+case class XYName(var x: Int, var y: Int, var name: String)
+  extends IdentEntity[(Int, Int), XYName](XYName) {
+  def ident = (x, y)
+}
+
+object XYName
+  extends IdentEntityMeta[(Int, Int), XYName] {
+
+  val table = TableQuery[Tbl]
+
+  class Tbl(tag: Tag)
+    extends Table[XYName](tag, "NAME") {
+
+    def x = column[Int]("X")
+    def y = column[Int]("Y")
+    def name = column[String]("NAME")
+
+    def * = (x, y, name) <>
+      ((XYName.apply _).tupled, XYName.unapply)
+  }
+
+  override def byIdentQuery(ident: (Int, Int)) =
+    table.filter(_.x === ident._1).filter(_.y === ident._2)
+}
