@@ -14,6 +14,8 @@ abstract class EntityMeta[E <: Entity[E]] {
   type T = Table[E]
   def table: TableQuery[_ <: T]
 
+  def count: Int = dbAwait(table.size.result)
+
   def insert(e: E): Future[E] = dbFuture {
     val newE = beforeInsert(e)
     (table += newE).named(s"Insert $e") map(i => newE)
