@@ -28,6 +28,10 @@ class IdentEntityTest
     XYName.stream.foreach { e =>
       println(" - " + e)
     }
+
+    xyn1.name = "11"
+    xyn1.save.await
+    assert(XYName.byIdent((1, 1)).await.get.name == "11")
   }
 }
 
