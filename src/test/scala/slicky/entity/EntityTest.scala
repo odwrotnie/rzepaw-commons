@@ -11,37 +11,37 @@ class EntityTest
   with Logger {
 
   dbAwait {
-    NameValue.table.schema.create
+    XYName.table.schema.create
   }
 
   test("Insert entity") {
 
-    val in1 = NameValue("one", 1).insert.await
-    val in2 = NameValue("two", 2).insert.await
-    val in3 = NameValue("three", 3).insert.await
-    assert(NameValue.stream.toList.size == 3)
+    val in1 = XYName("one", 1).insert.await
+    val in2 = XYName("two", 2).insert.await
+    val in3 = XYName("three", 3).insert.await
+    assert(XYName.stream.toList.size == 3)
 
-    NameValue.stream.foreach { e =>
+    XYName.stream.foreach { e =>
       println(" - " + e)
     }
   }
 }
 
 case class NameValue(var name: String, var value: Int)
-  extends Entity[NameValue](NameValue)
+  extends Entity[XYName](XYName)
 
 object NameValue
-  extends EntityMeta[NameValue] {
+  extends EntityMeta[XYName] {
 
   val table = TableQuery[Tbl]
 
   class Tbl(tag: Tag)
-    extends Table[NameValue](tag, "NAME") {
+    extends Table[XYName](tag, "NAME") {
 
     def name = column[String]("NAME")
     def value = column[Int]("VALUE")
 
     def * = (name, value) <>
-      ((NameValue.apply _).tupled, NameValue.unapply)
+      ((XYName.apply _).tupled, XYName.unapply)
   }
 }
