@@ -22,7 +22,8 @@ abstract class EntityMeta[E <: Entity[E]] {
     e
   }
 
-  def stream: Stream[E] = streamify(table)
+  def stream(query: Query[T, E, Seq]): Stream[E] = streamify(query)
+  def stream: Stream[E] = stream(table)
 
   // BEFORE
   def beforeInsert(e: E): E = e
