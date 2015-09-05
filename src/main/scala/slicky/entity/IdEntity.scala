@@ -15,9 +15,10 @@ abstract class IdEntity[IE <: IdEntity[IE]](meta: IdEntityMeta[IE])
 
 abstract class IdEntityMeta[IE <: IdEntity[IE]]
   extends IdentEntityMeta[ID, IE] {
-  type IT = Table[IE] { def id: Rep[ID] }
-  override def table: TableQuery[_ <: IT]
-  override def byIdentQuery(ident: ID): Query[IT, IE, Seq] = table.filter(_.id === ident)
+
+  type IET = Table[IE] { def id: Rep[ID] }
+  override def table: TableQuery[_ <: IET]
+  override def byIdentQuery(ident: ID): Query[IET, IE, Seq] = table.filter(_.id === ident)
 
   override def insert(ie: IE): Future[IE] = dbFuture {
     require(ie.id.isEmpty)
