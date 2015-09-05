@@ -37,9 +37,9 @@ abstract class IdEntityMeta[IE <: IdEntity[IE]]
         afterSave(newIE)
         newIE
       }
-      case _ => insert(newIE).map { _ =>
-        afterSave(newIE)
-        newIE
+      case _ => insert(newIE).map { withId =>
+        afterSave(withId)
+        withId
       }
     }
   }

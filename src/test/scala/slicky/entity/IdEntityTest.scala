@@ -16,8 +16,12 @@ class IdEntityTest
 
   test("Insert entity") {
 
-    val in1 = IdName("one").save.await
+    val in1 = IdName("one").insert.await
+    assert(in1.ident == 1l)
+
     val in2 = IdName("two").save.await
+    assert(in2.ident == 2l)
+
     val in3 = IdName("three").save.await
     assert(IdName.stream.toList.size == 3)
 
@@ -26,7 +30,7 @@ class IdEntityTest
     }
 
     in1.name = "ONE"
-    in1.save
+    assert(in1.update.await.name == "ONE")
     assert(IdName.byIdent(1).await.get.name == "ONE")
 
     in1.copy()
@@ -36,7 +40,7 @@ class IdEntityTest
 case class IdName(var name: String,
                   id: Option[ID] = None)
   extends IdEntity[IdName](IdName) {
-  override def withId(id: ID) = this.copy(id = this.id)
+  override def withId(id: ID) = this.copy(id = Some(id))
 }
 
 object IdName
