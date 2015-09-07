@@ -24,5 +24,6 @@ object Lipsum {
     s"$word@$word.$domain"
   }
 
-  def digits(n: Int) = (1 to n).map(Random.nextInt).mkString("")
+  def digits(n: Int) = (1 to n).map(Random.nextInt).mkString
+  def alphanumeric(n: Int) = Random.alphanumeric.take(n).mkString
 }

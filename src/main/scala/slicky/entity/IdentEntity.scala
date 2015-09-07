@@ -1,5 +1,6 @@
 package slicky.entity
 
+import commons.logger.Logger
 import slicky.Slicky._
 import driver.api._
 import scala.concurrent.Future
@@ -20,10 +21,18 @@ abstract class IdentEntity[IDENT, IE <: IdentEntity[IDENT, IE]](meta: IdentEntit
 }
 
 abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
-  extends EntityMeta[IE] {
+  extends EntityMeta[IE]
+  with Logger {
 
   def byIdentQuery(ident: IDENT): Query[T, IE, Seq]
   def byIdent(ident: IDENT): Future[Option[IE]] = dbFuture { byIdentQuery(ident).result.headOption }
+  def byIdentGet(ident: IDENT): Future[IE] = byIdent(ident).map(_.get)
+  def byIdentOption(ident: Option[IDENT]): Future[Option[IE]] = ident match {
+    case Some(ident) => byIdent(ident)
+    case None => Future.successful(None)
+  }
+  def byIdentOptionOrCreate(ident: Option[IDENT], create: => Future[IE]): Future[IE] =
+    byIdentOption(ident).flatMap(_.fold(create)(Future.successful))
 
   override def insert(ie: IE): Future[IE] = dbFuture {
     val newE = beforeInsert(ie)
@@ -76,7 +85,9 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
   def beforeDelete(e: IE): IE = e
 
   // AFTER
-  def afterSave(e: IE): Unit = Unit
+  def afterSave(e: IE): Unit = {
+    debug(s"Saved: $e")
+  }
   def afterUpdate(e: IE): Unit = Unit
   def afterDelete(e: IE): Unit = Unit
 }
