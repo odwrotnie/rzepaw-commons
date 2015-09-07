@@ -26,13 +26,13 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
 
   def byIdentQuery(ident: IDENT): Query[T, IE, Seq]
   def byIdent(ident: IDENT): Future[Option[IE]] = dbFuture { byIdentQuery(ident).result.headOption }
-  def byIdentGet(ident: IDENT): Future[IE] = byIdent(ident).map(_.get)
-  def byIdentOption(ident: Option[IDENT]): Future[Option[IE]] = ident match {
+  def byIdent(ident: Option[IDENT]): Future[Option[IE]] = ident match {
     case Some(ident) => byIdent(ident)
     case None => Future.successful(None)
   }
+  def byIdentGet(ident: IDENT): Future[IE] = byIdent(ident).map(_.get)
   def byIdentOptionOrCreate(ident: Option[IDENT], create: => Future[IE]): Future[IE] =
-    byIdentOption(ident).flatMap(_.fold(create)(Future.successful))
+    byIdent(ident).flatMap(_.fold(create)(Future.successful))
 
   override def insert(ie: IE): Future[IE] = dbFuture {
     val newE = beforeInsert(ie)
