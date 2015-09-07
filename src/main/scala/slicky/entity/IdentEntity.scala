@@ -31,8 +31,8 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
     case None => Future.successful(None)
   }
   def byIdentGet(ident: IDENT): Future[IE] = byIdent(ident).map(_.get)
-  def byIdentOptionOrCreate(ident: Option[IDENT], create: => Future[IE]): Future[IE] =
-    byIdent(ident).flatMap(_.fold(create)(Future.successful))
+//  def byIdentOptionOrCreate(ident: Option[IDENT], create: => Future[IE]): Future[IE] =
+//    byIdent(ident).flatMap(_.fold(create)(Future.successful))
 
   override def insert(ie: IE): Future[IE] = dbFuture {
     val newE = beforeInsert(ie)

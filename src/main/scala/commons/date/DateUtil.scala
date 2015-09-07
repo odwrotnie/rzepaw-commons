@@ -15,7 +15,7 @@ object DateUtil {
   val DATE_FORMAT = "dd/MM/YYYY"
   val HOUR_FORMAT = "HH:mm"
   val TIME_FORMAT = s"$DATE_FORMAT $HOUR_FORMAT"
-  
+
   val DATE_PATTERN = DateTimeFormat.forPattern(DATE_FORMAT)
   val HOUR_PATTERN = DateTimeFormat.forPattern(HOUR_FORMAT)
   val TIME_PATTERN = DateTimeFormat.forPattern(TIME_FORMAT)
@@ -48,6 +48,9 @@ object DateUtil {
   def getDayNumber(date: AbstractInstant) = date.toDateTime().getDayOfMonth()
   def getMonthName(date: AbstractInstant) = DateTimeFormat.forPattern("MMMM").print(date)
   def getYear(date: AbstractInstant) = DateTimeFormat.forPattern("yyyy").print(date)
+
+  implicit def dateTimeOrdering: Ordering[DateTime] = Ordering.fromLessThan(_ isBefore _)
+  def ascending(dates: DateTime*): Seq[DateTime] = dates.sorted
 
   object TimePlace extends Enumeration {
     case class V(name: String) extends Val(name)
@@ -165,6 +168,9 @@ case class Month(dt: DateTime)
 
   lazy val firstDay = Day(start)
   lazy val firstWeek = Week(start)
+  lazy val days: Stream[Day] = firstDay
+    .nextInclusiveStream
+    .takeWhile(d => d.start.isBefore(end))
   lazy val weeks: Stream[Week] = firstWeek
     .nextInclusiveStream
     .takeWhile(w => w.start.isBefore(end))
