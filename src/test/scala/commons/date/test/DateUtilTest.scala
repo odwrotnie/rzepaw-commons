@@ -34,4 +34,15 @@ class DateUtilTest
     println("HOURS: " + d.getStandardHours)
     assert(d.getMillis == 10800000)
   }
+
+  test("Duration plus") {
+    val s1 = DateUtil.now
+    val e1 = s1.plusHours(1)
+    val d1 = new Duration(s1, e1)
+    val s2 = s1.plusHours(100)
+    val e2 = s2.plusHours(2)
+    val d2 = new Duration(s2, e2)
+    val d = d1.plus(d2)
+    assert(d.getMillis == 10800000)
+  }
 }

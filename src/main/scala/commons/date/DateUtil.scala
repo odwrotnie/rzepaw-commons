@@ -68,6 +68,9 @@ object DateUtil {
   def durationSeconds(count: Int) = new Duration(count * MILLISECONDS_IN_SECOND)
   def durationMinute(count: Int) = new Duration(count * MILLISECONDS_IN_MINUTE)
   def durationHour(count: Int) = new Duration(count * MILLISECONDS_IN_HOUR)
+  def seconds(duration: Duration): Float = duration.getMillis.toFloat / MILLISECONDS_IN_SECOND
+  def minutes(duration: Duration): Float = duration.getMillis.toFloat / MILLISECONDS_IN_MINUTE
+  def hours(duration: Duration): Float = duration.getMillis.toFloat / MILLISECONDS_IN_HOUR
 }
 
 abstract class DateInterval[DI <: DateInterval[DI]](val meta: DateIntervalMeta[DI]) {
