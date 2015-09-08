@@ -68,4 +68,10 @@ object Slicky {
       data.map(v => MaybeFilter(query.withFilter(f(v)))).getOrElse(this)
     }
   }
+
+  import org.reactivestreams.Publisher
+  import rx.RxReactiveStreams
+  implicit class PublisherToRxObservable[T](publisher: Publisher[T]) {
+    def toObservable= RxReactiveStreams.toObservable(publisher)
+  }
 }
