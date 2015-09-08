@@ -4,6 +4,7 @@ import java.sql.Timestamp
 import org.joda.time.DateTime
 import slick.backend.DatabasePublisher
 import slick.driver.H2Driver
+import slick.lifted.CanBeQueryCondition
 import scala.concurrent._
 import scala.concurrent.duration._
 
@@ -59,6 +60,12 @@ object Slicky {
     val pageCount: Long = Math.round(Math.ceil(length.toFloat / pageSize))
     Stream.from(0).takeWhile(_ < pageCount).flatMap { page =>
       dbAwait { query.drop(page * pageSize).take(pageSize).result }
+    }
+  }
+
+  case class MaybeFilter[X, Y](val query: Query[X, Y, Seq]) {
+    def filter[T, R: CanBeQueryCondition](data: Option[T])(f: T => X => R) = {
+      data.map(v => MaybeFilter(query.withFilter(f(v)))).getOrElse(this)
     }
   }
 }

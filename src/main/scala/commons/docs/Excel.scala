@@ -19,7 +19,37 @@ object Excel {
   }
 }
 
-case class WorkbookManipulator(val workbook: Workbook) {
+case class SheetHelper(workbook: Workbook, sheet: Sheet) {
+
+  def row(index: Int): Row = {
+    sheet.getRow(index) match {
+      case null => sheet.createRow(index)
+      case row => row
+    }
+  }
+
+  def cell(rowIndex: Int, index: Int): Cell = {
+    val row = this.row(rowIndex)
+    row.getCell(index) match {
+      case null => row.createCell(index)
+      case cell => cell
+    }
+  }
+
+  def set(row: Int, col: Int, value: Any): Cell = {
+    val c = cell(row, col)
+    value match {
+      case s: String => c.setCellValue(s)
+      case i: Int => c.setCellValue(i)
+      case f: Float => c.setCellValue(f)
+      case d: Double => c.setCellValue(d)
+      case x => c.setCellValue(x.toString)
+    }
+    c
+  }
+}
+
+case class WorkbookManipulator(workbook: Workbook) {
 
   def cellStringValue(letter: String)(implicit r: Row): Option[String] =
     cell(letter).flatMap { c =>
