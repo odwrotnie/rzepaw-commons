@@ -19,7 +19,14 @@ object Excel {
   }
 }
 
-case class SheetHelper(workbook: Workbook, sheet: Sheet) {
+abstract class AbstractSheetHelper {
+
+  def sheet: Sheet
+
+  protected def letterToIndex(letter: String): Int = {
+    val c = CellReference.convertColStringToIndex(letter)
+    c
+  }
 
   def row(index: Int): Row = {
     sheet.getRow(index) match {
@@ -35,6 +42,10 @@ case class SheetHelper(workbook: Workbook, sheet: Sheet) {
       case cell => cell
     }
   }
+}
+
+case class SheetHelper(sheet: Sheet, workbook: Option[Workbook] = None)
+  extends AbstractSheetHelper {
 
   def set(row: Int, col: Int, value: Any): Cell = {
     val c = cell(row, col)
@@ -49,17 +60,26 @@ case class SheetHelper(workbook: Workbook, sheet: Sheet) {
   }
 
   def valueString(row: Int, col: Int): Option[String] = {
-    Try(sheet.getRow(row).getCell(col).getStringCellValue).toOption
+    val c = sheet.getRow(row).getCell(col)
+    val tries = Try(c.getStringCellValue).toOption ::
+      Try(c.getNumericCellValue.toString).toOption :: Nil
+    tries.flatten.headOption
   }
+  def valueString(row: Int, col: String): Option[String] = valueString(row, letterToIndex(col))
   def valueBoolean(row: Int, col: Int): Option[Boolean] = {
     Try(sheet.getRow(row).getCell(col).getBooleanCellValue).toOption
   }
+  def valueBoolean(row: Int, col: String): Option[Boolean] = valueBoolean(row, letterToIndex(col))
   def valueNumeric(row: Int, col: Int): Option[Double] = {
     Try(sheet.getRow(row).getCell(col).getNumericCellValue).toOption
   }
+  def valueNumeric(row: Int, col: String): Option[Double] = valueNumeric(row, letterToIndex(col))
 }
 
-case class SheetRegionHelper(sh: SheetHelper, rowOffset: Int, colOffset: Int, maxRow: Option[Int] = None, maxCol: Option[Int]) {
+case class SheetRegionHelper(sheet: Sheet, rowOffset: Int, colOffset: Int, maxRow: Option[Int] = None, maxCol: Option[Int] = None)
+  extends AbstractSheetHelper {
+
+  val sh = SheetHelper(sheet)
 
   private def relativeRow(row: Int) = {
     val r = row + rowOffset
@@ -77,15 +97,29 @@ case class SheetRegionHelper(sh: SheetHelper, rowOffset: Int, colOffset: Int, ma
     val c = relativeCol(col)
     sh.valueString(r, c)
   }
+  def valueString(row: Int, col: String): Option[String] = {
+    val r = relativeRow(row)
+    sh.valueString(r, col)
+  }
+
   def valueBoolean(row: Int, col: Int): Option[Boolean] = {
     val r = relativeRow(row)
     val c = relativeCol(col)
     sh.valueBoolean(r, c)
   }
+  def valueBoolean(row: Int, col: String): Option[Boolean] = {
+    val r = relativeRow(row)
+    sh.valueBoolean(r, col)
+  }
+
   def valueNumeric(row: Int, col: Int): Option[Double] = {
     val r = relativeRow(row)
     val c = relativeCol(col)
     sh.valueNumeric(r, c)
+  }
+  def valueNumeric(row: Int, col: String): Option[Double] = {
+    val r = relativeRow(row)
+    sh.valueNumeric(r, col)
   }
 }
 

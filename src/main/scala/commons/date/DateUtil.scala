@@ -23,6 +23,7 @@ object DateUtil {
   val timeFormatStringJQuery = "hh:mm"
 
   def now: DateTime = new DateTime()
+  def date(y: Int, m: Int, d: Int): DateTime = new LocalDate(y, m, d).toDateTimeAtStartOfDay
   def nowDateOnly: DateTime = now.withTimeAtStartOfDay
   def nowString = formatTime(now)
   def todayString = formatDate(now)
@@ -165,6 +166,7 @@ case class Year(dt: DateTime)
 
 object Month
   extends DateIntervalMeta[Month] {
+  def apply(year: Int, month: Int): Month = Month(DateUtil.date(year, month, 1))
 }
 
 case class Month(dt: DateTime)
