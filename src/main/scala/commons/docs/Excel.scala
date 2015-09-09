@@ -47,14 +47,47 @@ case class SheetHelper(workbook: Workbook, sheet: Sheet) {
     }
     c
   }
+
+  def valueString(row: Int, col: Int): Option[String] = {
+    Try(sheet.getRow(row).getCell(col).getStringCellValue).toOption
+  }
+  def valueBoolean(row: Int, col: Int): Option[Boolean] = {
+    Try(sheet.getRow(row).getCell(col).getBooleanCellValue).toOption
+  }
+  def valueNumeric(row: Int, col: Int): Option[Double] = {
+    Try(sheet.getRow(row).getCell(col).getNumericCellValue).toOption
+  }
 }
 
-//case class SheetRegionHelper(sh: SheetHelper, rowOffset: Int, minCol: Int, maxRow: Option[Int] = None, maxCol: Option[Int]) {
-//
-//  private def relativeRow(row: Int) = {
-//    val r = row + minRow
-//  }
-//}
+case class SheetRegionHelper(sh: SheetHelper, rowOffset: Int, colOffset: Int, maxRow: Option[Int] = None, maxCol: Option[Int]) {
+
+  private def relativeRow(row: Int) = {
+    val r = row + rowOffset
+    maxRow foreach { mr => require(r <= mr) }
+    r
+  }
+  private def relativeCol(col: Int) = {
+    val c = col + colOffset
+    maxRow foreach { mc => require(c <= mc) }
+    c
+  }
+
+  def valueString(row: Int, col: Int): Option[String] = {
+    val r = relativeRow(row)
+    val c = relativeCol(col)
+    sh.valueString(r, c)
+  }
+  def valueBoolean(row: Int, col: Int): Option[Boolean] = {
+    val r = relativeRow(row)
+    val c = relativeCol(col)
+    sh.valueBoolean(r, c)
+  }
+  def valueNumeric(row: Int, col: Int): Option[Double] = {
+    val r = relativeRow(row)
+    val c = relativeCol(col)
+    sh.valueNumeric(r, c)
+  }
+}
 
 case class WorkbookManipulator(workbook: Workbook) {
 
