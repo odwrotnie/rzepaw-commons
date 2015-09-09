@@ -1,6 +1,8 @@
 package slicky
 
 import java.sql.Timestamp
+import java.util.Properties
+import commons.logger.Logger
 import org.joda.time.DateTime
 import slick.backend.DatabasePublisher
 import slick.driver.H2Driver
@@ -8,7 +10,18 @@ import slick.lifted.CanBeQueryCondition
 import scala.concurrent._
 import scala.concurrent.duration._
 
-object Slicky {
+object Properties {
+  private val PROPS = "/db.properties"
+  private val props = new Properties()
+  props.load(getClass.getResourceAsStream(PROPS))
+  def get(prop: String) = props.getProperty(prop) match {
+    case null => None
+    case s => Some(s)
+  }
+}
+
+object Slicky
+  extends Logger {
 
   type ID = Long
   type IDOPT = Option[ID]
@@ -20,10 +33,17 @@ object Slicky {
   import driver.api._
 
   val DURATION = Duration.Inf
-  val CONNECTION_STRING = "jdbc:h2:mem:wext-slick;DB_CLOSE_DELAY=-1;MVCC=TRUE"
-  // val CONNECTION_STRING = "jdbc:h2:~/tmp/wext-slick.db"
-  val DRIVER = "org.h2.Driver"
-  val db = Database.forURL(CONNECTION_STRING, driver = DRIVER)
+  lazy val CONNECTION_STRING: Option[String] = Properties.get("slick.db.connection.string")
+  lazy val DRIVER: Option[String] = Properties.get("slick.db.driver")
+  lazy val USER: Option[String] = Properties.get("slick.db.user")
+  lazy val PASSWORD: Option[String] = Properties.get("slick.db.password")
+  lazy val db = (CONNECTION_STRING, DRIVER, USER, PASSWORD) match {
+    case (Some(c), Some(d), Some(u), Some(p)) =>
+      Database.forURL(c, driver = d, user = u, password = p)
+    case (Some(c), Some(d), _, _) =>
+      Database.forURL(c, driver = d)
+  }
+
 
   // Run in transaction
   def dbFuture[R](f: => DBIO[R]): Future[R] = db.run(f)
