@@ -121,6 +121,8 @@ case class SheetRegionHelper(sheet: Sheet, rowOffset: Int, colOffset: Int, maxRo
     val r = relativeRow(row)
     sh.valueNumeric(r, col)
   }
+
+  override def toString = s"Sheet region, row offset: $rowOffset, column offset: $colOffset"
 }
 
 case class WorkbookManipulator(workbook: Workbook) {
@@ -162,10 +164,11 @@ abstract class SheetConverter[T](val workbook: Workbook) {
 
   def fromRow(implicit r: Row): T
 
-  lazy val rows: List[Row] = (for {
+  lazy val rows: List[Row] = for {
     sheet <- List(workbook.getSheetAt(0))
     row <- sheet
-  } yield row)
+  } yield row
+
   lazy val list: Stream[T] = {
     rows.toStream.map(r => Try(fromRow(r)).toOption).flatten
   }
