@@ -49,6 +49,13 @@ case class SheetHelper(workbook: Workbook, sheet: Sheet) {
   }
 }
 
+//case class SheetRegionHelper(sh: SheetHelper, rowOffset: Int, minCol: Int, maxRow: Option[Int] = None, maxCol: Option[Int]) {
+//
+//  private def relativeRow(row: Int) = {
+//    val r = row + minRow
+//  }
+//}
+
 case class WorkbookManipulator(workbook: Workbook) {
 
   def cellStringValue(letter: String)(implicit r: Row): Option[String] =

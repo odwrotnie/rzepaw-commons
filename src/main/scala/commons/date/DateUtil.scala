@@ -80,9 +80,12 @@ abstract class DateInterval[DI <: DateInterval[DI]](val meta: DateIntervalMeta[D
   def start: ReadableInstant
   lazy val startDT = new DateTime(start)
   lazy val startTimestamp = new Timestamp(start.getMillis)
+  lazy val startMillis = start.getMillis
+
   def end: ReadableInstant
   lazy val endDT = new DateTime(end)
   lazy val endTimestamp = new Timestamp(end.getMillis)
+  lazy val endMillis = end.getMillis
 
   def next = meta.apply(endDT)
   def nextStream: Stream[DI] = {
@@ -197,12 +200,17 @@ case class Week(dt: DateTime)
 
 // DAY
 
-object Day extends DateIntervalMeta[Day]
+object Day extends DateIntervalMeta[Day] {
+  val DAYTIME_START_HOUR = 6
+  val DAYTIME_END_HOUR = 18
+}
 
 case class Day(dt: DateTime)
   extends DateInterval[Day](Day) {
   lazy val start = dt.withTimeAtStartOfDay
   lazy val end = start plusDays 1
+  
+  lazy val daytimeInterval = new Interval(start.withHourOfDay(Day.DAYTIME_START_HOUR), start.withHourOfDay(Day.DAYTIME_END_HOUR))
 
   def dayOfMonth = start.getDayOfMonth
   def month = Month(start)
