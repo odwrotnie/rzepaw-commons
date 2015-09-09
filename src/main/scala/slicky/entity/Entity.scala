@@ -4,7 +4,7 @@ import slicky.Slicky._
 import driver.api._
 import scala.concurrent.Future
 
-abstract class Entity[E <: Entity[E]](meta: EntityMeta[E]) {
+abstract class Entity[E <: Entity[E]](val meta: EntityMeta[E]) {
   self: E =>
   def insert = meta.insert(this)
 }

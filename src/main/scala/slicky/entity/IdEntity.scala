@@ -5,7 +5,7 @@ import driver.api._
 
 import scala.concurrent.Future
 
-abstract class IdEntity[IE <: IdEntity[IE]](meta: IdEntityMeta[IE])
+abstract class IdEntity[IE <: IdEntity[IE]](override val meta: IdEntityMeta[IE])
   extends IdentEntity[ID, IE](meta) {
   self: IE =>
   def id: Option[ID]

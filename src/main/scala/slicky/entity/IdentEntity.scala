@@ -11,7 +11,7 @@ import scala.concurrent.Future
  * @tparam IDENT set of fields, i.e. (Int, String)
  * @tparam IE
  */
-abstract class IdentEntity[IDENT, IE <: IdentEntity[IDENT, IE]](meta: IdentEntityMeta[IDENT, IE])
+abstract class IdentEntity[IDENT, IE <: IdentEntity[IDENT, IE]](override val meta: IdentEntityMeta[IDENT, IE])
   extends Entity[IE](meta) {
   self: IE =>
   def ident: IDENT
