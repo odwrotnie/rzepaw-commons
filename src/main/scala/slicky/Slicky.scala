@@ -5,7 +5,7 @@ import java.util.Properties
 import commons.logger.Logger
 import org.joda.time.DateTime
 import slick.backend.DatabasePublisher
-import slick.driver.H2Driver
+import slick.driver.{MySQLDriver, H2Driver}
 import slick.lifted.CanBeQueryCondition
 import scala.concurrent._
 import scala.concurrent.duration._
@@ -28,22 +28,24 @@ object Slicky
 
   implicit lazy val futureEC = scala.concurrent.ExecutionContext.Implicits.global
 
-  val driver = H2Driver
+  val DURATION = Duration.Inf
+  lazy val CONNECTION_STRING: Option[String] = Properties.get("slick.db.connection.string")
+  lazy val DRIVER_CLASS: Option[String] = Properties.get("slick.db.driver")
+  lazy val USER: Option[String] = Properties.get("slick.db.user")
+  lazy val PASSWORD: Option[String] = Properties.get("slick.db.password")
+  lazy val driver = DRIVER_CLASS.get match {
+    case "org.h2.Driver" => H2Driver
+    case "com.mysql.jdbc.Driver" => MySQLDriver
+  }
 
   import driver.api._
 
-  val DURATION = Duration.Inf
-  lazy val CONNECTION_STRING: Option[String] = Properties.get("slick.db.connection.string")
-  lazy val DRIVER: Option[String] = Properties.get("slick.db.driver")
-  lazy val USER: Option[String] = Properties.get("slick.db.user")
-  lazy val PASSWORD: Option[String] = Properties.get("slick.db.password")
-  lazy val db = (CONNECTION_STRING, DRIVER, USER, PASSWORD) match {
+  lazy val db = (CONNECTION_STRING, DRIVER_CLASS, USER, PASSWORD) match {
     case (Some(c), Some(d), Some(u), Some(p)) =>
       Database.forURL(c, driver = d, user = u, password = p)
     case (Some(c), Some(d), _, _) =>
       Database.forURL(c, driver = d)
   }
-
 
   // Run in transaction
   def dbFuture[R](f: => DBIO[R]): Future[R] = db.run(f)
