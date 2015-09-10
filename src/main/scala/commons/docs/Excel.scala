@@ -17,6 +17,12 @@ object Excel {
   } catch {
     case t: Throwable => workbook(new File(path))
   }
+
+  def save(wb: Workbook, path: String): Unit = {
+    val fileOut = new FileOutputStream(path)
+    wb.write(fileOut)
+    fileOut.close()
+  }
 }
 
 abstract class AbstractSheetHelper {
@@ -47,16 +53,19 @@ abstract class AbstractSheetHelper {
 case class SheetHelper(sheet: Sheet, workbook: Option[Workbook] = None)
   extends AbstractSheetHelper {
 
-  def set(row: Int, col: Int, value: Any): Cell = {
-    val c = cell(row, col)
-    value match {
-      case s: String => c.setCellValue(s)
-      case i: Int => c.setCellValue(i)
-      case f: Float => c.setCellValue(f)
-      case d: Double => c.setCellValue(d)
-      case x => c.setCellValue(x.toString)
+  def set(row: Int, col: Int, values: Any*): Seq[Cell] = {
+    values.zipWithIndex map {
+      case (value, index) =>
+        val c = cell(row, col + index)
+        value match {
+          case s: String => c.setCellValue(s)
+          case i: Int => c.setCellValue(i)
+          case f: Float => c.setCellValue(f)
+          case d: Double => c.setCellValue(d)
+          case x => c.setCellValue(x.toString)
+        }
+        c
     }
-    c
   }
 
   def valueString(row: Int, col: Int): Option[String] = {
