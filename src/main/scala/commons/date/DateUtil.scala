@@ -174,6 +174,7 @@ case class Month(dt: DateTime)
   lazy val start = dt.withDayOfMonth(1).withTimeAtStartOfDay()
   lazy val end = start plusMonths 1
 
+  lazy val monthOfYear = start.getMonthOfYear
   lazy val firstDay = Day(start)
   lazy val firstWeek = Week(start)
   lazy val days: Stream[Day] = firstDay
@@ -218,6 +219,8 @@ case class Day(dt: DateTime)
   def month = Month(start)
   def firstHour = Hour(start)
   def hours = firstHour.nextInclusive(24)
+
+  def isHoliday = start.getDayOfWeek - 6 < 2
 
   override def toString = "%s - %s/%s/%s" format (start.dayOfWeek.getAsText,
     start.getYear, start.getMonthOfYear, start.getDayOfMonth)
