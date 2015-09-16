@@ -86,7 +86,7 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
 
   // AFTER
   def afterSave(e: IE): Unit = {
-    debug(s"Saved (${ getClass.getSimpleName }): $e")
+    debug(s"Saved (${ getClass.getSimpleName.replace("$", "") }): $e")
   }
   def afterUpdate(e: IE): Unit = Unit
   def afterDelete(e: IE): Unit = Unit
