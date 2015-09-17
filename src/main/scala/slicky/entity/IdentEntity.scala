@@ -30,10 +30,8 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
     case Some(ident) => byIdent(ident)
     case None => Future.successful(None)
   }
-  def byIdentGet(ident: IDENT): Future[IE] = {
-    println(s"BYIDENT $ident for meta: " + this)
-    byIdent(ident).map(_.get)
-  }
+  def byIdentGet(ident: IDENT): Future[IE] = byIdent(ident).map(_.get)
+
 //  def byIdentOptionOrCreate(ident: Option[IDENT], create: => Future[IE]): Future[IE] =
 //    byIdent(ident).flatMap(_.fold(create)(Future.successful))
 
