@@ -5,11 +5,14 @@ import Actor._
 
 object Background {
 
-  def repeat(delay: Int)(x: => Unit) {
+  val MILLISECONDS_IN_SECOND = 1000
+
+  def repeat(secondsDelay: Int)(x: => Unit) {
+    val millisecondsDelay = secondsDelay * MILLISECONDS_IN_SECOND
     actor {
       loop {
         x
-        Thread.sleep(delay)
+        Thread.sleep(millisecondsDelay)
       }
     }
   }
