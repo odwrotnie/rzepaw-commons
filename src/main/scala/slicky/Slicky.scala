@@ -1,7 +1,7 @@
 package slicky
 
+import java.io.InputStream
 import java.sql.Timestamp
-import java.util.Properties
 import commons.logger.Logger
 import org.joda.time.DateTime
 import slick.backend.DatabasePublisher
@@ -9,14 +9,18 @@ import slick.driver.{MySQLDriver, H2Driver}
 import slick.lifted.CanBeQueryCondition
 import scala.concurrent._
 import scala.concurrent.duration._
+import scala.util.Try
 
 object Properties {
+  import java.util.Properties
   private val PROPS = "/db.properties"
-  private val props = new Properties()
-  props.load(getClass.getResourceAsStream(PROPS))
-  def get(prop: String) = props.getProperty(prop) match {
-    case null => None
-    case s => Some(s)
+  private val props: Option[Properties] = Try {
+    val p = new Properties()
+    p.load(getClass.getResourceAsStream(PROPS))
+    p
+  }.toOption
+  def get(prop: String): Option[String] = props flatMap { p =>
+    Try(p.getProperty(prop)).toOption.flatMap(Option(_))
   }
 }
 
@@ -30,22 +34,24 @@ object Slicky
   implicit lazy val futureEC = scala.concurrent.ExecutionContext.Implicits.global
 
   val DURATION = Duration.Inf
-  lazy val CONNECTION_STRING: Option[String] = Properties.get("slick.db.connection.string")
-  lazy val DRIVER_CLASS: Option[String] = Properties.get("slick.db.driver")
+  lazy val CONNECTION_STRING: String = Properties.get("slick.db.connection.string").getOrElse("jdbc:h2:mem:wext-slick;DB_CLOSE_DELAY=-1;MVCC=TRUE")
+  lazy val DRIVER_CLASS: String = Properties.get("slick.db.driver").getOrElse("org.h2.Driver")
   lazy val USER: Option[String] = Properties.get("slick.db.user")
   lazy val PASSWORD: Option[String] = Properties.get("slick.db.password")
-  lazy val driver = DRIVER_CLASS.get match {
+  lazy val driver = DRIVER_CLASS match {
     case "org.h2.Driver" => H2Driver
     case "com.mysql.jdbc.Driver" => MySQLDriver
   }
 
   import driver.api._
 
-  lazy val db = (CONNECTION_STRING, DRIVER_CLASS, USER, PASSWORD) match {
-    case (Some(c), Some(d), Some(u), Some(p)) =>
-      Database.forURL(c, driver = d, user = u, password = p)
-    case (Some(c), Some(d), _, _) =>
-      Database.forURL(c, driver = d)
+  info(s"Database setup - connection: $CONNECTION_STRING, driver: $DRIVER_CLASS, user: $USER, password: $PASSWORD")
+
+  lazy val db = (USER, PASSWORD) match {
+    case (Some(u), Some(p)) =>
+      Database.forURL(CONNECTION_STRING, driver = DRIVER_CLASS, user = u, password = p)
+    case _ =>
+      Database.forURL(CONNECTION_STRING, driver = DRIVER_CLASS)
   }
 
   // Run in transaction
