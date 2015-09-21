@@ -92,15 +92,26 @@ object Slicky
     }
   }
 
-  case class MaybeFilter[X, Y](val query: Query[X, Y, Seq]) {
+  /**
+   * Optionally filters on a column with a supplied predicate
+   * @param query
+   * @tparam X
+   * @tparam Y
+   */
+  case class MaybeFilter[X, Y](query: Query[X, Y, Seq]) {
     def filter[T, R: CanBeQueryCondition](data: Option[T])(f: T => X => R) = {
       data.map(v => MaybeFilter(query.withFilter(f(v)))).getOrElse(this)
+    }
+    def filter[R: CanBeQueryCondition](condition: Boolean)(f: X => R) = if (condition) {
+      MaybeFilter(query.withFilter(f))
+    } else {
+      this
     }
   }
 
   import org.reactivestreams.Publisher
   import rx.RxReactiveStreams
   implicit class PublisherToRxObservable[T](publisher: Publisher[T]) {
-    def toObservable= RxReactiveStreams.toObservable(publisher)
+    def toObservable = RxReactiveStreams.toObservable(publisher)
   }
 }
