@@ -19,7 +19,7 @@ abstract class IdentEntity[IDENT, IE <: IdentEntity[IDENT, IE]](override val met
   def update: Future[IE] = meta.update(this)
   def delete: Future[IE] = meta.delete(this)
 
-  def updateOrInsert(query: Query[meta.T, IE, Seq]): Future[IE] = meta.updateOrInsert(query, this)
+  def updateOrInsert(query: Query[meta.T, IE, Seq]): Future[IE] = meta.getOrInsert(query, this)
 }
 
 abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
@@ -62,7 +62,7 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
   def update(query: Query[T, IE, Seq], ie: IE): Future[IE] = dbFuture {
     val newIE = beforeUpdate(ie)
     query.update(newIE) map { rows =>
-      require(rows == 1)
+      require(rows == 1, s"The query should return exactly 1 row ${ getClass.getSimpleName }: ${ dbFuture(query.result).await }")
       afterUpdate(newIE)
       newIE
     }
@@ -70,17 +70,23 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
 
   def update(ie: IE): Future[IE] = update(ie.ident, ie)
 
-  def updateOrInsert(query: Query[T, IE, Seq], ie: IE): Future[IE] = {
+  def getOrInsert(query: Query[T, IE, Seq], ie: IE): Future[IE] = {
     dbFuture {
       query.length.result
     } flatMap {
       case i if i == 0 => insert(ie)
-      case i if i == 1 => dbFuture(query.update(ie)).flatMap { _ => dbFuture(query.result.head) }
+      case i if i == 1 => dbFuture(query.result.head)
       case _ => Future.failed(new Exception("The query returned more than 1 row"))
     }
   }
 
-  def save(ie: IE): Future[IE] = updateOrInsert(byIdentQuery(ie.ident), ie)
+  def save(ie: IE): Future[IE] = dbFuture {
+    byIdentQuery(ie.ident).length.result
+  } flatMap {
+    case i if i == 0 => insert(ie)
+    case i if i == 1 => update(ie)
+    case _ => Future.failed(new Exception("The query returned more than 1 row"))
+  }
 
   def delete(ie: IE): Future[IE] = dbFuture {
     val newIE = beforeDelete(ie)

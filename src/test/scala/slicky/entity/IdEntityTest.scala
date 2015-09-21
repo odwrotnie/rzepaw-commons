@@ -8,6 +8,7 @@ import driver.api._
 /*
 sbt "~rzepawCommons/testOnly slicky.entity.IdEntityTest"
  */
+
 class IdEntityTest
   extends FunSuite
   with Logger {
@@ -16,7 +17,7 @@ class IdEntityTest
     IdName.table.schema.create
   }
 
-  test("Insert entity") {
+  ignore("Insert entity") {
 
     val in1 = IdName("one").insert.await
     assert(in1.ident == 1l)
@@ -34,6 +35,16 @@ class IdEntityTest
     in1.name = "ONE"
     assert(in1.update.await.name == "ONE")
     assert(IdName.byIdent(1).await.get.name == "ONE")
+  }
+
+  test("Update or insert with id") {
+    val in1 = IdName("one").updateOrInsert(IdName.table.filter(_.name === "one")).await
+    println(IdName.stream.toList)
+    val in2 = IdName("one").updateOrInsert(IdName.table.filter(_.name === "one")).await
+    println(IdName.stream.toList)
+
+    assert(in1.id.isDefined)
+    assert(in1.id == in2.id)
   }
 }
 
