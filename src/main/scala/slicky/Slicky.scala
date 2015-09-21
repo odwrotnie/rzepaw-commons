@@ -107,6 +107,8 @@ object Slicky
     } else {
       this
     }
+    def filter[R: CanBeQueryCondition](f: X => R) =
+      MaybeFilter(query.withFilter(f))
   }
 
   import org.reactivestreams.Publisher
