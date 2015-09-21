@@ -3,19 +3,18 @@ package commons.logger
 import dispatch.Defaults._
 import dispatch._
 
-import scala.concurrent.Await
-import scala.concurrent.duration._
 import scala.util.parsing.json.JSONObject
+import scala.util.{Failure, Success}
 
 case class GoogleMobileNotification(name: String, key: String)
   extends Logger {
 
-  def alert(message: String) = {
-    val h = host("gcm-http.googleapis.com").secure
+  val h = host("gcm-http.googleapis.com").secure
+  val headers = Map(
+    "Authorization" -> s"key=$key",
+    "Content-Type" -> "application/json")
 
-    val headers = Map(
-      "Authorization" -> s"key=$key",
-      "Content-Type" -> "application/json")
+  def alert(message: String) = {
 
     val json = JSONObject(Map(
       "notification" -> JSONObject(Map(
@@ -27,18 +26,22 @@ case class GoogleMobileNotification(name: String, key: String)
       )),
       "to" -> "/topics/global"
     ))
-
     val jsonString = json.toString()
-
-    debug(jsonString)
 
     val req = h / "gcm" / "send" <:< headers << jsonString
 
     val http = new Http
     val push = http(req OK as.String)
 
-    val dm = Await.result(push, 15.seconds)
-    http.shutdown()
-    dm
+    push onComplete {
+      case Success(s) =>
+        http.shutdown()
+      case Failure(t) =>
+        throw t
+        http.shutdown()
+    }
+
+//    Await.result(push, 30.seconds)
+//    http.shutdown()
   }
 }
