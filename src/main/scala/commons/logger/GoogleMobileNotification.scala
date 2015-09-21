@@ -7,7 +7,8 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.util.parsing.json.JSONObject
 
-case class GoogleMobileNotification(name: String, key: String) {
+case class GoogleMobileNotification(name: String, key: String)
+  extends Logger {
 
   def alert(message: String) = {
     val h = host("gcm-http.googleapis.com").secure
@@ -27,8 +28,11 @@ case class GoogleMobileNotification(name: String, key: String) {
       "to" -> "/topics/global"
     ))
 
+    val jsonString = json.toString()
 
-    val req = h / "gcm" / "send" <:< headers << json.toString()
+    debug(jsonString)
+
+    val req = h / "gcm" / "send" <:< headers << jsonString
 
     val http = new Http
     val push = http(req OK as.String)
