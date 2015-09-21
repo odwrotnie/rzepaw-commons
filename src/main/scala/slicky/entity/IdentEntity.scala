@@ -18,6 +18,8 @@ abstract class IdentEntity[IDENT, IE <: IdentEntity[IDENT, IE]](override val met
   def save: Future[IE] = meta.save(this)
   def update: Future[IE] = meta.update(this)
   def delete: Future[IE] = meta.delete(this)
+
+  def updateOrInsert(query: Query[meta.T, IE, Seq]): Future[IE] = meta.updateOrInsert(query, this)
 }
 
 abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
@@ -66,16 +68,12 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
   def update(ie: IE): Future[IE] = update(ie.ident, ie)
 
   def updateOrInsert(query: Query[T, IE, Seq], ie: IE): Future[IE] = {
-    val newIE = beforeInsert(ie)
     dbFuture {
       query.length.result
     } flatMap {
-      case i if i == 0 => dbFuture((table += newIE).map(_ => newIE))
-      case i if i == 1 => dbFuture(query.update(ie)).map( _ => newIE)
+      case i if i == 0 => insert(ie)
+      case i if i == 1 => dbFuture(query.update(ie)).flatMap { _ => dbFuture(query.result.head) }
       case _ => Future.failed(new Exception("The query returned more than 1 row"))
-    } map { ie =>
-      afterInsert(ie)
-      ie
     }
   }
 
