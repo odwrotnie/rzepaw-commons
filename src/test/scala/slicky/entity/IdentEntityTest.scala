@@ -5,7 +5,9 @@ import org.scalatest.FunSuite
 import slicky.Slicky._
 import driver.api._
 
-// sbt "~rzepawCommons/testOnly slicky.entity.EntityTest"
+/*
+sbt "~rzepawCommons/testOnly slicky.entity.IdentEntityTest"
+ */
 class IdentEntityTest
   extends FunSuite
   with Logger {
@@ -20,7 +22,7 @@ class IdentEntityTest
     assert(XYName.byIdent((1, 1)).await.get.name == "one")
 
     val xyn2 = XYName(2, 2, "two").save.await
-    assert(XYName.byIdent((1, 1)).await.get.name == "two")
+    assert(XYName.byIdent((2, 2)).await.get.name == "two")
 
     val xyn3 = XYName(3, 3, "three").save.await
     assert(XYName.stream.toList.size == 3)

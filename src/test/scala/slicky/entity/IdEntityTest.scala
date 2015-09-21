@@ -5,7 +5,9 @@ import org.scalatest.FunSuite
 import slicky.Slicky._
 import driver.api._
 
-// sbt "~rzepawCommons/testOnly slicky.entity.IdEntityTest"
+/*
+sbt "~rzepawCommons/testOnly slicky.entity.IdEntityTest"
+ */
 class IdEntityTest
   extends FunSuite
   with Logger {

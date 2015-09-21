@@ -25,19 +25,24 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
   with Logger {
 
   def byIdentQuery(ident: IDENT): Query[T, IE, Seq]
-  def byIdent(ident: IDENT): Future[Option[IE]] = dbFuture { byIdentQuery(ident).result.headOption }
+
+  def byIdent(ident: IDENT): Future[Option[IE]] = dbFuture {
+    byIdentQuery(ident).result.headOption
+  }
+
   def byIdent(ident: Option[IDENT]): Future[Option[IE]] = ident match {
     case Some(ident) => byIdent(ident)
     case None => Future.successful(None)
   }
+
   def byIdentGet(ident: IDENT): Future[IE] = byIdent(ident).map(_.get)
 
-//  def byIdentOptionOrCreate(ident: Option[IDENT], create: => Future[IE]): Future[IE] =
-//    byIdent(ident).flatMap(_.fold(create)(Future.successful))
+  //  def byIdentOptionOrCreate(ident: Option[IDENT], create: => Future[IE]): Future[IE] =
+  //    byIdent(ident).flatMap(_.fold(create)(Future.successful))
 
   override def insert(ie: IE): Future[IE] = dbFuture {
     val newE = beforeInsert(ie)
-    (table += newE).named(s"Insert $ie") map { rows =>
+    (table += newE) map { rows =>
       require(rows == 1)
       newE
     }
@@ -46,9 +51,12 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
     e
   }
 
-  def update(ident: IDENT, ie: IE): Future[IE] = dbFuture {
+  def update(ident: IDENT, ie: IE): Future[IE] =
+    update(byIdentQuery(ident), ie)
+
+  def update(query: Query[T, IE, Seq], ie: IE): Future[IE] = dbFuture {
     val newIE = beforeUpdate(ie)
-    byIdentQuery(ident).update(newIE) map { rows =>
+    query.update(newIE) map { rows =>
       require(rows == 1)
       afterUpdate(newIE)
       newIE
@@ -57,19 +65,21 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
 
   def update(ie: IE): Future[IE] = update(ie.ident, ie)
 
-  def save(ie: IE): Future[IE] = {
-    val newIE = beforeSave(ie)
-    byIdent(ie.ident).flatMap {
-      case Some(ie) => update(ie.ident, newIE).map { _ =>
-        afterSave(newIE)
-        newIE
-      }
-      case None => insert(newIE).map { _ =>
-        afterSave(newIE)
-        newIE
-      }
+  def updateOrInsert(query: Query[T, IE, Seq], ie: IE): Future[IE] = {
+    val newIE = beforeInsert(ie)
+    dbFuture {
+      query.length.result
+    } flatMap {
+      case i if i == 0 => dbFuture((table += newIE).map(_ => newIE))
+      case i if i == 1 => dbFuture(query.update(ie)).map( _ => newIE)
+      case _ => Future.failed(new Exception("The query returned more than 1 row"))
+    } map { ie =>
+      afterInsert(ie)
+      ie
     }
   }
+
+  def save(ie: IE): Future[IE] = updateOrInsert(byIdentQuery(ie.ident), ie)
 
   def delete(ie: IE): Future[IE] = dbFuture {
     val newIE = beforeDelete(ie)
