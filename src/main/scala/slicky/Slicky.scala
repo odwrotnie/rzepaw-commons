@@ -1,31 +1,21 @@
 package slicky
 
-import java.io.InputStream
 import java.sql.Timestamp
+
+import commons.files.ResourceProperties
 import commons.logger.Logger
 import org.joda.time.DateTime
 import slick.backend.DatabasePublisher
-import slick.driver.{MySQLDriver, H2Driver}
+import slick.driver.{H2Driver, MySQLDriver}
 import slick.lifted.CanBeQueryCondition
+
 import scala.concurrent._
 import scala.concurrent.duration._
-import scala.util.Try
-
-object Properties {
-  import java.util.Properties
-  private val PROPS = "/db.properties"
-  private val props: Option[Properties] = Try {
-    val p = new Properties()
-    p.load(getClass.getResourceAsStream(PROPS))
-    p
-  }.toOption
-  def get(prop: String): Option[String] = props flatMap { p =>
-    Try(p.getProperty(prop)).toOption.flatMap(Option(_))
-  }
-}
 
 object Slicky
   extends Logger {
+  
+  val properties = ResourceProperties("/db.properties")
 
   type ID = Long
   @deprecated
@@ -34,10 +24,10 @@ object Slicky
   implicit lazy val futureEC = scala.concurrent.ExecutionContext.Implicits.global
 
   val DURATION = Duration.Inf
-  lazy val CONNECTION_STRING: String = Properties.get("slick.db.connection.string").getOrElse("jdbc:h2:mem:wext-slick;DB_CLOSE_DELAY=-1;MVCC=TRUE")
-  lazy val DRIVER_CLASS: String = Properties.get("slick.db.driver").getOrElse("org.h2.Driver")
-  lazy val USER: Option[String] = Properties.get("slick.db.user")
-  lazy val PASSWORD: Option[String] = Properties.get("slick.db.password")
+  lazy val CONNECTION_STRING: String = properties.get("slick.db.connection.string").getOrElse("jdbc:h2:mem:wext-slick;DB_CLOSE_DELAY=-1;MVCC=TRUE")
+  lazy val DRIVER_CLASS: String = properties.get("slick.db.driver").getOrElse("org.h2.Driver")
+  lazy val USER: Option[String] = properties.get("slick.db.user")
+  lazy val PASSWORD: Option[String] = properties.get("slick.db.password")
   lazy val driver = DRIVER_CLASS match {
     case "org.h2.Driver" => H2Driver
     case "com.mysql.jdbc.Driver" => MySQLDriver
