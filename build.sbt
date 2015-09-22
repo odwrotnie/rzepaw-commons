@@ -58,3 +58,21 @@ libraryDependencies += "com.wix" %% "accord-core" % "0.5"
 libraryDependencies += "com.h2database" % "h2" % "1.3.175"
 
 libraryDependencies += "io.reactivex" % "rxjava-reactive-streams" % "1.0.1"
+
+// SPRAY
+
+val SPRAY_VERSION = "1.3.1"
+
+val SPRAY_JSON_VERSION = "1.2.6"
+
+libraryDependencies += "io.spray" %% "spray-client" % SPRAY_VERSION
+
+libraryDependencies += "io.spray" %% "spray-io" % SPRAY_VERSION
+
+libraryDependencies += "io.spray" %% "spray-util" % SPRAY_VERSION
+
+libraryDependencies += "io.spray" %% "spray-can" % SPRAY_VERSION
+
+libraryDependencies += "io.spray" %%  "spray-json" % SPRAY_JSON_VERSION
+
+libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.3.4"

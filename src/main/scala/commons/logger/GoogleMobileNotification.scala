@@ -3,8 +3,12 @@ package commons.logger
 import dispatch.Defaults._
 import dispatch._
 
+import scala.concurrent.{Future, Await}
+import scala.concurrent.duration.Duration
 import scala.util.parsing.json.JSONObject
 import scala.util.{Failure, Success}
+
+
 
 case class GoogleMobileNotification(name: String, key: String)
   extends Logger {
@@ -41,7 +45,7 @@ case class GoogleMobileNotification(name: String, key: String)
         http.shutdown()
     }
 
-//    Await.result(push, 30.seconds)
-//    http.shutdown()
+    //    Await.result(push, 30.seconds)
+    //    http.shutdown()
   }
 }
