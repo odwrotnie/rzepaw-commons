@@ -2,6 +2,9 @@ package commons.logger
 
 import org.scalatest.FunSuite
 
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
+
 /*
 sbt "~rzepawCommons/testOnly commons.logger.GoogleMessagingTest"
  */
@@ -11,6 +14,7 @@ class GoogleMessagingTest
 
   test("Send notification") {
     val gm = GoogleMessaging("Scalatest", "???")
-    gm.notify("The message - żółć!")
+    val response = gm.notify("The message - żółć!")
+    info("Response: " + Await.result(response, Duration.Inf))
   }
 }
