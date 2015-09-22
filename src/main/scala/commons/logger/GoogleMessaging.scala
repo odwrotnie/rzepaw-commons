@@ -34,7 +34,7 @@ case class GoogleMessaging(title: String, key: String)
       )),
       "to" -> "/topics/global"
     ))
-    val post = Post(uri, HttpEntity(MediaTypes.`application/json` ,json.toString()))
+    val post = Post(uri, HttpEntity(MediaTypes.`application/json`, json.toString()))
     // debug(s"Google Messaging POST: $post")
     val ppl: Future[String] = pipeline(post)
     //    val futureResult = ppl.map { t: String =>

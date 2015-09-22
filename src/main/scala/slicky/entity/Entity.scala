@@ -32,5 +32,7 @@ abstract class EntityMeta[E <: Entity[E]] {
   def beforeInsert(e: E): E = e
 
   // AFTER
-  def afterInsert(e: E): Unit = Unit
+  def afterInsert(e: E): Unit = {
+    debug(s"Inserted (${ getClass.getSimpleName.replace("$", "") }): $e")
+  }
 }
