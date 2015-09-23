@@ -70,7 +70,10 @@ object DateUtil {
   def durationMinute(count: Int) = new Duration(count * MILLISECONDS_IN_MINUTE)
   def durationHour(count: Int) = new Duration(count * MILLISECONDS_IN_HOUR)
   def seconds(duration: Duration): Float = duration.getMillis.toFloat / MILLISECONDS_IN_SECOND
+
   def minutes(duration: Duration): Float = duration.getMillis.toFloat / MILLISECONDS_IN_MINUTE
+  def minutesFromHours(hours: Float): Float = hours * MINUTES_IN_HOUR
+
   def hours(duration: Duration): Float = duration.getMillis.toFloat / MILLISECONDS_IN_HOUR
 }
 
