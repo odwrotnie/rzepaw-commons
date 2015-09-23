@@ -1,7 +1,7 @@
 package commons.data
 
-case class Table[T](val headers: List[String],
-                    val rows: List[List[T]]) {
+case class Table[T](headers: List[String],
+                    rows: List[List[T]]) {
 
   val LINE_DELIMITER = "\n"
   val ROW_DELIMITER = ","
