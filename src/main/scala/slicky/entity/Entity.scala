@@ -24,8 +24,9 @@ abstract class EntityMeta[E <: Entity[E]] {
     e
   }
 
+  val streamQuery = table
   def stream(query: Query[T, E, Seq]): Stream[E] = streamify(query)
-  def stream: Stream[E] = stream(table)
+  def stream: Stream[E] = stream(streamQuery)
   private def streamPage(stream: Stream[E], page: Int, pageSize: Int): Stream[E] =
     // stream.take((page + 1) * pageSize).takeRight(pageSize)
     stream.take((page + 1) * pageSize).reverse.take(pageSize).reverse
