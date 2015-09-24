@@ -4,6 +4,7 @@ import commons.logger._
 import org.scalatest.FunSuite
 import slicky.Slicky._
 import driver.api._
+import slicky.helpers.{TreeEntityMeta, TreeEntity}
 
 // sbt "~rzepawCommons/testOnly slicky.entity.TreeEntityTest"
 class TreeEntityTest

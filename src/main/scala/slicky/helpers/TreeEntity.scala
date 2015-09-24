@@ -1,7 +1,8 @@
-package slicky.entity
+package slicky.helpers
 
 import slicky.Slicky._
-import driver.api._
+import slicky.Slicky.driver.api._
+import slicky.entity._
 
 import scala.concurrent.Future
 
