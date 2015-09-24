@@ -15,6 +15,8 @@ abstract class EntityMeta[E <: Entity[E]] {
   def table: TableQuery[_ <: T]
 
   def count: Int = dbAwait(table.size.result)
+  def deleteAll(): Future[Int] = delete(allQuery)
+  def delete(query: Query[T, E, Seq]): Future[Int] = dbFuture(query.delete)
 
   def insert(e: E): Future[E] = dbFuture {
     val newE = beforeInsert(e)
@@ -24,16 +26,24 @@ abstract class EntityMeta[E <: Entity[E]] {
     e
   }
 
-  def streamQuery: Query[T, E, Seq] = table
+  def allQuery: Query[T, E, Seq] = table
   def stream(query: Query[T, E, Seq]): Stream[E] = streamify(query)
-  def stream: Stream[E] = stream(streamQuery)
-  private def streamPage(stream: Stream[E], page: Int, pageSize: Int): Stream[E] =
-    // stream.take((page + 1) * pageSize).takeRight(pageSize)
-    stream.take((page + 1) * pageSize).reverse.take(pageSize).reverse
-  def streamPage(query: Query[T, E, Seq], page: Int, pageSize: Int): Stream[E] =
-    streamPage(stream(query), page, pageSize)
-  def streamPage(page: Int, pageSize: Int): Stream[E] =
-    streamPage(stream, page, pageSize)
+  def stream: Stream[E] = stream(allQuery)
+  def pages(pageSize: Int): Future[Long] = pages(allQuery, pageSize)
+  def page(pageNum: Int, pageSize: Int): Future[Seq[E]] = page(allQuery, pageNum, pageSize)
+  def page(query: Query[T, E, Seq], pageNum: Int, pageSize: Int): Future[Seq[E]] = {
+    pages(query, pageSize) flatMap { pageCount: Long =>
+      require(pageSize > 0)
+      dbFuture {
+        query.drop(pageNum * pageSize).take(pageSize).take(pageSize).result
+      }
+    }
+  }
+  def pages(query: Query[T, E, Seq], pageSize: Int): Future[Long] = dbFuture {
+    query.length.result
+  } map { length: Int =>
+    Math.round(Math.ceil(length.toFloat / pageSize))
+  }
 
   // BEFORE
   def beforeInsert(e: E): E = e

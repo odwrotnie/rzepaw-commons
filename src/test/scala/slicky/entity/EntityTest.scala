@@ -27,6 +27,38 @@ class EntityTest
       println(" - " + e)
     }
   }
+
+  test("Entity stream") {
+    (1 to 10) foreach { i =>
+      NameValue(f"NV:$i%03d", i).insert.await
+    }
+
+    NameValue.stream.foreach { nv =>
+      println(" *** " + nv)
+    }
+  }
+
+  test("Entity stream page") {
+
+    NameValue.deleteAll().await
+
+    val PAGE_SIZE = 3
+
+    (1 to 10) foreach { i =>
+      NameValue(f"NV:$i%03d", i).insert.await
+    }
+    val pages = NameValue.pages(PAGE_SIZE).await
+    println(s"Pages: $pages")
+    assert(pages == 4)
+
+    val all: Seq[NameValue] = (0 to 10) flatMap { page =>
+      val nvs = NameValue.page(page, PAGE_SIZE).await
+      println(s"P$page: " + nvs)
+      nvs
+    }
+
+    assert(all.distinct.size == 10)
+  }
 }
 
 case class NameValue(var name: String, var value: Int)
