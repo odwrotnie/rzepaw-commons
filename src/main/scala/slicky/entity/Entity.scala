@@ -24,7 +24,7 @@ abstract class EntityMeta[E <: Entity[E]] {
     e
   }
 
-  val streamQuery = table
+  def streamQuery: Query[T, E, Seq] = table
   def stream(query: Query[T, E, Seq]): Stream[E] = streamify(query)
   def stream: Stream[E] = stream(streamQuery)
   private def streamPage(stream: Stream[E], page: Int, pageSize: Int): Stream[E] =
