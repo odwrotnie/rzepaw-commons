@@ -73,7 +73,7 @@ object Slicky
     def await: T = Await.result(under, DURATION)
   }
 
-  @deprecated("To jest zle, zastapic to tym z Entity.page")
+  @deprecated("This is shit, replace it with Entity.page")
   def streamify[T](query: Query[_,T,Seq], pageSize: Int = 31): Stream[T] = {
     require(pageSize > 0)
     val length: Int = dbAwait { query.length.result }
