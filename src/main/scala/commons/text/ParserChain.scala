@@ -6,10 +6,14 @@ import scala.util.Try
 
 case class ParserChain[T](list: (String => T) *)
   extends Logger {
+
   def apply(s: String): Option[T] = {
-    debug(s"Parsing: $s with ${ list.size } steps")
-    list.flatMap { st =>
-      Try(st(s)).toOption
-    }.headOption
+    val steps = list.map { st =>
+      Try {
+        st(s)
+      }.toOption
+    }
+    debug(s"Parsing: $s with ${ list.size } steps - ${ steps.mkString("[ ", " | ", " ]") }")
+    steps.flatten.headOption
   }
 }
