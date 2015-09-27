@@ -35,7 +35,7 @@ abstract class EntityMeta[E <: Entity[E]] {
     pages(query, pageSize) flatMap { pageCount: Long =>
       require(pageSize > 0)
       dbFuture {
-        query.drop(pageNum * pageSize).take(pageSize).take(pageSize).result
+        query.drop(pageNum * pageSize).take(pageSize).result
       }
     }
   }
