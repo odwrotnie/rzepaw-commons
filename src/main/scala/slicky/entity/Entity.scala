@@ -1,5 +1,6 @@
 package slicky.entity
 
+import slicky.Slicky
 import slicky.Slicky._
 import driver.api._
 import scala.concurrent.Future
@@ -27,23 +28,12 @@ abstract class EntityMeta[E <: Entity[E]] {
   }
 
   def allQuery: Query[T, E, Seq] = table
-  def stream(query: Query[T, E, Seq]): Stream[E] = streamify(query)
+  def stream(query: Query[T, E, Seq]): Stream[E] = Slicky.streamify(query)
   def stream: Stream[E] = stream(allQuery)
   def pages(pageSize: Int): Future[Long] = pages(allQuery, pageSize)
   def page(pageNum: Int, pageSize: Int): Future[Seq[E]] = page(allQuery, pageNum, pageSize)
-  def page(query: Query[T, E, Seq], pageNum: Int, pageSize: Int): Future[Seq[E]] = {
-    pages(query, pageSize) flatMap { pageCount: Long =>
-      require(pageSize > 0)
-      dbFuture {
-        query.drop(pageNum * pageSize).take(pageSize).result
-      }
-    }
-  }
-  def pages(query: Query[T, E, Seq], pageSize: Int): Future[Long] = dbFuture {
-    query.length.result
-  } map { length: Int =>
-    Math.round(Math.ceil(length.toFloat / pageSize))
-  }
+  def page(query: Query[T, E, Seq], pageNum: Int, pageSize: Int): Future[Seq[E]] = Slicky.page(query, pageNum, pageSize)
+  def pages(query: Query[T, E, Seq], pageSize: Int): Future[Long] = Slicky.pages(query, pageSize)
 
   // BEFORE
   def beforeInsert(e: E): E = e

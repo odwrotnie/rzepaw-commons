@@ -8,6 +8,7 @@ import driver.api._
 /*
 sbt "~rzepawCommons/testOnly slicky.entity.EntityTest"
  */
+
 class EntityTest
   extends FunSuite
   with Logger {

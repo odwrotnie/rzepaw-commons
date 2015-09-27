@@ -73,13 +73,18 @@ object Slicky
     def await: T = Await.result(under, DURATION)
   }
 
-  @deprecated("This is shit, replace it with Entity.page")
-  def streamify[T](query: Query[_,T,Seq], pageSize: Int = 31): Stream[T] = {
-    require(pageSize > 0)
-    val length: Int = dbAwait { query.length.result }
-    val pageCount: Long = Math.round(Math.ceil(length.toFloat / pageSize))
-    Stream.from(0).takeWhile(_ < pageCount).flatMap { page =>
-      dbAwait { query.drop(page * pageSize).take(pageSize).result }
+  def page[E](query: Query[_, E, Seq], pageNum: Int, pageSize: Int): Future[Seq[E]] = dbFuture {
+    query.drop(pageNum * pageSize).take(pageSize).result
+  }
+  def pages[E](query: Query[_, E, Seq], pageSize: Int): Future[Long] = dbFuture {
+    query.length.result
+  } map { length: Int =>
+    Math.round(Math.ceil(length.toFloat / pageSize))
+  }
+  def streamify[E](query: Query[_, E, Seq], pageSize: Int = 128): Stream[E] = {
+    val pageCount = pages(query, pageSize).await
+    Stream.from(0).takeWhile(_ < pageCount) flatMap { pageNum =>
+      page(query, pageNum, pageSize).await
     }
   }
 
