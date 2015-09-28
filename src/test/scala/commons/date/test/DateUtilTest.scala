@@ -1,6 +1,6 @@
 package commons.date.test
 
-import commons.date.DateUtil
+import commons.date.{Day, DateUtil}
 import commons.logger.Logger
 import org.joda.time.Duration
 import org.ocpsoft.prettytime.PrettyTime
@@ -9,6 +9,7 @@ import org.scalatest.FunSuite
 /*
 sbt "~rzepawCommons/testOnly commons.date.test.DateUtilTest"
  */
+
 class DateUtilTest
   extends FunSuite
   with Logger {
@@ -44,5 +45,11 @@ class DateUtilTest
     val d2 = new Duration(s2, e2)
     val d = d1.plus(d2)
     assert(d.getMillis == 10800000)
+  }
+
+  test("Holidays") {
+    Day.current.next(10) foreach { day =>
+      println(s"Day: $day num: ${ day.dayOfWeek } - ${ day.isHoliday }")
+    }
   }
 }

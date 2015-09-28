@@ -218,12 +218,13 @@ case class Day(dt: DateTime)
   
   lazy val daytimeInterval = new Interval(start.withHourOfDay(Day.DAYTIME_START_HOUR), start.withHourOfDay(Day.DAYTIME_END_HOUR))
 
+  def dayOfWeek = start.getDayOfWeek // Mon == 1, Tue == 2... Sun == 7
   def dayOfMonth = start.getDayOfMonth
   def month = Month(start)
   def firstHour = Hour(start)
   def hours = firstHour.nextInclusive(24)
 
-  def isHoliday = start.getDayOfWeek - 6 < 2
+  def isHoliday = dayOfWeek >= 6
 
   override def toString = "%s - %s/%s/%s" format (start.dayOfWeek.getAsText,
     start.getYear, start.getMonthOfYear, start.getDayOfMonth)
