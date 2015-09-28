@@ -74,9 +74,12 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
     dbFuture {
       query.length.result
     } flatMap {
-      case i if i == 0 => insert(ie)
-      case i if i == 1 => dbFuture(query.result.head)
-      case _ => Future.failed(new Exception("The query returned more than 1 row"))
+      case i if i == 0 =>
+        insert(ie)
+      case i if i == 1 =>
+        dbFuture(query.result.head)
+      case _ =>
+        Future.failed(new Exception("The query returned more than 1 row"))
     }
   }
 
