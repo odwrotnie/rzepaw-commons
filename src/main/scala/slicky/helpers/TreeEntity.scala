@@ -55,7 +55,7 @@ abstract class TreeEntity[TE <: TreeEntity[TE]](meta: TreeEntityMeta[TE])
   def path: Future[Seq[TE]] = for {
     op: Option[TE] <- parent
     seq: Seq[TE] <- op.map(_.path).getOrElse(Future.successful(Seq[TE]()))
-  } yield op.toSeq ++ seq
+  } yield seq ++ op.toSeq
 
   def pathString: String = path.await.reverse.mkString(" / ")
 
