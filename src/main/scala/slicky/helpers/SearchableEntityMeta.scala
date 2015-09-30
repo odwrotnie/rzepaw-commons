@@ -12,6 +12,8 @@ trait SearchableEntityMeta[E <: Entity[E]]
 
   self: EntityMeta[E] =>
 
+  protected def dbLikeQueryString(string: String): String = s"%${ string.toLowerCase }%"
+
   def searchQuery(query: String): Query[T, E, Seq]
 
   def searchPage(query: String, pageNum: Int, pageSize: Int): Future[Seq[E]] =
