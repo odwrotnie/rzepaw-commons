@@ -3,7 +3,7 @@ package commons.docs
 import java.io._
 
 import org.apache.poi.ss.usermodel._
-import org.apache.poi.ss.util.CellReference
+import org.apache.poi.ss.util.{NumberToTextConverter, CellReference}
 
 import scala.collection.JavaConversions._
 import scala.util.Try
@@ -71,7 +71,7 @@ case class SheetHelper(sheet: Sheet, workbook: Option[Workbook] = None)
   def valueString(row: Int, col: Int): Option[String] = {
     val c = sheet.getRow(row).getCell(col)
     val tries = Try(c.getStringCellValue).toOption ::
-      Try(c.getNumericCellValue.toString).toOption :: Nil
+      Try(NumberToTextConverter.toText(c.getNumericCellValue)).toOption :: Nil
     tries.flatten.headOption.filter(_.nonEmpty)
   }
   def valueString(row: Int, col: String): Option[String] = valueString(row, letterToIndex(col))
