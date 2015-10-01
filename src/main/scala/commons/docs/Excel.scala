@@ -72,7 +72,7 @@ case class SheetHelper(sheet: Sheet, workbook: Option[Workbook] = None)
     val c = sheet.getRow(row).getCell(col)
     val tries = Try(c.getStringCellValue).toOption ::
       Try(c.getNumericCellValue.toString).toOption :: Nil
-    tries.flatten.headOption
+    tries.flatten.headOption.filter(_.nonEmpty)
   }
   def valueString(row: Int, col: String): Option[String] = valueString(row, letterToIndex(col))
   def valueBoolean(row: Int, col: Int): Option[Boolean] = {

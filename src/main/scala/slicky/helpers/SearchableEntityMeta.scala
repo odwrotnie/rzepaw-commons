@@ -16,11 +16,12 @@ trait SearchableEntityMeta[E <: Entity[E]]
 
   def searchQuery(query: String): Query[T, E, Seq]
 
-  def searchPage(query: String, pageNum: Int, pageSize: Int): Future[Seq[E]] =
-    if (query.nonEmpty) {
-      page(searchQuery(query), pageNum, pageSize)
-    } else {
-      warn("Search query is empty")
-      page(allQuery, pageNum, pageSize)
+  def searchPage(query: Option[String], pageNum: Int, pageSize: Int): Future[Seq[E]] =
+    query match {
+      case Some(q) if q.nonEmpty =>
+        page(searchQuery(q), pageNum, pageSize)
+      case _ =>
+        warn("Search query is empty")
+        page(allQuery, pageNum, pageSize)
     }
 }
