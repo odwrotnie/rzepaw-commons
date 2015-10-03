@@ -56,8 +56,9 @@ abstract class TreeEntity[TE <: TreeEntity[TE]](meta: TreeEntityMeta[TE])
     op: Option[TE] <- parent
     seq: Seq[TE] <- op.map(_.path).getOrElse(Future.successful(Seq[TE]()))
   } yield seq ++ op.toSeq
-
+  def pathWithThis: Future[Seq[TE]] = path.map(p => p :+ this)
   def pathString: String = path.await.mkString(" / ")
+  def pathStringWithThis: String = pathWithThis.await.mkString(" / ")
 
   def level: Future[Int] = parent.flatMap { op: Option[TE] =>
     op match {
