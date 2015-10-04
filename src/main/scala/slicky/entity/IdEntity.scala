@@ -10,7 +10,10 @@ abstract class IdEntity[IE <: IdEntity[IE]](override val meta: IdEntityMeta[IE])
   self: IE =>
   def id: Option[ID]
   def withId(id: ID): IE
-  override def ident: ID = id.get
+  override def ident: ID = id match {
+    case Some(id) => id
+    case _ => throw new Exception(s"$this has no id yet")
+  }
 }
 
 abstract class IdEntityMeta[IE <: IdEntity[IE]]
