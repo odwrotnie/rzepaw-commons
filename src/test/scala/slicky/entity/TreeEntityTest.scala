@@ -33,7 +33,7 @@ class TreeEntityTest
 }
 
 case class TreeName(var name: String,
-                    var parentId: IDOPT = None,
+                    var parentId: Option[ID] = None,
                     id: Option[ID] = None)
   extends TreeEntity[TreeName](TreeName) {
   override def withId(id: ID) = this.copy(id = Some(id))
@@ -49,7 +49,7 @@ object TreeName
     extends Table[TreeName](tag, "ID_NAME") {
 
     def name = column[String]("NAME")
-    def parentId = column[IDOPT]("PARENT")
+    def parentId = column[Option[ID]]("PARENT")
     def id = column[ID]("ID", O.PrimaryKey, O.AutoInc)
 
     def * = (name, parentId, id.?) <>

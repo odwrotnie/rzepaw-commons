@@ -18,8 +18,6 @@ object Slicky
   val properties = ResourceProperties("/db.properties")
 
   type ID = Long
-  @deprecated
-  type IDOPT = Option[ID]
 
   implicit lazy val futureEC = scala.concurrent.ExecutionContext.Implicits.global
 
