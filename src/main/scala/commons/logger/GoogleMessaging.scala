@@ -33,12 +33,10 @@ case class GoogleMessaging(title: String, key: String)
 
   def notify(message: String): Future[String] = {
     val json = JSONObject(Map(
-      "notification" -> JSONObject(Map(
-        "sound" -> "default",
-        "badge" -> "1",
-        "title" -> title,
-        "body" -> message,
-        "icon" -> "ic_stat_ic_notification"
+      "data" -> JSONObject(Map(
+        "name" -> title,
+        "message" -> message,
+        "href" -> "/monitoring/"
       )),
       "to" -> "/topics/global"
     ))
