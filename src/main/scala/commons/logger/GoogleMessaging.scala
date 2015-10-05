@@ -31,12 +31,12 @@ case class GoogleMessaging(title: String, key: String)
       ~> unmarshal[String])
   val uri = URI.withPath(Path / "gcm" / "send")
 
-  def notify(message: String): Future[String] = {
+  def notify(message: String, href: String): Future[String] = {
     val json = JSONObject(Map(
       "data" -> JSONObject(Map(
         "name" -> title,
         "message" -> message,
-        "href" -> "/monitoring/"
+        "href" -> href
       )),
       "to" -> "/topics/global"
     ))
