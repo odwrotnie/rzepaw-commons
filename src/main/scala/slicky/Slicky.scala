@@ -66,7 +66,7 @@ object Slicky
     (t: Timestamp) => new DateTime(t.getTime)
   )
 
-  implicit def futureToSuperFuture[T](f: Future[T]) = new SuperFuture[T](f)
+  implicit def futureToSuperFuture[T](f: Future[T]): SuperFuture[T] = new SuperFuture[T](f)
   class SuperFuture[T](under: Future[T]) {
     def await: T = Await.result(under, DURATION)
   }
