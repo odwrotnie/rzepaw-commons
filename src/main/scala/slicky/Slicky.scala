@@ -80,10 +80,9 @@ object Slicky
     Math.round(Math.ceil(length.toFloat / pageSize))
   }
   def streamify[E](query: Query[_, E, Seq], pageSize: Int = 128): Stream[E] = {
-    val pageCount = pages(query, pageSize).await
-    Stream.from(0).takeWhile(_ < pageCount) flatMap { pageNum =>
+    Stream.from(0) map { pageNum =>
       page(query, pageNum, pageSize).await
-    }
+    } takeWhile(_.nonEmpty) flatten
   }
 
   /**

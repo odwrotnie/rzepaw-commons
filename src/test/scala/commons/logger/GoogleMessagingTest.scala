@@ -14,7 +14,7 @@ class GoogleMessagingTest
 
   test("Send notification") {
     val gm = GoogleMessaging("Scalatest", "???")
-    val response = gm.notify("The message - żółć!")
+    val response = gm.notify("The message - żółć!", "/")
     info("Response: " + Await.result(response, Duration.Inf))
   }
 }
