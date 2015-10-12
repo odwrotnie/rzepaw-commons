@@ -14,6 +14,8 @@ trait SearchableEntityMeta[E <: Entity[E]]
 
   protected def dbLikeQueryString(string: String): String = s"%${ string.toLowerCase }%"
 
+  def likeQueryString(s: String) = s"%${ s.toLowerCase }%"
+
   def searchQuery(query: String): Query[T, E, Seq]
 
   def searchPage(query: Option[String], pageNum: Int, pageSize: Int): Future[Seq[E]] =
