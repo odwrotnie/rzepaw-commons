@@ -50,8 +50,28 @@ abstract class AbstractSheetHelper {
   }
 }
 
-case class SheetHelper(sheet: Sheet, workbook: Option[Workbook] = None)
+case class SheetHelper(sheet: Sheet)
   extends AbstractSheetHelper {
+
+  def valueString(row: Row, col: Int): Option[String] = {
+    val c = row.getCell(col)
+    val tries = Try(c.getStringCellValue).toOption ::
+      Try(NumberToTextConverter.toText(c.getNumericCellValue)).toOption :: Nil
+    tries.flatten.headOption.filter(_.nonEmpty)
+  }
+  def valueString(row: Int, col: Int): Option[String] = valueString(sheet.getRow(row), col)
+  def valueString(row: Row, col: String): Option[String] = valueString(row, letterToIndex(col))
+  def valueString(row: Int, col: String): Option[String] = valueString(sheet.getRow(row), col)
+
+  def valueBoolean(row: Row, col: Int): Option[Boolean] = Try(row.getCell(col).getBooleanCellValue).toOption
+  def valueBoolean(row: Int, col: Int): Option[Boolean] = valueBoolean(sheet.getRow(row), col)
+  def valueBoolean(row: Row, col: String): Option[Boolean] = valueBoolean(row, letterToIndex(col))
+  def valueBoolean(row: Int, col: String): Option[Boolean] = valueBoolean(sheet.getRow(row), col)
+
+  def valueNumeric(row: Row, col: Int): Option[Double] = Try(row.getCell(col).getNumericCellValue).toOption
+  def valueNumeric(row: Int, col: Int): Option[Double] = valueNumeric(sheet.getRow(row), col)
+  def valueNumeric(row: Row, col: String): Option[Double] = valueNumeric(row, letterToIndex(col))
+  def valueNumeric(row: Int, col: String): Option[Double] = valueNumeric(sheet.getRow(row), col)
 
   def set(row: Int, col: Int, values: Any*): Seq[Cell] = {
     values.zipWithIndex map {
@@ -68,21 +88,7 @@ case class SheetHelper(sheet: Sheet, workbook: Option[Workbook] = None)
     }
   }
 
-  def valueString(row: Int, col: Int): Option[String] = {
-    val c = sheet.getRow(row).getCell(col)
-    val tries = Try(c.getStringCellValue).toOption ::
-      Try(NumberToTextConverter.toText(c.getNumericCellValue)).toOption :: Nil
-    tries.flatten.headOption.filter(_.nonEmpty)
-  }
-  def valueString(row: Int, col: String): Option[String] = valueString(row, letterToIndex(col))
-  def valueBoolean(row: Int, col: Int): Option[Boolean] = {
-    Try(sheet.getRow(row).getCell(col).getBooleanCellValue).toOption
-  }
-  def valueBoolean(row: Int, col: String): Option[Boolean] = valueBoolean(row, letterToIndex(col))
-  def valueNumeric(row: Int, col: Int): Option[Double] = {
-    Try(sheet.getRow(row).getCell(col).getNumericCellValue).toOption
-  }
-  def valueNumeric(row: Int, col: String): Option[Double] = valueNumeric(row, letterToIndex(col))
+  def rows: Stream[Row] = sheet.rowIterator.toStream
 }
 
 case class SheetRegionHelper(sheet: Sheet, rowOffset: Int, colOffset: Int, maxRow: Option[Int] = None, maxCol: Option[Int] = None)
@@ -134,51 +140,15 @@ case class SheetRegionHelper(sheet: Sheet, rowOffset: Int, colOffset: Int, maxRo
   override def toString = s"Sheet region, row offset: $rowOffset, column offset: $colOffset"
 }
 
-case class WorkbookManipulator(workbook: Workbook) {
-
-  def cellStringValue(letter: String)(implicit r: Row): Option[String] =
-    cell(letter).flatMap { c =>
-      List(Try(c.getStringCellValue).toOption,
-        Try(c.getNumericCellValue.toString).toOption).flatten.headOption
-    }
-  def cellBooleanValue(letter: String)(implicit r: Row): Option[Boolean] =
-    cell(letter).map(_.getBooleanCellValue)
-  def cellDoubleValue(letter: String)(implicit r: Row): Option[Double] =
-    cell(letter).flatMap { c =>
-      List(Try(c.getNumericCellValue).toOption,
-        Try(c.getStringCellValue.toDouble).toOption).flatten.headOption
-    }
-
-  private def letterToIndex(letter: String) =
-    CellReference.convertColStringToIndex(letter)
-  def cell(letter: String)(implicit r: Row): Option[Cell] =
-    r.getCell(letterToIndex(letter)) match {
-      case null => None
-      case c: Cell if c.getCellType == Cell.CELL_TYPE_BLANK => None
-      case c: Cell => Some(c)
-    }
-  def cellGetOrCreate(letter: String)(implicit r: Row): Cell = {
-    cell(letter) match {
-      case Some(c) => c
-      case _ => r.createCell(letterToIndex(letter))
-    }
-  }
-
-  def save(os: OutputStream) = workbook.write(os)
-}
-
-abstract class SheetConverter[T](val workbook: Workbook) {
-
-  protected val wm = WorkbookManipulator(workbook)
-
-  def fromRow(implicit r: Row): T
-
-  lazy val rows: List[Row] = for {
-    sheet <- List(workbook.getSheetAt(0))
-    row <- sheet
-  } yield row
-
-  lazy val list: Stream[T] = {
-    rows.toStream.map(r => Try(fromRow(r)).toOption).flatten
-  }
-}
+//// TODO To jakaś pozostałość, usunąć
+//abstract class SheetConverter[T](val workbook: Workbook) {
+//
+//  protected val sheet = workbook.getSheetAt(0)
+//  protected val wm = SheetHelper(sheet)
+//
+//  def fromRow(implicit r: Row): T
+//
+//  lazy val rows: Stream[Row] = sheet.rowIterator.toStream
+//
+//  lazy val list: Stream[T] = rows.flatMap(r => Try(fromRow(r)).toOption)
+//}
