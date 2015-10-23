@@ -109,4 +109,6 @@ object Slicky
   implicit class PublisherToRxObservable[T](publisher: Publisher[T]) {
     def toObservable = RxReactiveStreams.toObservable(publisher)
   }
+
+  def likeQueryString(s: String) = s"%${ s.toLowerCase }%"
 }
