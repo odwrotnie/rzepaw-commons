@@ -211,7 +211,7 @@ object Day extends DateIntervalMeta[Day] {
   val DAYTIME_END_HOUR = 18
   // TODO Add this everywhere
   def between(after: DateTime, before: DateTime): Stream[Day] =
-    Day(after).nextStream.filter(_.start isBefore before)
+    Day(after).nextStream.takeWhile(_.start isBefore before)
 }
 
 case class Day(dt: DateTime)
