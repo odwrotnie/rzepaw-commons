@@ -1,6 +1,7 @@
 package slicky.helpers
 
 import commons.logger.Logger
+import slick.lifted.CanBeQueryCondition
 import slicky.entity.{EntityMeta, Entity}
 import slicky.Slicky._
 import driver.api._
@@ -26,4 +27,8 @@ trait SearchableEntityMeta[E <: Entity[E]]
         warn("Search query is empty")
         page(allQuery, pageNum, pageSize)
     }
+
+//  def filterByQuery(query: Query[T, E, Seq])(f: T => CanBeQueryCondition) =
+//  query.withFilter(_.na)
+//    query.withFilter(f)
 }
