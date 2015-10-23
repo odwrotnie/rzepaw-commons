@@ -92,6 +92,9 @@ object Slicky
    * @tparam Y
    */
   case class MaybeFilter[X, Y](query: Query[X, Y, Seq]) {
+//    def filter[T, R: Query[X, Y, Seq]](data: Option[T])(f: T => X => R) = {
+//      data.map(v => MaybeFilter(query.withFilter(f(v)))).getOrElse(this)
+//    }
     def filter[T, R: CanBeQueryCondition](data: Option[T])(f: T => X => R) = {
       data.map(v => MaybeFilter(query.withFilter(f(v)))).getOrElse(this)
     }
