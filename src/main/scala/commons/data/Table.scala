@@ -6,13 +6,13 @@ case class Table[T](headers: List[String],
   val LINE_DELIMITER = "\n"
   val ROW_DELIMITER = ","
 
-  def print(delimiter: String): String = {
-    headers.mkString(delimiter) +
-      LINE_DELIMITER +
-      rows.map(row => row.mkString(delimiter)).mkString(LINE_DELIMITER)
-  }
+  def print(rowToString: List[Any] => String): String =
+    (headers :: rows).map(row => rowToString(headers)).mkString(LINE_DELIMITER)
 
-  override def toString = print(ROW_DELIMITER)
+  def googleVisualizationArray: List[List[Any]] = headers :: rows
+  def googleVisualizationArrayString: String = print(_.mkString("[", ",", "]"))
+
+  override def toString = print(_.mkString(ROW_DELIMITER))
 }
 
 object Table {
