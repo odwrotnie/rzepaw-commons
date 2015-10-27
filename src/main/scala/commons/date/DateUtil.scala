@@ -65,7 +65,10 @@ object DateUtil {
   lazy val MILLISECONDS_IN_MINUTE = MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE
   lazy val MINUTES_IN_HOUR = 60
   lazy val SECONDS_IN_HOUR = SECONDS_IN_MINUTE * MINUTES_IN_HOUR
+  lazy val HOURS_IN_DAY = 24
   lazy val MILLISECONDS_IN_HOUR = MILLISECONDS_IN_MINUTE * MINUTES_IN_HOUR
+  lazy val MILLISECONDS_IN_DAY = MILLISECONDS_IN_HOUR * HOURS_IN_DAY
+
   def durationSeconds(count: Int) = new Duration(count * MILLISECONDS_IN_SECOND)
   def durationMinute(count: Int) = new Duration(count * MILLISECONDS_IN_MINUTE)
   def durationHour(count: Int) = new Duration(count * MILLISECONDS_IN_HOUR)
@@ -75,6 +78,8 @@ object DateUtil {
   def minutesFromHours(hours: Float): Float = hours * MINUTES_IN_HOUR
 
   def hours(duration: Duration): Float = duration.getMillis.toFloat / MILLISECONDS_IN_HOUR
+
+  def days(duration: Duration): Float = duration.getMillis.toFloat / MILLISECONDS_IN_DAY
 }
 
 abstract class DateInterval[DI <: DateInterval[DI]](val meta: DateIntervalMeta[DI]) {
