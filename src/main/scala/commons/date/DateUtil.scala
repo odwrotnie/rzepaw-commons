@@ -61,13 +61,22 @@ object DateUtil {
   }
 
   lazy val MILLISECONDS_IN_SECOND = 1000
+
   lazy val SECONDS_IN_MINUTE = 60
   lazy val MILLISECONDS_IN_MINUTE = MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE
+
   lazy val MINUTES_IN_HOUR = 60
   lazy val SECONDS_IN_HOUR = SECONDS_IN_MINUTE * MINUTES_IN_HOUR
+
   lazy val HOURS_IN_DAY = 24
   lazy val MILLISECONDS_IN_HOUR = MILLISECONDS_IN_MINUTE * MINUTES_IN_HOUR
   lazy val MILLISECONDS_IN_DAY = MILLISECONDS_IN_HOUR * HOURS_IN_DAY
+
+  lazy val DAYS_IN_YEAR_AVERAGE = ((365f * 4) -1) / 4
+  lazy val DAYS_IN_WEEK = 7
+  lazy val DAYS_IN_MONTH_AVERAGE = (365f * 4) / (12 * 4)
+
+  lazy val MONTHS_IN_YEAR = 12
 
   def durationSeconds(count: Int) = new Duration(count * MILLISECONDS_IN_SECOND)
   def durationMinute(count: Int) = new Duration(count * MILLISECONDS_IN_MINUTE)
@@ -78,7 +87,6 @@ object DateUtil {
   def minutesFromHours(hours: Float): Float = hours * MINUTES_IN_HOUR
 
   def hours(duration: Duration): Float = duration.getMillis.toFloat / MILLISECONDS_IN_HOUR
-
   def days(duration: Duration): Float = duration.getMillis.toFloat / MILLISECONDS_IN_DAY
 }
 
@@ -140,6 +148,8 @@ abstract class DateInterval[DI <: DateInterval[DI]](val meta: DateIntervalMeta[D
 trait DateIntervalMeta[DI <: DateInterval[DI]] {
   def apply(dt: DateTime): DI
   def current = apply(DateTime.now)
+  def between(after: DateTime, before: DateTime): Stream[DI] =
+    apply(after).nextStream.takeWhile(_.start isBefore before)
 }
 
 // YEAR
@@ -214,16 +224,13 @@ case class Week(dt: DateTime)
 object Day extends DateIntervalMeta[Day] {
   val DAYTIME_START_HOUR = 6
   val DAYTIME_END_HOUR = 18
-  // TODO Add this everywhere
-  def between(after: DateTime, before: DateTime): Stream[Day] =
-    Day(after).nextStream.takeWhile(_.start isBefore before)
 }
 
 case class Day(dt: DateTime)
   extends DateInterval[Day](Day) {
   lazy val start = dt.withTimeAtStartOfDay
   lazy val end = start plusDays 1
-  
+
   lazy val daytimeInterval = new Interval(start.withHourOfDay(Day.DAYTIME_START_HOUR), start.withHourOfDay(Day.DAYTIME_END_HOUR))
 
   def dayOfWeek = start.getDayOfWeek // Mon == 1, Tue == 2... Sun == 7
