@@ -52,6 +52,9 @@ object DateUtil {
 
   implicit def dateTimeOrdering: Ordering[DateTime] = Ordering.fromLessThan(_ isBefore _)
   def ascending(dates: DateTime*): Seq[DateTime] = dates.sorted
+  def descending(dates: DateTime*): Seq[DateTime] = ascending(dates:_*).reverse
+  def max(dates: DateTime*): DateTime = descending(dates:_*).head
+  def min(dates: DateTime*): DateTime = ascending(dates:_*).head
 
   object TimePlace extends Enumeration {
     case class V(name: String) extends Val(name)
