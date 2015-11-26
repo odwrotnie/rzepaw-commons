@@ -12,23 +12,18 @@ abstract class TreeEntity[TE <: TreeEntity[TE]](meta: TreeEntityMeta[TE])
   def parentId: Option[ID]
   def parentId_=(i: Option[ID]): Unit
 
-  def parent: Future[Option[TE]] =
-    parentId.fold(Future.successful(Option.empty[TE]))(id => meta.byIdent(id))
+  def parent: DBIO[Option[TE]] = parentId.fold(DBIO.successful(Option.empty[TE]))(id => meta.byIdent(id))
 
-  def children: Future[Seq[TE]] = dbFuture {
-    meta.table.filter(_.parentId === id).result
-  }
+  def children: DBIO[Seq[TE]] = DBIO.sequence(meta.table.filter(_.parentId === id).result)
 
-  def childrenCount: Future[Int] = dbFuture {
-    meta.table.filter(_.parentId === id).length.result
-  }
+  def childrenCount: DBIO[Int] = meta.table.filter(_.parentId === id).length.result
 
-  def descendants: Future[Seq[TE]] = {
-    val childrenChildren: Future[Seq[TE]] = children.flatMap { seq: Seq[TE] =>
+  def descendants: DBIO[Seq[TE]] = {
+    val childrenChildren: DBIO[Seq[TE]] = children.flatMap { seq: Seq[TE] =>
       if (seq.isEmpty) {
-        Future.successful(Seq[TE]())
+        DBIO.successful(Seq[TE]())
       } else {
-        Future.sequence(seq.map(_.descendants)).map(_.flatten)
+        DBIO.sequence(seq.map(_.descendants)).map(_.flatten)
       }
     }
     for {
@@ -37,7 +32,7 @@ abstract class TreeEntity[TE <: TreeEntity[TE]](meta: TreeEntityMeta[TE])
     } yield cc ++ c
   }
 
-  def descendantsCount: Future[Int] = {
+  def descendantsCount: DBIO[Int] = {
     val childrenChildrenCount: Future[Int] = children.flatMap { seq: Seq[TE] =>
       seq.foldLeft(Future.successful(0)) {
         (sumF, childrenF) => for {
@@ -52,7 +47,7 @@ abstract class TreeEntity[TE <: TreeEntity[TE]](meta: TreeEntityMeta[TE])
     } yield ccc + cc
   }
 
-  def path: Future[Seq[TE]] = for {
+  def path: DBIO[Seq[TE]] = for {
     op: Option[TE] <- parent
     seq: Seq[TE] <- op.map(_.path).getOrElse(Future.successful(Seq[TE]()))
   } yield seq ++ op.toSeq
@@ -60,7 +55,7 @@ abstract class TreeEntity[TE <: TreeEntity[TE]](meta: TreeEntityMeta[TE])
   def pathString: String = path.await.mkString(" / ")
   def pathStringWithThis: String = pathWithThis.await.mkString(" / ")
 
-  def level: Future[Int] = parent.flatMap { op: Option[TE] =>
+  def level: DBIO[Int] = parent.flatMap { op: Option[TE] =>
     op match {
       case Some(tn) => tn.level.map(_ + 1)
       case _ => Future.successful(0)
@@ -73,7 +68,5 @@ abstract class TreeEntityMeta[TE <: TreeEntity[TE]]
   type TET = Table[TE] { def parentId: Rep[Option[ID]]}
   override def table: TableQuery[_ <: IET with TET]
 
-  def roots: Future[Seq[TE]] = dbFuture {
-    table.filter(_.parentId isEmpty).result
-  }
+  def roots: DBIO[Seq[TE]] = table.filter(_.parentId isEmpty).result
 }

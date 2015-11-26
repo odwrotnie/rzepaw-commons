@@ -15,11 +15,11 @@ abstract class IdentEntity[IDENT, IE <: IdentEntity[IDENT, IE]](override val met
   extends Entity[IE](meta) {
   self: IE =>
   def ident: IDENT
-  def save: Future[IE] = meta.save(this)
-  def update: Future[IE] = meta.update(this)
-  def delete: Future[IE] = meta.delete(this)
+  def save: DBIO[IE] = meta.save(this)
+  def update: DBIO[IE] = meta.update(this)
+  def delete: DBIO[IE] = meta.delete(this)
 
-  def updateOrInsert(query: Query[meta.T, IE, Seq]): Future[IE] = meta.getOrInsert(query, this)
+  def updateOrInsert(query: Query[meta.T, IE, Seq]): DBIO[IE] = meta.getOrInsert(query, this)
 }
 
 abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
@@ -28,24 +28,22 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
 
   def byIdentQuery(ident: IDENT): Query[T, IE, Seq]
 
-  def byIdent(ident: IDENT): Future[Option[IE]] = dbFuture {
-    byIdentQuery(ident).result.headOption
-  }
+  def byIdent(ident: IDENT): DBIO[Option[IE]] = byIdentQuery(ident).result.headOption
 
-  def byIdent(ident: Option[IDENT]): Future[Option[IE]] = ident match {
+  def byIdent(ident: Option[IDENT]): DBIO[Option[IE]] = ident match {
     case Some(ident) => byIdent(ident)
-    case None => Future.successful(None)
+    case None => DBIO.successful(None)
   }
 
-  def byIdentGet(ident: IDENT): Future[IE] = byIdent(ident).map {
-    case Some(ie) => ie
-    case _ => throw new Exception(s"There is no entity ${ getClass.getSimpleName } with ident: $ident")
+  def byIdentGet(ident: IDENT): DBIO[IE] = byIdent(ident).flatMap {
+    case Some(ie) => DBIO.successful(ie)
+    case _ => DBIO.failed(new Exception(s"There is no entity ${ getClass.getSimpleName } with ident: $ident"))
   }
 
   //  def byIdentOptionOrCreate(ident: Option[IDENT], create: => Future[IE]): Future[IE] =
   //    byIdent(ident).flatMap(_.fold(create)(Future.successful))
 
-  override def insert(ie: IE): Future[IE] = dbFuture {
+  override def insert(ie: IE): DBIO[IE] = {
     val newE = beforeInsert(ie)
     (table += newE) map { rows =>
       require(rows == 1)
@@ -56,10 +54,10 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
     e
   }
 
-  def update(ident: IDENT, ie: IE): Future[IE] =
+  def update(ident: IDENT, ie: IE): DBIO[IE] =
     update(byIdentQuery(ident), ie)
 
-  def update(query: Query[T, IE, Seq], ie: IE): Future[IE] = dbFuture {
+  def update(query: Query[T, IE, Seq], ie: IE): DBIO[IE] = {
     val newIE = beforeUpdate(ie)
     query.update(newIE) map { rows =>
       require(rows == 1, s"The query should return exactly 1 row ${ getClass.getSimpleName }: ${ dbFuture(query.result).await }")
@@ -68,30 +66,21 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
     }
   }
 
-  def update(ie: IE): Future[IE] = update(ie.ident, ie)
+  def update(ie: IE): DBIO[IE] = update(ie.ident, ie)
 
-  def getOrInsert(query: Query[T, IE, Seq], ie: IE): Future[IE] = {
-    dbFuture {
-      query.length.result
-    } flatMap {
-      case i if i == 0 =>
-        insert(ie)
-      case i if i == 1 =>
-        dbFuture(query.result.head)
-      case _ =>
-        Future.failed(new Exception("The query returned more than 1 row"))
-    }
+  def getOrInsert(query: Query[T, IE, Seq], ie: IE): DBIO[IE] = query.length.result.flatMap {
+    case i if i == 0 => insert(ie)
+    case i if i == 1 => query.result.head
+    case _ => DBIO.failed(new Exception("The query returned more than 1 row"))
   }
 
-  def save(ie: IE): Future[IE] = dbFuture {
-    byIdentQuery(ie.ident).length.result
-  } flatMap {
+  def save(ie: IE): DBIO[IE] = byIdentQuery(ie.ident).length.result.flatMap {
     case i if i == 0 => insert(ie)
     case i if i == 1 => update(ie)
-    case _ => Future.failed(new Exception("The query returned more than 1 row"))
+    case _ => DBIO.failed(new Exception("The query returned more than 1 row"))
   }
 
-  def delete(ie: IE): Future[IE] = dbFuture {
+  def delete(ie: IE): DBIO[IE] = {
     val newIE = beforeDelete(ie)
     byIdentQuery(ie.ident).delete map { rows =>
       require(rows == 1)

@@ -16,10 +16,10 @@ abstract class EntityMeta[E <: Entity[E]] {
   def table: TableQuery[_ <: T]
 
   def count: Int = dbAwait(table.size.result)
-  def deleteAll(): Future[Int] = delete(allQuery)
-  def delete(query: Query[T, E, Seq]): Future[Int] = dbFuture(query.delete)
+  def deleteAll(): DBIO[Int] = delete(allQuery)
+  def delete(query: Query[T, E, Seq]): DBIO[Int] = query.delete
 
-  def insert(e: E): Future[E] = dbFuture {
+  def insert(e: E): DBIO[E] = {
     val newE = beforeInsert(e)
     (table += newE).named(s"Insert $e") map(i => newE)
   } map { e =>
