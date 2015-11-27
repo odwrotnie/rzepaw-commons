@@ -23,7 +23,7 @@ abstract class IdEntityMeta[IE <: IdEntity[IE]]
   override def table: TableQuery[_ <: IET]
   override def byIdentQuery(ident: ID): Query[IET, IE, Seq] = table.filter(_.id === ident)
 
-  override def insert(ie: IE): Future[IE] = dbFuture {
+  override def insert(ie: IE): DBIO[IE] = {
     require(ie.id.isEmpty)
     val newIE = beforeInsert(ie)
     val idAction = (table returning table.map(_.id)) += ie
@@ -34,7 +34,7 @@ abstract class IdEntityMeta[IE <: IdEntity[IE]]
     }
   }
 
-  override def save(ie: IE): Future[IE] = {
+  override def save(ie: IE): DBIO[IE] = {
     val newIE = beforeSave(ie)
     ie.id match {
       case Some(id) => update(ie.ident, newIE).map { _ =>
