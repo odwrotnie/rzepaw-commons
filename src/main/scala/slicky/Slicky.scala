@@ -72,6 +72,13 @@ object Slicky
     def await: T = Await.result(under, DURATION)
   }
 
+  implicit def dbioToSuperDBIO[T](a: DBIO[T]): SuperDBIO[T] = new SuperDBIO[T](a)
+  class SuperDBIO[T](under: DBIO[T]) {
+    def future: Future[T] = dbFuture(under)
+    @deprecated("Use .future.await instead")
+    def await: T = Await.result(future, DURATION)
+  }
+
   def page[E](query: Query[_, E, Seq], pageNum: Int, pageSize: Int): Future[Seq[E]] = dbFuture {
     query.drop(pageNum * pageSize).take(pageSize).result
   }
