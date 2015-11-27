@@ -6,7 +6,7 @@ case class Table[T](headers: List[String],
   val LINE_DELIMITER = "\n"
   val ROW_DELIMITER = ","
 
-  def print(rowToString: List[Any] => String): String =
+  def print(rowToString: List[Any] => String = (list) => list.mkString("[", ",", "]\n")): String =
     (headers :: rows).map(row => rowToString(headers)).mkString(LINE_DELIMITER)
 
   def googleVisualizationArray: List[List[Any]] = headers :: rows

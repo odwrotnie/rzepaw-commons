@@ -19,9 +19,9 @@ class EntityTest
 
   test("Insert entity") {
 
-    val in1 = NameValue("one", 1).insert.await
-    val in2 = NameValue("two", 2).insert.await
-    val in3 = NameValue("three", 3).insert.await
+    val in1 = dbFuture(NameValue("one", 1).insert).await
+    val in2 = dbFuture(NameValue("two", 2).insert).await
+    val in3 = dbFuture(NameValue("three", 3).insert).await
     assert(NameValue.stream.toList.size == 3)
 
     NameValue.stream.foreach { e =>
@@ -30,9 +30,11 @@ class EntityTest
   }
 
   test("Entity stream") {
-    (1 to 10) foreach { i =>
-      NameValue(f"NV:$i%03d", i).insert.await
-    }
+    dbFutureSeq {
+      (1 to 10) map { i =>
+        NameValue(f"NV:$i%03d", i).insert
+      }
+    } await
 
     NameValue.stream.foreach { nv =>
       println(" *** " + nv)
@@ -41,13 +43,15 @@ class EntityTest
 
   test("Entity stream page") {
 
-    NameValue.deleteAll().await
+    dbFuture(NameValue.deleteAll()).await
 
     val PAGE_SIZE = 3
 
-    (1 to 10) foreach { i =>
-      NameValue(f"NV:$i%03d", i).insert.await
-    }
+    dbFutureSeq {
+      (1 to 10) map { i =>
+        NameValue(f"NV:$i%03d", i).insert
+      }
+    } await
     val pages = NameValue.pages(PAGE_SIZE).await
     println(s"Pages: $pages")
     assert(pages == 4)

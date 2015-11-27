@@ -20,9 +20,11 @@ class SlickyTest
   }
 
   test("Streamify") {
-    (1 to 10) foreach { i =>
-      NameValue(i.toString, i).insert.await
-    }
+    dbFutureSeq {
+      (1 to 10) map { i =>
+        NameValue(i.toString, i).insert
+      }
+    }.await
     val stream = Slicky.streamify(NameValue.table, 3)
     stream foreach { nv =>
       println(s" - $nv")

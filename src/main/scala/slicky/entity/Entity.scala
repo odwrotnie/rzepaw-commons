@@ -7,7 +7,7 @@ import scala.concurrent.Future
 
 abstract class Entity[E <: Entity[E]](val meta: EntityMeta[E]) {
   self: E =>
-  def insert = meta.insert(this)
+  def insert: DBIO[E] = meta.insert(this)
 }
 
 abstract class EntityMeta[E <: Entity[E]] {

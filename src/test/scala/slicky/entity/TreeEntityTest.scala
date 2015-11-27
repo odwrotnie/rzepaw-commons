@@ -17,17 +17,17 @@ class TreeEntityTest
 
   test("Insert entity") {
 
-    val in1 = TreeName("one").insert.await
+    val in1 = dbAwait(TreeName("one").insert)
     assert(in1.ident == 1l)
 
-    val in2 = TreeName("two", in1.id).save.await
+    val in2 = dbAwait(TreeName("two", in1.id).save)
     assert(in2.ident == 2l)
 
-    val in3 = TreeName("three", in2.id).save.await
+    val in3 = dbAwait(TreeName("three", in2.id).save)
     assert(TreeName.stream.toList.size == 3)
 
     TreeName.stream.foreach { e =>
-      println(s" - $e path: ${ e.path.await.mkString(" / ") }")
+      println(s" - $e path: ${ dbAwait(e.path).mkString(" / ") }")
     }
   }
 }

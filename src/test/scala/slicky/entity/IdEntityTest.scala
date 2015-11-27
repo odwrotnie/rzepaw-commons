@@ -19,13 +19,13 @@ class IdEntityTest
 
   ignore("Insert entity") {
 
-    val in1 = IdName("one").insert.await
+    val in1 = dbAwait(IdName("one").insert)
     assert(in1.ident == 1l)
 
-    val in2 = IdName("two").save.await
+    val in2 = dbAwait(IdName("two").save)
     assert(in2.ident == 2l)
 
-    val in3 = IdName("three").save.await
+    val in3 = dbAwait(IdName("three").save)
     assert(IdName.stream.toList.size == 3)
 
     IdName.stream.foreach { e =>
@@ -33,14 +33,14 @@ class IdEntityTest
     }
 
     in1.name = "ONE"
-    assert(in1.update.await.name == "ONE")
-    assert(IdName.byIdent(1).await.get.name == "ONE")
+    assert(dbAwait(in1.update).name == "ONE")
+    assert(dbAwait(IdName.byIdent(1)).get.name == "ONE")
   }
 
   test("Update or insert with id") {
-    val in1 = IdName("one").updateOrInsert(IdName.table.filter(_.name === "one")).await
+    val in1 = dbAwait(IdName("one").updateOrInsert(IdName.table.filter(_.name === "one")))
     println(IdName.stream.toList)
-    val in2 = IdName("one").updateOrInsert(IdName.table.filter(_.name === "one")).await
+    val in2 = dbAwait(IdName("one").updateOrInsert(IdName.table.filter(_.name === "one")))
     println(IdName.stream.toList)
 
     assert(in1.id.isDefined)

@@ -11,6 +11,6 @@ class CSVTest
   test("CSV") {
 
     val table = Table(List("left", "right"), List(1, 2), List(3, 4))
-    info(table.print("\t"))
+    info(table.print())
   }
 }

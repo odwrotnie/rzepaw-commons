@@ -44,6 +44,7 @@ object Slicky
 
   // Run in transaction
   def dbFuture[R](f: => DBIO[R]): Future[R] = db.run(f)
+  def dbFutureSeq[R](f: => Seq[DBIO[R]]): Future[Unit] = db.run(DBIO.seq(f:_*))
 
   // Run in transaction and wait for the result
   def dbAwait[R](f: => DBIO[R]): R = await(dbFuture(f))
