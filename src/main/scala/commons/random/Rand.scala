@@ -14,8 +14,8 @@ object Rand {
     else Some(s(Random.nextInt(s.size)))
   }
 
-  def one[T](s: T*): T = {
-    require(!s.isEmpty)
+  def one[T](s: Seq[T]): T = {
+    require(s.nonEmpty)
     s(Random.nextInt(s.size))
   }
 
