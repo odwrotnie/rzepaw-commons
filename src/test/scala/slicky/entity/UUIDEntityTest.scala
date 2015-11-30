@@ -16,7 +16,8 @@ class UUIDEntityTest
   with Logger {
 
   dbAwait {
-    UuidName.table.schema.create
+    UuidName.table.schema.create >>
+      UuidValue.table.schema.create
   }
 
   test("Insert entity") {
@@ -44,7 +45,14 @@ class UUIDEntityTest
     assert(in1.id.isDefined)
     assert(in1.id == in2.id)
   }
+
+  test("Polymorphic filter") {
+    val nUUID: UUID = dbAwait(UuidName("a").insert).ident
+    val vUUID: UUID = dbAwait(UuidValue(1).insert).ident
+  }
 }
+
+// Name
 
 case class UuidName(var name: String,
                     id: Option[UUID] = None)
@@ -59,12 +67,37 @@ object UuidName
   val table = TableQuery[Tbl]
 
   class Tbl(tag: Tag)
-    extends Table[UuidName](tag, "ID_NAME") {
+    extends Table[UuidName](tag, "UUID_NAME") {
 
     def name = column[String]("NAME")
     def id = column[Option[UUID]]("UUID", O.PrimaryKey)
 
     def * = (name, id) <>
       ((UuidName.apply _).tupled, UuidName.unapply)
+  }
+}
+
+// Value
+
+case class UuidValue(var value: Long,
+                     id: Option[UUID] = None)
+  extends UUIDEntity[UuidValue](UuidValue) {
+
+  override def withId(id: UUID) = this.copy(id = Some(id))
+}
+
+object UuidValue
+  extends UUIDEntityMeta[UuidValue] {
+
+  val table = TableQuery[Tbl]
+
+  class Tbl(tag: Tag)
+    extends Table[UuidValue](tag, "UUID_VALUE") {
+
+    def value = column[Long]("VALUE")
+    def id = column[Option[UUID]]("UUID", O.PrimaryKey)
+
+    def * = (value, id) <>
+      ((UuidValue.apply _).tupled, UuidValue.unapply)
   }
 }

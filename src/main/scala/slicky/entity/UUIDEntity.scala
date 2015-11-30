@@ -5,6 +5,7 @@ import java.util.UUID
 import slicky.Slicky._
 import driver.api._
 
+import scala.collection.immutable.HashSet
 import scala.concurrent.Future
 
 abstract class UUIDEntity[IE <: UUIDEntity[IE]](override val meta: UUIDEntityMeta[IE])
@@ -20,6 +21,8 @@ abstract class UUIDEntity[IE <: UUIDEntity[IE]](override val meta: UUIDEntityMet
 
 abstract class UUIDEntityMeta[IE <: UUIDEntity[IE]]
   extends IdentEntityMeta[UUID, IE] {
+
+//  UUIDEntities.
 
   type IET = Table[IE] { def id: Rep[Option[UUID]] }
   override def table: TableQuery[_ <: IET]
@@ -50,3 +53,10 @@ abstract class UUIDEntityMeta[IE <: UUIDEntity[IE]]
     }
   }
 }
+
+//object UUIDEntities {
+//  val all: collection.mutable.Set[UUIDEntityMeta] = HashSet[UUIDEntityMeta]()
+//  def add(meta: UUIDEntityMeta): Unit = {
+//    all :+ meta
+//  }
+//}
