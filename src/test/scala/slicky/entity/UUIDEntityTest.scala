@@ -3,6 +3,7 @@ package slicky.entity
 import java.util.UUID
 
 import commons.logger._
+import commons.random.Rand
 import org.scalatest.FunSuite
 import slicky.Slicky._
 import driver.api._
@@ -41,7 +42,6 @@ class UUIDEntityTest
     println(UuidName.stream.toList)
     val in2 = dbAwait(UuidName("one").updateOrInsert(UuidName.table.filter(_.name === "one")))
     println(UuidName.stream.toList)
-
     assert(in1.id.isDefined)
     assert(in1.id == in2.id)
   }
@@ -49,6 +49,11 @@ class UUIDEntityTest
   test("Polymorphic filter") {
     val nUUID: UUID = dbAwait(UuidName("a").insert).ident
     val vUUID: UUID = dbAwait(UuidValue(1).insert).ident
+    assert(UUIDEntities.byIdent(nUUID).get.isInstanceOf[UuidName])
+    assert(UUIDEntities.byIdent(vUUID).get.isInstanceOf[UuidValue])
+    val randomUUID: UUID = Rand.one(nUUID, vUUID)
+    val entity = UUIDEntities.byIdent(randomUUID)
+    assert(entity.isDefined)
   }
 }
 

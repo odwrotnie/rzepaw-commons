@@ -2,6 +2,7 @@ package slicky.entity
 
 import java.util.UUID
 
+import commons.logger.Logger
 import slicky.Slicky._
 import driver.api._
 
@@ -22,7 +23,7 @@ abstract class UUIDEntity[IE <: UUIDEntity[IE]](override val meta: UUIDEntityMet
 abstract class UUIDEntityMeta[IE <: UUIDEntity[IE]]
   extends IdentEntityMeta[UUID, IE] {
 
-//  UUIDEntities.
+  UUIDEntities.add(this)
 
   type IET = Table[IE] { def id: Rep[Option[UUID]] }
   override def table: TableQuery[_ <: IET]
@@ -54,9 +55,18 @@ abstract class UUIDEntityMeta[IE <: UUIDEntity[IE]]
   }
 }
 
-//object UUIDEntities {
-//  val all: collection.mutable.Set[UUIDEntityMeta] = HashSet[UUIDEntityMeta]()
-//  def add(meta: UUIDEntityMeta): Unit = {
-//    all :+ meta
-//  }
-//}
+object UUIDEntities
+  extends Logger {
+  val all: collection.mutable.Set[UUIDEntityMeta[_]] = collection.mutable.HashSet[UUIDEntityMeta[_]]()
+  def add(meta: UUIDEntityMeta[_]): Unit = {
+    debug(s"UUIDEntities.add - $meta")
+    all += meta
+  }
+  def byIdent(id: UUID): Option[UUIDEntity[_]] = {
+    // TODO Switch to Stream so it computes until its found
+    all.flatMap { em: UUIDEntityMeta[_] =>
+      // TODO Get rid of asInstanceOf
+      em.byIdent(id).await.map(_.asInstanceOf[UUIDEntity[_]])
+    } headOption
+  }
+}
