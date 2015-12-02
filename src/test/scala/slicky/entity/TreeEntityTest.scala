@@ -6,7 +6,10 @@ import slicky.Slicky._
 import driver.api._
 import slicky.helpers.{TreeEntityMeta, TreeEntity}
 
-// sbt "~rzepawCommons/testOnly slicky.entity.TreeEntityTest"
+/*
+sbt "~rzepawCommons/testOnly slicky.entity.TreeEntityTest"
+*/
+
 class TreeEntityTest
   extends FunSuite
   with Logger {
@@ -29,6 +32,10 @@ class TreeEntityTest
     TreeName.stream.foreach { e =>
       println(s" - $e path: ${ dbAwait(e.path).mkString(" / ") }")
     }
+
+    assert(in1.descendantsCount.await == 2)
+    assert(in2.descendantsCount.await == 1)
+    assert(in3.descendantsCount.await == 0)
   }
 }
 

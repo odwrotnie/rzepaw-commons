@@ -51,7 +51,7 @@ class UUIDEntityTest
     val vUUID: UUID = dbAwait(UuidValue(1).insert).ident
     assert(UUIDEntities.byIdent(nUUID).get.isInstanceOf[UuidName])
     assert(UUIDEntities.byIdent(vUUID).get.isInstanceOf[UuidValue])
-    val randomUUID: UUID = Rand.one(nUUID, vUUID)
+    val randomUUID: UUID = Rand.one(List(nUUID, vUUID))
     val entity = UUIDEntities.byIdent(randomUUID)
     assert(entity.isDefined)
   }
