@@ -35,20 +35,15 @@ abstract class TreeEntity[TE <: TreeEntity[TE]](meta: TreeEntityMeta[TE])
     } yield cc ++ c
   }
 
-  def descendantsCount: DBIO[Int] = DBIO.successful(0)
-//    val childrenChildrenCount: DBIO[Int] = children.map { seq: Seq[TE] =>
-//      seq.foldLeft(DBIO.successful(0)) {
-//        (sumF, childrenF) => for {
-//          children <- childrenF.descendantsCount
-//          sum <- sumF
-//        } yield sum + children
-//      }
-//    }
-//    for {
-//      ccc <- childrenChildrenCount
-//      cc <- childrenCount
-//    } yield ccc + cc
-//  }
+  def descendantsCount: DBIO[Int] = {
+    val childrenChildrenCount: DBIO[Int] = children.map { seq: Seq[TE] =>
+      seq.foldLeft(0)((sum, childrenF) => sum + childrenF.descendantsCount.await)
+    }
+    for {
+      ccc <- childrenChildrenCount
+      cc <- childrenCount
+    } yield ccc + cc
+  }
 
   def path: DBIO[Seq[TE]] = for {
     op: Option[TE] <- parent
