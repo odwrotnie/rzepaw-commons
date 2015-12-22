@@ -20,6 +20,7 @@ abstract class IdentEntity[IDENT, IE <: IdentEntity[IDENT, IE]](override val met
   def delete: DBIO[IE] = meta.delete(this)
 
   def updateOrInsert(query: Query[meta.T, IE, Seq]): DBIO[IE] = meta.getOrInsert(query, this)
+  def readFromDB: DBIO[IE] = meta.byIdentGet(ident)
 }
 
 abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
