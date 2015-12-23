@@ -16,6 +16,7 @@ abstract class TreeEntity[TE <: TreeEntity[TE]](meta: TreeEntityMeta[TE])
     case Some(id) => meta.byIdent(id)
     case _ => DBIO.successful(None)
   }
+  def isRoot: DBIO[Boolean] = parent.map(_.isDefined)
 
   def children: DBIO[Seq[TE]] = meta.table.filter(_.parentId === id).result
 
