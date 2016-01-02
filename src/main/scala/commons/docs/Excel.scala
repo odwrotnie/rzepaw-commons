@@ -25,13 +25,13 @@ object Excel {
   }
 }
 
-case class WorkbookHelper(wb: Option[Workbook] = None, file: Option[File] = None, input: Option[InputStream] = None, path: Option[String] = None) {
+case class WorkbookHelper(wb: Option[Workbook] = None, file: Option[File] = None, input: Option[InputStream] = None, path: Option[String] = None, dropFirstRows: Int = 0) {
   require(List(wb, file, input, path).flatten.nonEmpty)
   val workbook: Workbook =
     List(wb, file.map(Excel.workbook), input.map(Excel.workbook), path.map(Excel.workbook))
       .flatten.headOption.get
   val sheets: Stream[Sheet] = (0 until workbook.getNumberOfSheets).map(i => workbook.getSheetAt(i)).toStream
-  val sheetHelpers: Stream[SheetHelper] = sheets.map(SheetHelper.apply)
+  val sheetHelpers: Stream[SheetHelper] = sheets.map(s => SheetHelper.apply(s, dropFirstRows))
   val rows: Stream[Row] = sheetHelpers.flatMap(_.rows)
   val rowHelpers: Stream[RowHelper] = rows.map(RowHelper.apply)
   def rows[R](convert: (RowHelper => R)): Stream[R] = rowHelpers.map(convert)
@@ -62,7 +62,7 @@ abstract class AbstractSheetHelper {
   }
 }
 
-case class SheetHelper(sheet: Sheet)
+case class SheetHelper(sheet: Sheet, dropFirstRows: Int = 0)
   extends AbstractSheetHelper {
 
   def valueString(row: Row, col: Int): Option[String] = RowHelper(row).valueString(col)
@@ -82,7 +82,7 @@ case class SheetHelper(sheet: Sheet)
 
   def set(row: Int, col: Int, values: Any*): Seq[Cell] = RowHelper(sheet.getRow(row)).set(col, values)
 
-  def rows: Stream[Row] = sheet.rowIterator.toStream
+  def rows: Stream[Row] = sheet.rowIterator.toStream.drop(dropFirstRows)
   def rowHelpers: Stream[RowHelper] = rows.map(RowHelper.apply)
   def rows[R](convert: (RowHelper => R)): Stream[R] = rowHelpers.map(convert)
 }
