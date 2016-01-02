@@ -3,6 +3,7 @@ package commons.date.test
 import commons.date.{Day, DateUtil}
 import commons.logger.Logger
 import org.joda.time.Duration
+import org.joda.time.format.DateTimeFormat
 import org.ocpsoft.prettytime.PrettyTime
 import org.scalatest.FunSuite
 
@@ -51,5 +52,15 @@ class DateUtilTest
     Day.current.next(10) foreach { day =>
       println(s"Day: $day num: ${ day.dayOfWeek } - ${ day.isHoliday }")
     }
+  }
+
+  test("Parse date") {
+
+    println("FORMATED: " + DateTimeFormat.forPattern("YYYY/MM/dd").print(DateUtil.date(2016, 1, 3)))
+
+    assert(DateUtil.parseDate("1999/01/01").contains(DateUtil.date(1999, 1, 1)))
+    assert(DateUtil.parseDate("1999.01.01").contains(DateUtil.date(1999, 1, 1)))
+    assert(DateUtil.parseDate("1999.01/01").contains(DateUtil.date(1999, 1, 1)))
+    assert(DateUtil.parseDate("1999/01-01").contains(DateUtil.date(1999, 1, 1)))
   }
 }
