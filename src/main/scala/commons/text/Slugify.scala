@@ -12,7 +12,7 @@ object Slugify {
     "ń" -> "n", "ó" -> "o", "ś" -> "s", "ź" -> "z", "ż" -> "z")
 
   def apply(input: String) = {
-    var slug = input
+    var slug = input.trim
     slug = slug.toLowerCase()
     unpolish.foreach(unp => slug = slug.replace(unp._1, unp._2))
     // slug = Normalizer.normalize(input, Form.NFD)
