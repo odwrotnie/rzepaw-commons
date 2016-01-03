@@ -3,7 +3,7 @@ package commons.date
 import java.sql.Timestamp
 
 import commons.date.DateUtil.TimePlace
-import commons.text.{ParserChain2, ParserChain}
+import commons.text._
 import org.joda.time._
 import org.joda.time.base._
 import org.joda.time.format._
@@ -41,7 +41,7 @@ object DateUtil {
   def formatTime(date: java.util.Date): String = formatTime(new DateTime(date))
 
   def getDate(l: Long): DateTime = new DateTime(new java.util.Date(l))
-  def parseDate(s: String): Option[DateTime] = ParserChain2[DateTime](s.trim.replaceAll("[^\\d]", "/")) +
+  def parseDate(s: String): Option[DateTime] = ParserChain[DateTime](s.trim.replaceAll("[^\\d]", "/")) +
     (s => { DateTimeFormat.forPattern(DATE_FORMAT).parseDateTime(s).withTimeAtStartOfDay }) +
     (s => { DateTimeFormat.forPattern("YYYY/MM/dd").parseDateTime(s) }) parse
   def parseDateTime(s: String): Option[DateTime] = Try(TIME_PATTERN.parseDateTime(s)).toOption

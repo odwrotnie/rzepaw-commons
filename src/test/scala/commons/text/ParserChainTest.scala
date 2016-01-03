@@ -13,7 +13,7 @@ class ParserChainTest
 
   test("Simple") {
 
-    val i: Option[Int] = ParserChain2[Int]("31") +
+    val i: Option[Int] = ParserChain[Int]("31") +
       (s => 1/0) +
       (s => s.toInt) +
       (s => 1/0) +
