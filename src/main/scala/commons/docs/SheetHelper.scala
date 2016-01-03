@@ -5,6 +5,8 @@ import org.apache.poi.ss.util.CellReference
 import scala.collection.JavaConversions._
 import org.apache.poi.ss.usermodel.{Cell, Row, Sheet}
 
+import scala.util.Try
+
 abstract class AbstractSheetHelper {
 
   def sheet: Sheet
@@ -43,7 +45,10 @@ case class SheetHelper(sheet: Sheet, dropFirstRows: Int = 0)
   def valueNumeric(row: Row, col: String): Option[Double] = RowHelper(row).valueNumeric(col)
   def valueNumeric(row: Int, col: String): Option[Double] = RowHelper(sheet.getRow(row)).valueNumeric(col)
 
-  def set(row: Int, col: Int, values: Any*): Seq[Cell] = RowHelper(sheet.getRow(row)).set(col, values)
+  def set(rowIndex: Int, col: Int, values: Any*): Seq[Cell] = {
+    val row: Row = Option(sheet.getRow(rowIndex)).getOrElse(sheet.createRow(rowIndex))
+    RowHelper(row).set(col, values)
+  }
 
   def rows: Stream[Row] = sheet.rowIterator.toStream.drop(dropFirstRows)
   def rowHelpers: Stream[RowHelper] = rows.map(RowHelper.apply)

@@ -29,18 +29,13 @@ case class RowHelper(row: Row) {
   def valueNumeric(col: String): Option[Double] = letterToIndex(col).flatMap(valueNumeric)
   def valueNumericByLabel(col: String, labelsIndex: Int = 0): Option[Double] = labelToIndexByHeaderRow(col, labelsIndex).flatMap(valueNumeric)
 
-  def cell(col: Int): Cell = {
-    row.getCell(col) match {
-      case null => row.createCell(col)
-      case cell => cell
-    }
-  }
-  def cell(col: String): Option[Cell] = letterToIndex(col).map(cell)
+  def cell(col: Int): Option[Cell] = Option(row.getCell(col))
+  def cell(col: String): Option[Cell] = letterToIndex(col).flatMap(cell)
 
   def set(col: Int, values: Any*): Seq[Cell] = {
     values.zipWithIndex map {
       case (value, index) =>
-        val c = cell(col + index)
+        val c = cell(col + index).getOrElse(row.createCell(col))
         value match {
           case s: String => c.setCellValue(s)
           case i: Int => c.setCellValue(i)
@@ -51,4 +46,5 @@ case class RowHelper(row: Row) {
         c
     }
   }
+  // def set(col: String, values: Any*) = letterToIndex(col).map(i => set(i, values))
 }
