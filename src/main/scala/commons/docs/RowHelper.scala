@@ -46,5 +46,6 @@ case class RowHelper(row: Row) {
         c
     }
   }
+
   // def set(col: String, values: Any*) = letterToIndex(col).map(i => set(i, values))
 }

@@ -40,6 +40,8 @@ object DateUtil {
   def formatTime(date: AbstractInstant): String = TIME_PATTERN.print(date)
   def formatTime(date: java.util.Date): String = formatTime(new DateTime(date))
 
+  def formatOnlyHour(date: AbstractInstant): String = HOUR_PATTERN.print(date)
+
   def getDate(l: Long): DateTime = new DateTime(new java.util.Date(l))
   def parseDate(s: String): Option[DateTime] = ParserChain[DateTime](s.trim.replaceAll("[^\\d]", "/")) +
     (s => { DateTimeFormat.forPattern(DATE_FORMAT).parseDateTime(s).withTimeAtStartOfDay }) +
