@@ -17,6 +17,16 @@ case class ParserChain[T](s: String)
   def parse: Option[T] = {
     methods.toStream.map { st =>
       Try(st(s)).toOption
-    }.find(_.isDefined).flatten
+    }.find(_.isDefined).flatten match {
+      case None =>
+        warn(s"Unable to parse $s, returning None")
+        None
+      case s => s
+    }
+  }
+
+  def parseOrElse(t: T) = {
+    warn(s"Unable to parse $s, returning default")
+    parse.getOrElse(t)
   }
 }

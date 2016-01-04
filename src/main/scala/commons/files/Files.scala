@@ -1,6 +1,16 @@
 package commons.files
 
-import java.io.FileWriter
+import java.io.{File, FileWriter}
+import java.net.URL
+
+object Files {
+  def listFromResources(directoryInResources: String): List[File] = {
+    val dirUrl: URL = getClass.getResource(directoryInResources)
+    val dir = new File(dirUrl.toURI)
+    require(dir.isDirectory)
+    dir.listFiles().toList
+  }
+}
 
 case class TextFile(path: String) {
 
