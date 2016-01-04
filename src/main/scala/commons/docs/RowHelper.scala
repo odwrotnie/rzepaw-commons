@@ -35,7 +35,7 @@ case class RowHelper(row: Row) {
   def set(col: Int, values: Any*): Seq[Cell] = {
     values.zipWithIndex map {
       case (value, index) =>
-        val c = cell(col + index).getOrElse(row.createCell(col))
+        val c: Cell = cell(col + index).getOrElse(row.createCell(col))
         value match {
           case s: String => c.setCellValue(s)
           case i: Int => c.setCellValue(i)

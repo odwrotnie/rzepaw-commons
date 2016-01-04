@@ -47,7 +47,7 @@ case class SheetHelper(sheet: Sheet, dropFirstRows: Int = 0)
 
   def set(rowIndex: Int, col: Int, values: Any*): Seq[Cell] = {
     val row: Row = Option(sheet.getRow(rowIndex)).getOrElse(sheet.createRow(rowIndex))
-    RowHelper(row).set(col, values)
+    RowHelper(row).set(col, values:_*)
   }
 
   def rows: Stream[Row] = sheet.rowIterator.toStream.drop(dropFirstRows)
