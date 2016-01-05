@@ -234,14 +234,16 @@ object Day extends DateIntervalMeta[Day] {
   val DAYTIME_END_HOUR = 18
 
   def daytimeIntervals(intervals: Interval*): Seq[Interval] = {
-    val sorted = intervals.sortBy(_.getStart.getMillis)
-    val days: Stream[Day] = between(sorted.head.getStart, sorted.reverse.head.getEnd)
-    val daytimes = days.map(_.daytimeInterval)
-    val overlaps = for {
-      interval <- intervals
-      daytime <- daytimes
-    } yield Option(interval.overlap(daytime))
-    overlaps.flatten
+    if (intervals.isEmpty) Seq[Interval]() else {
+      val sorted = intervals.sortBy(_.getStart.getMillis)
+      val days: Stream[Day] =  between(sorted.head.getStart, sorted.reverse.head.getEnd)
+      val daytimes = days.map(_.daytimeInterval)
+      val overlaps = for {
+        interval <- intervals
+        daytime <- daytimes
+      } yield Option(interval.overlap(daytime))
+      overlaps.flatten
+    }
   }
   def daytimeDuration(intervals: Interval*): Duration =
     daytimeIntervals(intervals:_*).foldLeft(new Duration(0))((d, i) => d plus i.toDuration)
