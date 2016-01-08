@@ -231,7 +231,7 @@ case class Week(dt: DateTime)
 
 object Day extends DateIntervalMeta[Day] {
   val DAYTIME_START_HOUR = 6
-  val DAYTIME_END_HOUR = 18
+  val DAYTIME_END_HOUR = 22
 
   def daytimeIntervals(intervals: Interval*): Seq[Interval] = {
     if (intervals.isEmpty) Seq[Interval]() else {
