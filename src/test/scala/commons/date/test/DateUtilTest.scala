@@ -36,7 +36,7 @@ class DateUtilTest
     assert(d.getMillis == 10800000)
   }
 
-  "Second duration" should "have 10800000 millis" in {
+  it should "now have 10800000 millis" in {
     val s1 = DateUtil.now
     val e1 = s1.plusHours(1)
     val d1 = new Duration(s1, e1)
