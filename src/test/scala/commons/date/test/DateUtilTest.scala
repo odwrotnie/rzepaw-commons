@@ -2,23 +2,22 @@ package commons.date.test
 
 import commons.date.{Day, DateUtil}
 import commons.logger.Logger
-import org.joda.time.Duration
+import org.joda.time.{Interval, Duration}
 import org.joda.time.format.DateTimeFormat
 import org.ocpsoft.prettytime.PrettyTime
-import org.scalatest.FunSuite
+import org.scalatest.{FlatSpec, FunSuite}
 
 /*
 sbt "~rzepawCommons/testOnly commons.date.test.DateUtilTest"
  */
 
 class DateUtilTest
-  extends FunSuite
+  extends FlatSpec
   with Logger {
 
   val pt = new PrettyTime
 
-  test("Date util test") {
-
+  "Date util test" should "" in {
     (1 to 30) foreach { i =>
       val minutes = i * 7
       val date = DateUtil.now.plusHours(1).minusMinutes(minutes)
@@ -27,7 +26,7 @@ class DateUtilTest
     }
   }
 
-  test("Duration test") {
+  "Duration" should "have 10800000 millis" in {
     val s = DateUtil.now
     val e = s.plusHours(3)
     val d = new Duration(s, e)
@@ -37,7 +36,7 @@ class DateUtilTest
     assert(d.getMillis == 10800000)
   }
 
-  test("Duration plus") {
+  "Second duration" should "have 10800000 millis" in {
     val s1 = DateUtil.now
     val e1 = s1.plusHours(1)
     val d1 = new Duration(s1, e1)
@@ -48,19 +47,29 @@ class DateUtilTest
     assert(d.getMillis == 10800000)
   }
 
-  test("Holidays") {
-    Day.current.next(10) foreach { day =>
-      println(s"Day: $day num: ${ day.dayOfWeek } - ${ day.isHoliday }")
-    }
+//  test("Holidays") {
+//    Day.current.next(10) foreach { day =>
+//      println(s"Day: $day num: ${ day.dayOfWeek } - ${ day.isHoliday }")
+//    }
+//  }
+
+//  test("Parse date") {
+//
+//    println("FORMATED: " + DateTimeFormat.forPattern("YYYY/MM/dd").print(DateUtil.date(2016, 1, 3)))
+//
+//    assert(DateUtil.parseDate("1999/01/01").contains(DateUtil.date(1999, 1, 1)))
+//    assert(DateUtil.parseDate("1999.01.01").contains(DateUtil.date(1999, 1, 1)))
+//    assert(DateUtil.parseDate("1999.01/01").contains(DateUtil.date(1999, 1, 1)))
+//    assert(DateUtil.parseDate("1999/01-01").contains(DateUtil.date(1999, 1, 1)))
+//  }
+
+  "Days surrounding 1 hour" should "have 1 element" in {
+    val i = new Interval(DateUtil.date(2016, 1, 6).withHourOfDay(10), DateUtil.date(2016, 1, 6).withHourOfDay(11))
+    assert(Day.surrounding(i).force.size == 1)
   }
 
-  test("Parse date") {
-
-    println("FORMATED: " + DateTimeFormat.forPattern("YYYY/MM/dd").print(DateUtil.date(2016, 1, 3)))
-
-    assert(DateUtil.parseDate("1999/01/01").contains(DateUtil.date(1999, 1, 1)))
-    assert(DateUtil.parseDate("1999.01.01").contains(DateUtil.date(1999, 1, 1)))
-    assert(DateUtil.parseDate("1999.01/01").contains(DateUtil.date(1999, 1, 1)))
-    assert(DateUtil.parseDate("1999/01-01").contains(DateUtil.date(1999, 1, 1)))
+  "Days surrounding 24 hours" should "have 2 elements" in {
+    val i = new Interval(DateUtil.date(2016, 1, 6).withHourOfDay(10), DateUtil.date(2016, 1, 7).withHourOfDay(10))
+    assert(Day.surrounding(i).force.size == 2)
   }
 }

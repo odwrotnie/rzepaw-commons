@@ -156,8 +156,8 @@ abstract class DateInterval[DI <: DateInterval[DI]](val meta: DateIntervalMeta[D
 trait DateIntervalMeta[DI <: DateInterval[DI]] {
   def apply(dt: DateTime): DI
   def current = apply(DateTime.now)
-  def between(after: DateTime, before: DateTime): Stream[DI] =
-    apply(after).nextStream.takeWhile(_.start isBefore before)
+  def surrounding(interval: Interval): Stream[DI] = surrounding(interval.getStart, interval.getEnd)
+  def surrounding(after: DateTime, before: DateTime): Stream[DI] = apply(after).nextInclusiveStream.takeWhile(_.start isBefore before)
 }
 
 // YEAR
@@ -236,7 +236,7 @@ object Day extends DateIntervalMeta[Day] {
   def daytimeIntervals(intervals: Interval*): Seq[Interval] = {
     if (intervals.isEmpty) Seq[Interval]() else {
       val sorted = intervals.sortBy(_.getStart.getMillis)
-      val days: Stream[Day] =  between(sorted.head.getStart, sorted.reverse.head.getEnd)
+      val days: Stream[Day] =  surrounding(sorted.head.getStart, sorted.reverse.head.getEnd)
       val daytimes = days.map(_.daytimeInterval)
       val overlaps = for {
         interval <- intervals
