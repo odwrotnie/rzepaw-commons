@@ -64,8 +64,9 @@ abstract class TreeEntity[TE <: TreeEntity[TE]](meta: TreeEntityMeta[TE])
 
 abstract class TreeEntityMeta[TE <: TreeEntity[TE]]
   extends IdEntityMeta[TE] {
-  type TET = Table[TE] { def parentId: Rep[Option[ID]]}
-  override def table: TableQuery[_ <: IET with TET]
+  abstract class EntityTableWithIdAndParent(tag: Tag)
+    extends EntityTableWithId(tag) { def parentId: Rep[Option[ID]]}
+  override def table: TableQuery[_ <: EntityTableWithIdAndParent]
 
   def roots: DBIO[Seq[TE]] = table.filter(_.parentId isEmpty).result
 }

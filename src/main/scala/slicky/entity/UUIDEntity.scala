@@ -25,9 +25,11 @@ abstract class UUIDEntityMeta[IE <: UUIDEntity[IE]](tableName: String)
 
   UUIDEntities.add(this)
 
-  type IET = Table[IE] { def id: Rep[Option[UUID]] }
-  override def table: TableQuery[_ <: IET]
-  override def byIdentQuery(ident: UUID): Query[IET, IE, Seq] = table.filter(_.id === ident)
+  abstract class EntityTableWithUUID(tag: Tag)
+    extends EntityTable(tag) { def id: Rep[Option[UUID]] }
+
+  override def table: TableQuery[_ <: EntityTableWithUUID]
+  override def byIdentQuery(ident: UUID): Query[EntityTableWithUUID, IE, Seq] = table.filter(_.id === ident)
 
   override def insert(ie: IE): DBIO[IE] = {
     require(ie.id.isEmpty)
