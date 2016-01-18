@@ -19,7 +19,7 @@ abstract class IdentEntity[IDENT, IE <: IdentEntity[IDENT, IE]](override val met
   def update: DBIO[IE] = meta.update(this)
   def delete: DBIO[IE] = meta.delete(this)
 
-  def updateOrInsert(query: Query[_ <: meta.EntityTable, IE, Seq]): DBIO[IE] = meta.getOrInsert(query, this)
+  def updateOrInsert(query: Query[_, IE, Seq]): DBIO[IE] = meta.getOrInsert(query, this)
   def readFromDB: DBIO[IE] = meta.byIdentGet(ident)
 }
 
@@ -69,7 +69,7 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
 
   def update(ie: IE): DBIO[IE] = update(ie.ident, ie)
 
-  def getOrInsert(query: Query[EntityTable, IE, Seq], ie: IE): DBIO[IE] = query.length.result.flatMap {
+  def getOrInsert(query: Query[_, IE, Seq], ie: IE): DBIO[IE] = query.length.result.flatMap {
     case i if i == 0 => insert(ie)
     case i if i == 1 => query.result.head
     case _ => DBIO.failed(new Exception("The query returned more than 1 row"))

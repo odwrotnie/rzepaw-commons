@@ -13,7 +13,7 @@ abstract class Entity[E <: Entity[E]](val meta: EntityMeta[E]) {
 
 abstract class EntityMeta[E <: Entity[E]] {
 
-  val tableName: String = Slugify(getClass.getSimpleName).toUpperCase
+  val tableName: String = Slugify(getClass.getSimpleName, "_").toUpperCase
   abstract class EntityTable(tag: Tag) extends Table[E](tag, tableName)
 
   def table: TableQuery[_ <: EntityTable]
