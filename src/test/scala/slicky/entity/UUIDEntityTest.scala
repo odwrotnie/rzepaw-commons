@@ -67,12 +67,12 @@ case class UuidName(var name: String,
 }
 
 object UuidName
-  extends UUIDEntityMeta[UuidName] {
+  extends UUIDEntityMeta[UuidName]("UUID_NAME") {
 
   val table = TableQuery[Tbl]
 
   class Tbl(tag: Tag)
-    extends Table[UuidName](tag, "UUID_NAME") {
+    extends Table[UuidName](tag, tableName) {
 
     def name = column[String]("NAME")
     def id = column[Option[UUID]]("UUID", O.PrimaryKey)
@@ -92,12 +92,12 @@ case class UuidValue(var value: Long,
 }
 
 object UuidValue
-  extends UUIDEntityMeta[UuidValue] {
+  extends UUIDEntityMeta[UuidValue]("UUID_VALUE") {
 
   val table = TableQuery[Tbl]
 
   class Tbl(tag: Tag)
-    extends Table[UuidValue](tag, "UUID_VALUE") {
+    extends Table[UuidValue](tag, tableName) {
 
     def value = column[Long]("VALUE")
     def id = column[Option[UUID]]("UUID", O.PrimaryKey)

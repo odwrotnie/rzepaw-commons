@@ -56,7 +56,7 @@ case class IdName(var name: String,
 }
 
 object IdName
-  extends IdEntityMeta[IdName] {
+  extends IdEntityMeta[IdName]("ID_NAME") {
 
 //  override def beforeSave(in: IdName): IdName = {
 //    in.name = in.name + " BEFORE_SAVE"
@@ -66,7 +66,7 @@ object IdName
   val table = TableQuery[Tbl]
 
   class Tbl(tag: Tag)
-    extends Table[IdName](tag, "ID_NAME") {
+    extends Table[IdName](tag, tableName) {
 
     def name = column[String]("NAME")
     def id = column[ID]("ID", O.PrimaryKey, O.AutoInc)

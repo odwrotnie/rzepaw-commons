@@ -70,12 +70,12 @@ case class NameValue(var name: String, var value: Int)
   extends Entity[NameValue](NameValue)
 
 object NameValue
-  extends EntityMeta[NameValue] {
+  extends EntityMeta[NameValue]("NAME_VALUE") {
 
   val table = TableQuery[Tbl]
 
   class Tbl(tag: Tag)
-    extends Table[NameValue](tag, "NAME") {
+    extends EntityTable(tag) {
 
     def name = column[String]("NAME")
     def value = column[Int]("VALUE")

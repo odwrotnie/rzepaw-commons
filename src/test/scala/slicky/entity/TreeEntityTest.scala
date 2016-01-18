@@ -48,12 +48,12 @@ case class TreeName(var name: String,
 }
 
 object TreeName
-  extends TreeEntityMeta[TreeName] {
+  extends TreeEntityMeta[TreeName]("ID_NAME") {
 
   val table = TableQuery[Tbl]
 
   class Tbl(tag: Tag)
-    extends Table[TreeName](tag, "ID_NAME") {
+    extends Table[TreeName](tag, tableName) {
 
     def name = column[String]("NAME")
     def parentId = column[Option[ID]]("PARENT")

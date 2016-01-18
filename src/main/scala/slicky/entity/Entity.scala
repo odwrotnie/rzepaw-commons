@@ -12,7 +12,10 @@ abstract class Entity[E <: Entity[E]](val meta: EntityMeta[E]) {
 
 abstract class EntityMeta[E <: Entity[E]] {
 
-  type T = Table[E]
+  val tableName: String = getClass.getSimpleName.toUpperCase
+  abstract class EntityTable(tag: Tag) extends Table[E](tag, tableName)
+
+  type T = Table[E] // TODO Change to type T = EntityTable
   def table: TableQuery[_ <: T]
 
   def count: Int = dbAwait(table.size.result)

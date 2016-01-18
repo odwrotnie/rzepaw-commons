@@ -8,6 +8,7 @@ import driver.api._
 /*
 sbt "~rzepawCommons/testOnly slicky.entity.IdentEntityTest"
  */
+
 class IdentEntityTest
   extends FunSuite
   with Logger {
@@ -43,12 +44,12 @@ case class XYName(var x: Int, var y: Int, var name: String)
 }
 
 object XYName
-  extends IdentEntityMeta[(Int, Int), XYName] {
+  extends IdentEntityMeta[(Int, Int), XYName]("XY_NAME") {
 
   val table = TableQuery[Tbl]
 
   class Tbl(tag: Tag)
-    extends Table[XYName](tag, "NAME") {
+    extends Table[XYName](tag, tableName) {
 
     def x = column[Int]("X")
     def y = column[Int]("Y")

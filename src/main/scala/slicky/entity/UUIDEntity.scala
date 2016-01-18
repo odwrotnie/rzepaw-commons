@@ -20,7 +20,7 @@ abstract class UUIDEntity[IE <: UUIDEntity[IE]](override val meta: UUIDEntityMet
   }
 }
 
-abstract class UUIDEntityMeta[IE <: UUIDEntity[IE]]
+abstract class UUIDEntityMeta[IE <: UUIDEntity[IE]](tableName: String)
   extends IdentEntityMeta[UUID, IE] {
 
   UUIDEntities.add(this)
