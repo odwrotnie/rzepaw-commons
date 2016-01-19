@@ -8,6 +8,7 @@ import org.joda.time.DateTime
 import slick.backend.DatabasePublisher
 import slick.driver.{H2Driver, MySQLDriver}
 import slick.lifted.CanBeQueryCondition
+import slicky.entity.IdEntity
 
 import scala.concurrent._
 import scala.concurrent.duration._
@@ -95,6 +96,7 @@ object Slicky
 
   /**
    * Optionally filters on a column with a supplied predicate
+ *
    * @param query
    * @tparam X
    * @tparam Y
