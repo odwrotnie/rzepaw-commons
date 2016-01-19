@@ -61,7 +61,8 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
   def update(query: Query[EntityTable, IE, Seq], ie: IE): DBIO[IE] = {
     val newIE = beforeUpdate(ie)
     query.update(newIE) map { rows =>
-      require(rows == 1, s"The query should return exactly 1 row ${ getClass.getSimpleName }: ${ dbFuture(query.result).await }")
+      require(rows == 1, s"IdentEntity update query in ${ getClass.getSimpleName } should return exactly 1 row: " +
+        s"${ dbFuture(query.result).await } you should probably use save method instead")
       afterUpdate(newIE)
       newIE
     }
