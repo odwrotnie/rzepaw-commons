@@ -44,12 +44,11 @@ case class XYName(var x: Int, var y: Int, var name: String)
 }
 
 object XYName
-  extends IdentEntityMeta[(Int, Int), XYName]("XY_NAME") {
+  extends IdentEntityMeta[(Int, Int), XYName] {
 
   val table = TableQuery[Tbl]
 
-  class Tbl(tag: Tag)
-    extends Table[XYName](tag, tableName) {
+  class Tbl(tag: Tag) extends EntityTable(tag) {
 
     def x = column[Int]("X")
     def y = column[Int]("Y")

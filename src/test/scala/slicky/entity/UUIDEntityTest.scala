@@ -71,8 +71,7 @@ object UuidName
 
   val table = TableQuery[Tbl]
 
-  class Tbl(tag: Tag)
-    extends Table[UuidName](tag, tableName) {
+  class Tbl(tag: Tag) extends EntityTableWithUUID(tag) {
 
     def name = column[String]("NAME")
     def id = column[Option[UUID]]("UUID", O.PrimaryKey)
@@ -96,8 +95,7 @@ object UuidValue
 
   val table = TableQuery[Tbl]
 
-  class Tbl(tag: Tag)
-    extends Table[UuidValue](tag, tableName) {
+  class Tbl(tag: Tag) extends EntityTableWithUUID(tag) {
 
     def value = column[Long]("VALUE")
     def id = column[Option[UUID]]("UUID", O.PrimaryKey)
