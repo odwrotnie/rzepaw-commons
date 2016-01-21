@@ -201,8 +201,12 @@ case class Month(dt: DateTime)
   lazy val end = start plusMonths 1
 
   lazy val monthOfYear = start.getMonthOfYear
+  lazy val firstHour = Hour(start)
   lazy val firstDay = Day(start)
   lazy val firstWeek = Week(start)
+  lazy val hours: Stream[Hour] = firstHour
+    .nextInclusiveStream
+    .takeWhile(d => d.start.isBefore(end))
   lazy val days: Stream[Day] = firstDay
     .nextInclusiveStream
     .takeWhile(d => d.start.isBefore(end))
@@ -230,6 +234,8 @@ case class Week(dt: DateTime)
 // DAY
 
 object Day extends DateIntervalMeta[Day] {
+  val WORKTIME_START_HOUR = 8
+  val WORKTIME_END_HOUR = 16
   val DAYTIME_START_HOUR = 6
   val DAYTIME_END_HOUR = 22
 
@@ -256,6 +262,7 @@ case class Day(dt: DateTime)
   lazy val start = dt.withTimeAtStartOfDay
   lazy val end = start plusDays 1
 
+  lazy val worktimeInterval = new Interval(start.withHourOfDay(Day.WORKTIME_START_HOUR), start.withHourOfDay(Day.WORKTIME_END_HOUR))
   lazy val daytimeInterval = new Interval(start.withHourOfDay(Day.DAYTIME_START_HOUR), start.withHourOfDay(Day.DAYTIME_END_HOUR))
 
   def dayOfWeek = start.getDayOfWeek // Mon == 1, Tue == 2... Sun == 7
