@@ -262,8 +262,10 @@ case class Day(dt: DateTime)
   lazy val start = dt.withTimeAtStartOfDay
   lazy val end = start plusDays 1
 
-  lazy val worktimeInterval = new Interval(start.withHourOfDay(Day.WORKTIME_START_HOUR), start.withHourOfDay(Day.WORKTIME_END_HOUR))
-  lazy val daytimeInterval = new Interval(start.withHourOfDay(Day.DAYTIME_START_HOUR), start.withHourOfDay(Day.DAYTIME_END_HOUR))
+  lazy val worktimeInterval: Interval = new Interval(start.withHourOfDay(Day.WORKTIME_START_HOUR), start.withHourOfDay(Day.WORKTIME_END_HOUR))
+  lazy val worktimeHours: List[Hour] = Hour.surrounding(worktimeInterval).toList
+  lazy val daytimeInterval: Interval = new Interval(start.withHourOfDay(Day.DAYTIME_START_HOUR), start.withHourOfDay(Day.DAYTIME_END_HOUR))
+  lazy val daytimeHours: List[Hour] = Hour.surrounding(daytimeInterval).toList
 
   def dayOfWeek = start.getDayOfWeek // Mon == 1, Tue == 2... Sun == 7
   def dayOfMonth = start.getDayOfMonth
