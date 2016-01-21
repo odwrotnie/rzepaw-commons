@@ -8,7 +8,7 @@ import org.joda.time.DateTime
 import slick.backend.DatabasePublisher
 import slick.driver.{H2Driver, MySQLDriver}
 import slick.lifted.CanBeQueryCondition
-import slicky.entity.IdEntity
+import slicky.entity.{IdentEntity, Entity, IdEntity}
 
 import scala.concurrent._
 import scala.concurrent.duration._
@@ -19,6 +19,9 @@ object Slicky
   val properties = ResourceProperties("/db.properties")
 
   type ID = Long
+  type AnyEntity = Entity[_ <: Entity[_]]
+  type AnyIdentEntity = IdentEntity[_, _ <: IdentEntity[_, _]]
+  type AnyIdEntity = IdEntity[_ <: IdEntity[_]]
 
   implicit lazy val futureEC = scala.concurrent.ExecutionContext.Implicits.global
 
