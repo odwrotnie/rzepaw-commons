@@ -2,12 +2,43 @@ package money
 
 object Currency {
 
-  val PLN = Currency("Złoty", "zł", "gr")
-  val EUR = Currency("Euro", "€", "¢")
-  val USD = Currency("U.S. Dollar", "$", "¢")
+  def apply(slug: String): Currency = Currency(slug, slug, slug, slug)
+
+  val PLN = Currency("Złoty", "PLN", "zł", "gr")
+  val EUR = Currency("Euro", "EUR", "€", "¢")
+  val USD = Currency("US Dollar", "USD", "$", "¢")
+  val JPY = Currency("JPY")
+  val BGN = Currency("BGN")
+  val CZK = Currency("CZK")
+  val DKK = Currency("DKK")
+  val GBP = Currency("GBP")
+  val HUF = Currency("HUF")
+  val RON = Currency("RON")
+  val SEK = Currency("SEK")
+  val CHF = Currency("CHF")
+  val NOK = Currency("NOK")
+  val HRK = Currency("HRK")
+  val RUB = Currency("RUB")
+  val TRY = Currency("TRY")
+  val AUD = Currency("AUD")
+  val BRL = Currency("BRL")
+  val CAD = Currency("CAD")
+  val CNY = Currency("CNY")
+  val HKD = Currency("HKD")
+  val IDR = Currency("IDR")
+  val ILS = Currency("ILS")
+  val INR = Currency("INR")
+  val KRW = Currency("KRW")
+  val MXN = Currency("MXN")
+  val MYR = Currency("MYR")
+  val NZD = Currency("NZD")
+  val PHP = Currency("PHP")
+  val SGD = Currency("SGD")
+  val THB = Currency("THB")
+  val ZAR = Currency("ZAR")
 }
 
-case class Currency(name: String, short: String, p: String, left: Boolean = false) {
+case class Currency(name: String, slug: String, short: String, p: String, left: Boolean = false) {
 
   def digits(value: Double) = append("%.2f" format value, short)
   def words(value: Double) = {

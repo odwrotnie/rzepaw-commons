@@ -17,8 +17,13 @@ class CurrencyTest
 //  }
 
   "Currency rate of PLN" should "be greater than 1" in {
-    println("-" * 100)
-    println(CurrencyRate.eurTo("PLN"))
-    println("-" * 100)
+    assert(CurrencyRate.euroIn("PLN").isDefined)
+    assert(CurrencyRate.euroIn("PLN").get > 1)
+  }
+
+  "Currency rate of EUR" should "be equal" in {
+    println(CurrencyRate.calculate("EUR", "EUR")(1.23))
+    assert(CurrencyRate.calculate("EUR", "EUR")(1.23).isDefined)
+    assert(CurrencyRate.calculate("EUR", "EUR")(1.23).get == 1.23)
   }
 }
