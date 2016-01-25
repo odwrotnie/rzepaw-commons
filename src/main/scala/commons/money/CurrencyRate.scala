@@ -20,10 +20,10 @@ object CurrencyRate {
   }
 
   def calculate(from: String, to: String)(value: Double): Option[Double] = for {
-    euroDivFrom <- if (from == BASE_CURRENCY.slug) Some(1d) else euroIn(from)
-    euroDivTo <- if (to == BASE_CURRENCY.slug) Some(1d) else euroIn(to)
+    fromRate <- if (from == BASE_CURRENCY.slug) Some(1d) else euroIn(from)
+    toRate <- if (to == BASE_CURRENCY.slug) Some(1d) else euroIn(to)
   } yield {
-    val euro = value * euroDivFrom
-    euro / euroDivTo
+    val euro = value / fromRate
+    toRate * euro
   }
 }

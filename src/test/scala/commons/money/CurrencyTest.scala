@@ -22,8 +22,20 @@ class CurrencyTest
   }
 
   "Currency rate of EUR" should "be equal" in {
-    println(CurrencyRate.calculate("EUR", "EUR")(1.23))
-    assert(CurrencyRate.calculate("EUR", "EUR")(1.23).isDefined)
-    assert(CurrencyRate.calculate("EUR", "EUR")(1.23).get == 1.23)
+    val eur2eur = CurrencyRate.calculate("EUR", "EUR") _
+    assert(eur2eur(1.23).isDefined)
+    assert(eur2eur(1.23).get == 1.23)
+  }
+
+  "1 EUR in PLN" should "should be greater than 1" in {
+    val eur2pln = CurrencyRate.calculate("EUR", "PLN") _
+    assert(eur2pln(1).isDefined)
+    assert(eur2pln(1).get > 2)
+  }
+
+  "1 USD in PLN" should "should be greater than 1" in {
+    val usd2pln = CurrencyRate.calculate("USD", "PLN") _
+    assert(usd2pln(1).isDefined)
+    assert(usd2pln(1).get > 2)
   }
 }
