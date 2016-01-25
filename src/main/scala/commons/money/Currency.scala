@@ -3,14 +3,14 @@ package money
 object Currency {
 
   val PLN = Currency("Złoty", "zł", "gr")
-  val EUR = Currency("Euro", "e", "c")
-  val USD = Currency("U.S. Dollar", "uds", "c")
+  val EUR = Currency("Euro", "€", "¢")
+  val USD = Currency("U.S. Dollar", "$", "¢")
 }
 
 case class Currency(name: String, short: String, p: String, left: Boolean = false) {
 
-  def digits(value: Float) = append("%.2f" format value, short)
-  def words(value: Float) = {
+  def digits(value: Double) = append("%.2f" format value, short)
+  def words(value: Double) = {
     val before = w(value.toLong)
     val after = w(((value * 100.0f) % 100).toLong)
     List(before, after).filterNot(_.isEmpty).zip(List(short, p)).
