@@ -1,13 +1,11 @@
 package commons.money
 
-import money.Currency
-
 import scala.util.Try
 import scala.xml.{Node, XML}
 
 object CurrencyRate {
 
-  val BASE_CURRENCY = Currency.EUR
+  val BASE_CURRENCY = CurrencyEnum.EUR
 
   val xml = XML.load("http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml")
 

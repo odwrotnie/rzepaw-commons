@@ -1,60 +1,9 @@
-package money
+package commons.money
 
-object Currency {
+trait PLNCurrencyPrinter
+  extends CurrencyPrinter {
 
-  def apply(slug: String): Currency = Currency(slug, slug, slug, slug)
-
-  val PLN = Currency("Złoty", "PLN", "zł", "gr")
-  val EUR = Currency("Euro", "EUR", "€", "¢")
-  val USD = Currency("US Dollar", "USD", "$", "¢")
-  val JPY = Currency("JPY")
-  val BGN = Currency("BGN")
-  val CZK = Currency("CZK")
-  val DKK = Currency("DKK")
-  val GBP = Currency("GBP")
-  val HUF = Currency("HUF")
-  val RON = Currency("RON")
-  val SEK = Currency("SEK")
-  val CHF = Currency("CHF")
-  val NOK = Currency("NOK")
-  val HRK = Currency("HRK")
-  val RUB = Currency("RUB")
-  val TRY = Currency("TRY")
-  val AUD = Currency("AUD")
-  val BRL = Currency("BRL")
-  val CAD = Currency("CAD")
-  val CNY = Currency("CNY")
-  val HKD = Currency("HKD")
-  val IDR = Currency("IDR")
-  val ILS = Currency("ILS")
-  val INR = Currency("INR")
-  val KRW = Currency("KRW")
-  val MXN = Currency("MXN")
-  val MYR = Currency("MYR")
-  val NZD = Currency("NZD")
-  val PHP = Currency("PHP")
-  val SGD = Currency("SGD")
-  val THB = Currency("THB")
-  val ZAR = Currency("ZAR")
-}
-
-case class Currency(name: String, slug: String, short: String, p: String, left: Boolean = false) {
-
-  def digits(value: Double) = append("%.2f" format value, short)
-  def words(value: Double) = {
-    val before = w(value.toLong)
-    val after = w(((value * 100.0f) % 100).toLong)
-    List(before, after).filterNot(_.isEmpty).zip(List(short, p)).
-      map(t => List(t._1, t._2)).flatten.mkString(" ").trim
-  }
-
-  private def append(s: String, currency: String) = {
-    var l = List(s, currency)
-    if (left) { l = l.reverse }
-    l.mkString(" ")
-  }
-
-  private def w(v: Long) = {
+  def w(v: Long) = {
     def w(number: Long, thousandPow: Int) = {
 
       assert(number >= 0 && number < 1000, "Number should contain 3 digits (%s)" format number)
@@ -132,6 +81,6 @@ case class Currency(name: String, slug: String, short: String, p: String, left: 
 
     val numbers = v.toString.reverse.grouped(3).toList.reverse.map(_.reverse.mkString("").toInt).reverse
 
-    numbers.zipWithIndex.reverse.map(t => List(w(t._1, t._2))).flatten.mkString(" ").trim
+    numbers.zipWithIndex.reverse.flatMap(t => List(w(t._1, t._2))).mkString(" ").trim
   }
 }

@@ -1,20 +1,20 @@
 package commons.money
 
-import money.Currency
 import org.scalatest.FlatSpec
 
 class CurrencyTest
   extends FlatSpec {
 
-  val value = 5678.90f
-  val words = "pięć tysięcy sześćset siedemdziesiąt osiem zł dziewięćdziesiąt gr"
+  val value = 5678f
+  val words = "pięć tysięcy sześćset siedemdziesiąt osiem zł"
 
 //  val value = 12345678.90f
 //  val words = "dwanaście milionów trzysta czterdzieści pięć tysięcy sześćset siedemdziesiąt osiem zł dziewięćdziesiąt gr"
 
-//  s"$value PLN" should s"be $words" in {
-//    assert(Currency.PLN.words(value) == words)
-//  }
+  s"$value PLN" should s"be $words" in {
+    val ca = CurrencyAmount(value, CurrencyEnum.PLN)
+    assert(ca.words == words)
+  }
 
   "Currency rate of PLN" should "be greater than 1" in {
     assert(CurrencyRate.euroIn("PLN").isDefined)
