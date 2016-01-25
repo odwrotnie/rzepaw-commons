@@ -5,11 +5,8 @@ import org.scalatest.FlatSpec
 class CurrencyTest
   extends FlatSpec {
 
-  val value = 5678f
-  val words = "pięć tysięcy sześćset siedemdziesiąt osiem zł"
-
-//  val value = 12345678.90f
-//  val words = "dwanaście milionów trzysta czterdzieści pięć tysięcy sześćset siedemdziesiąt osiem zł dziewięćdziesiąt gr"
+  val value = 12345678f
+  val words = "dwanaście milionów trzysta czterdzieści pięć tysięcy sześćset siedemdziesiąt osiem zł"
 
   s"$value PLN" should s"be $words" in {
     val ca = CurrencyAmount(value, CurrencyEnum.PLN)
