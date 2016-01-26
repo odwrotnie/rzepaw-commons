@@ -14,7 +14,7 @@ class CurrencyTest
 
   val amount = "12.3PLN"
   s"$amount" should "be convertable" in {
-    assert(CurrencyAmount.stringToCurrencyAmound(amount) == CurrencyAmount(12.3, CurrencyEnum.PLN))
+    assert(CurrencyAmount.stringToCurrencyAmound(amount) == CurrencyAmount(12.3, CurrencyEnum.USD))
   }
 
   s"$value PLN" should s"be $words" in {

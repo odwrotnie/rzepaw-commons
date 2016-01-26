@@ -19,7 +19,7 @@ case class CurrencyAmount(val amount: Double,
 
   override def toString = currency match {
     case cp: CurrencyPrinter => cp.digits(amount)
-    case _ => f"$amount%.2f"
+    case _ => if (currency.left) f"$currency$amount%.2f" else f"$amount%.2f $currency"
   }
 }
 

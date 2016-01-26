@@ -6,6 +6,7 @@ object CurrencyEnum extends Enumeration {
                  val short: String, val p: String,
                  val left: Boolean = true) extends Val(slug) {
     def amount(a: Double): CurrencyAmount = CurrencyAmount(a, this)
+    override def toString = short
   }
 
   private def short(slug: String): Currency = new Currency(slug, slug, slug, slug)
@@ -44,5 +45,6 @@ object CurrencyEnum extends Enumeration {
   val ZAR = short("ZAR")
 
   lazy val all: Seq[Currency] = values.toSeq.map((v: Value) => v.asInstanceOf[Currency])
-  def parse(currency: String): Option[Currency] = all.find(_.slug == currency)
+  def parse(currency: String): Option[Currency] =
+    all.find(_.slug == currency.toUpperCase)
 }
