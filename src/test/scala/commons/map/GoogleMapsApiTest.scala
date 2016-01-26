@@ -6,6 +6,7 @@ import org.scalatest.FunSuite
 /*
 sbt "~rzepawCommons/testOnly commons.map.GoogleMapsApiTest"
  */
+
 class GoogleMapsApiTest
   extends FunSuite
   with Logger {

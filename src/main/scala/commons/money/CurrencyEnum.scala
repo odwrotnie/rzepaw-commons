@@ -4,11 +4,11 @@ object CurrencyEnum extends Enumeration {
 
   class Currency(val name: String, val slug: String,
                  val short: String, val p: String,
-                 val left: Boolean = true) extends Val(slug)
+                 val left: Boolean = true) extends Val(slug) {
+    def amount(a: Double): CurrencyAmount = CurrencyAmount(a, this)
+  }
 
   private def short(slug: String): Currency = new Currency(slug, slug, slug, slug)
-
-  val all: Seq[Currency] = values.toSeq.map((v: Value) => v.asInstanceOf[Currency])
 
   val PLN = new Currency("Złoty", "PLN", "zł", "gr", left = false) with PLNCurrencyPrinter
   val EUR = new Currency("Euro", "EUR", "€", "¢")
@@ -42,4 +42,7 @@ object CurrencyEnum extends Enumeration {
   val SGD = short("SGD")
   val THB = short("THB")
   val ZAR = short("ZAR")
+
+  lazy val all: Seq[Currency] = values.toSeq.map((v: Value) => v.asInstanceOf[Currency])
+  def parse(currency: String): Option[Currency] = all.find(_.slug == currency)
 }

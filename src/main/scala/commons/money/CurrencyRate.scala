@@ -1,5 +1,7 @@
 package commons.money
 
+import commons.money.CurrencyEnum.Currency
+
 import scala.util.Try
 import scala.xml.{Node, XML}
 
@@ -24,4 +26,7 @@ object CurrencyRate {
     val euro = value / fromRate
     toRate * euro
   }
+
+  def calculate(from: Currency, to: Currency)(value: Double): Option[Double] =
+    calculate(from.slug, to.slug)(value)
 }

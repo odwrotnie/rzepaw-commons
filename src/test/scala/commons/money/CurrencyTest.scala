@@ -2,11 +2,20 @@ package commons.money
 
 import org.scalatest.FlatSpec
 
+/*
+sbt "~rzepawCommons/testOnly commons.money.CurrencyTest"
+ */
+
 class CurrencyTest
   extends FlatSpec {
 
   val value = 12345678f
   val words = "dwanaście milionów trzysta czterdzieści pięć tysięcy sześćset siedemdziesiąt osiem zł"
+
+  val amount = "12.3PLN"
+  s"$amount" should "be convertable" in {
+    assert(CurrencyAmount.stringToCurrencyAmound(amount) == CurrencyAmount(12.3, CurrencyEnum.PLN))
+  }
 
   s"$value PLN" should s"be $words" in {
     val ca = CurrencyAmount(value, CurrencyEnum.PLN)

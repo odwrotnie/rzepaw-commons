@@ -10,6 +10,11 @@ object Pattern {
       (s, p) => s.flatMap(s => p.findFirstIn(s))
     )
 
-  val INTEGER_PATTERN = "\\d+".r
-  def pickFirstInteger(text: String): Option[Int] = Try(pickFirst(INTEGER_PATTERN)(text).get.toInt).toOption
+  lazy val INTEGER_PATTERN = "\\d+".r
+  def pickFirstInteger(text: String): Option[Int] =
+    Try(pickFirst(INTEGER_PATTERN)(text).get.toInt).toOption
+
+  lazy val DOUBLE_PATTERN = "\\d+([\\.,]\\d+)?".r
+  def pickFirstDouble(text: String): Option[Double] =
+    Try(pickFirst(DOUBLE_PATTERN)(text).get.replace(",", ".").toDouble).toOption
 }
