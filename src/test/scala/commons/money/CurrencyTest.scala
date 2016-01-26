@@ -1,6 +1,7 @@
 package commons.money
 
 import org.scalatest.FlatSpec
+import CurrencyAmount._
 
 /*
 sbt "~rzepawCommons/testOnly commons.money.CurrencyTest"
@@ -14,7 +15,8 @@ class CurrencyTest
 
   val amount = "12.3PLN"
   s"$amount" should "be convertable" in {
-    assert(CurrencyAmount.stringToCurrencyAmound(amount) == CurrencyAmount(12.3, CurrencyEnum.USD))
+    println("123.50PLN".toEuro)
+    assert(CurrencyAmount.stringToCurrencyAmound(amount) == CurrencyAmount(12.3, CurrencyEnum.PLN))
   }
 
   s"$value PLN" should s"be $words" in {

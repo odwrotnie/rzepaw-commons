@@ -8,7 +8,7 @@ case class CurrencyAmount(val amount: Double,
 
   def to(toCurrency: Currency): Option[CurrencyAmount] =
     EURCurrencyRate.calculate(currency, toCurrency)(amount).map { amount =>
-      CurrencyAmount(amount, currency)
+      CurrencyAmount(amount, toCurrency)
     }
   def toEuro: Option[CurrencyAmount] = to(CurrencyEnum.EUR)
 
