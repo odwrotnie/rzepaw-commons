@@ -24,12 +24,12 @@ case class CurrencyAmount(val amount: Double,
 }
 
 object CurrencyAmount {
-  def apply(currency: String)(value: Double): Option[CurrencyAmount] =
-    CurrencyEnum.parse(currency).map(_.amount(value))
+  def apply(currency: String)(value: Double): CurrencyAmount =
+    CurrencyEnum.parse(currency).amount(value)
   implicit def stringToCurrencyAmound(s: String): CurrencyAmount = {
     val amount = Pattern.pickFirstDouble(s).get
     val currencySlug = Pattern.pickFirst("[A-Z]{3}".r)(s).get.toUpperCase
     val currency = CurrencyEnum.parse(currencySlug)
-    currency.get.amount(amount)
+    currency.amount(amount)
   }
 }

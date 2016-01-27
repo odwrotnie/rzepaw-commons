@@ -46,6 +46,6 @@ object CurrencyEnum extends Enumeration {
   val ZAR = short("ZAR")
 
   lazy val all: List[Currency] = values.toList.map((v: Value) => v.asInstanceOf[Currency])
-  def parse(currency: String): Option[Currency] =
-    all.find(_.slug == currency.toUpperCase)
+  def parse(currency: String): Currency = all.find(_.slug == currency.toUpperCase)
+    .getOrElse(throw new Exception("Currency enum parse"))
 }
