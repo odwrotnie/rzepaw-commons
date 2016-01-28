@@ -18,16 +18,16 @@ abstract class TreeEntity[TE <: TreeEntity[TE]](meta: TreeEntityMeta[TE])
   }
   def isRoot: DBIO[Boolean] = parent.map(_.isDefined)
 
-  def children: DBIO[Seq[TE]] = meta.table.filter(_.parentId === id).result
+  def children: DBIO[List[TE]] = meta.table.filter(_.parentId === id).result.map(_.toList)
 
   def childrenCount: DBIO[Int] = meta.table.filter(_.parentId === id).length.result
 
-  def descendants: DBIO[Seq[TE]] = {
-    val childrenChildren: DBIO[Seq[TE]] = children.flatMap { seq: Seq[TE] =>
-      if (seq.isEmpty) {
-        DBIO.successful(Seq[TE]())
+  def descendants: DBIO[List[TE]] = {
+    val childrenChildren: DBIO[List[TE]] = children.flatMap { list: List[TE] =>
+      if (list.isEmpty) {
+        DBIO.successful(Nil)
       } else {
-        DBIO.sequence(seq.map(_.descendants)).map(_.flatten)
+        DBIO.sequence(list.map(_.descendants)).map(_.flatten)
       }
     }
     for {
