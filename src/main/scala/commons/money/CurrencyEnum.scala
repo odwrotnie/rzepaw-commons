@@ -2,9 +2,9 @@ package commons.money
 
 object CurrencyEnum extends Enumeration {
 
-  class Currency(val name: String, val slug: String,
-                 val short: String, val p: String,
-                 val left: Boolean = true) extends Val(slug) {
+  case class Currency(val name: String, val slug: String,
+                      val short: String, val p: String,
+                      val left: Boolean = true) extends Val(slug) {
     def amount(a: Double): CurrencyAmount = CurrencyAmount(a, this)
     def euroAmount(a: Double): Option[CurrencyAmount] = EURCurrencyRate.calculate(CurrencyEnum.EUR, this)(a).map(amount)
     override def toString = short
