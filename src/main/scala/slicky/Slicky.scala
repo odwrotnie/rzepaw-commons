@@ -47,6 +47,7 @@ object Slicky
   }
 
   // Run in transaction
+  @deprecated("Use .future")
   def dbFuture[R](f: => DBIO[R]): Future[R] = db.run(f)
   def dbFutureSeq[R](f: => Seq[DBIO[R]]): Future[Unit] = db.run(DBIO.seq(f:_*))
 
