@@ -25,7 +25,7 @@ abstract class IdEntityMeta[IE <: IdEntity[IE]]
   override def byIdentQuery(ident: ID): Query[EntityTableWithId, IE, Seq] = table.filter(_.id === ident)
 
   override def insert(ie: IE): DBIO[IE] = {
-    require(ie.id.isEmpty)
+    require(ie.id.isEmpty, s"Inserting entity $ie with defined id: ${ ie.ident }")
     val newIE = beforeInsert(ie)
     val idAction = (table returning table.map(_.id)) += ie
     idAction.map { id: ID =>
