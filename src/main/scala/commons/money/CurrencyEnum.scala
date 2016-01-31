@@ -12,10 +12,10 @@ object CurrencyEnum extends Enumeration {
 
   private def short(slug: String): Currency = new Currency(slug, slug, slug, slug)
 
-  val PLN = new Currency("Złoty", "PLN", "zł", "gr", left = false) with PLNCurrencyPrinter
-  val EUR = new Currency("Euro", "EUR", "€", "¢")
-  val USD = new Currency("US Dollar", "USD", "$", "¢")
-  val GBP = new Currency("Pound", "GBP", "£", "p")
+  val PLN = new Currency("Złoty", "PLN", "zł", "gr", left = false) // with PLNCurrencyPrinter
+  val EUR = Currency("Euro", "EUR", "€", "¢")
+  val USD = Currency("US Dollar", "USD", "$", "¢")
+  val GBP = Currency("Pound", "GBP", "£", "p")
   val JPY = short("JPY")
   val BGN = short("BGN")
   val CZK = short("CZK")
