@@ -6,6 +6,10 @@ import commons.text.Pattern
 case class CurrencyAmount(val amount: Double,
                           val currency: Currency = CurrencyEnum.PLN) {
 
+  def plus(ca: CurrencyAmount): Option[CurrencyAmount] = {
+    ca.to(currency).map(ca => currency.amount(amount + ca.amount))
+  }
+
   def to(toCurrency: Currency): Option[CurrencyAmount] =
     EURCurrencyRate.calculate(currency, toCurrency)(amount).map { amount =>
       CurrencyAmount(amount, toCurrency)
