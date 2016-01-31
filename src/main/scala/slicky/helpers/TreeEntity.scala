@@ -10,7 +10,7 @@ abstract class TreeEntity[TE <: TreeEntity[TE]](meta: TreeEntityMeta[TE])
   extends IdEntity[TE](meta) {
   self: TE =>
   def parentId: Option[ID]
-  def parentId_=(i: Option[ID]): Unit
+  def parentId_=(id: Option[ID]): Unit
 
   def parent: DBIO[Option[TE]] = parentId match {
     case Some(id) => meta.byIdent(id)

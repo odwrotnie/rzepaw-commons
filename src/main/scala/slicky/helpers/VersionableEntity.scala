@@ -1,13 +1,20 @@
 package slicky.helpers
 
 import org.joda.time.DateTime
+import slicky.entity.IdEntity
 
 import scala.concurrent.Future
 import slicky.Slicky._
 
-trait VersionableEntity[TE <: TreeEntity[TE] with CreatedableEntity]
-  extends CreatedableEntity { self: TreeEntity[TE] with CreatedableEntity =>
+trait VersionableEntity[E <: IdEntity[E] with CreatedableEntity]
+  extends CreatedableEntity { self: IdEntity[E] with CreatedableEntity =>
 
-  def actualVersion: Future[TreeEntity[TE]] =
-    descendants.map(_.sortBy(_.created.getMillis).headOption.getOrElse(this)).future
+  def previousVersionId: Option[ID]
+
+  def deepCopy: Future[E]
+
+//  def actualVersion: Future[E] =
+//    descendants.map(_.sortBy(_.created.getMillis).headOption.getOrElse(this)).future
+//
+//  meta.table.filter(_.pre)
 }
