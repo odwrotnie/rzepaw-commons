@@ -30,7 +30,6 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
   def byIdentQuery(ident: IDENT): Query[EntityTable, IE, Seq]
 
   def byIdent(ident: IDENT): DBIO[Option[IE]] = byIdentQuery(ident).result.headOption
-
   def byIdent(ident: Option[IDENT]): DBIO[Option[IE]] = ident match {
     case Some(ident) => byIdent(ident)
     case None => DBIO.successful(None)
@@ -39,6 +38,10 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
   def byIdentGet(ident: IDENT): DBIO[IE] = byIdent(ident).flatMap {
     case Some(ie) => DBIO.successful(ie)
     case _ => DBIO.failed(new Exception(s"There is no entity ${ getClass.getSimpleName } with ident: $ident"))
+  }
+  def byIdentGet(ident: Option[IDENT]): DBIO[Option[IE]] = ident match {
+    case Some(ident) => byIdentGet(ident).map(Option.apply)
+    case None => DBIO.successful(None)
   }
 
   //  def byIdentOptionOrCreate(ident: Option[IDENT], create: => Future[IE]): Future[IE] =
