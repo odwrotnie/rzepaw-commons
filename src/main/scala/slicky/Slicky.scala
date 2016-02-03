@@ -5,17 +5,18 @@ import java.sql.Timestamp
 import commons.files.ResourceProperties
 import commons.logger.Logger
 import org.joda.time.DateTime
+import slick.jdbc.JdbcBackend._
 import slick.backend.DatabasePublisher
-import slick.driver.{JdbcDriver, H2Driver, MySQLDriver}
 import slick.lifted.CanBeQueryCondition
 import slicky.entity.{IdentEntity, Entity, IdEntity}
+import slick.driver._
 
 import scala.concurrent._
 import scala.concurrent.duration._
 
 object Slicky
   extends Logger {
-  
+
   val properties = ResourceProperties("/db.properties")
 
   type ID = Long
@@ -27,8 +28,11 @@ object Slicky
 
   val DURATION = Duration.Inf
 
-  lazy val driver = DefaultDBConfig.driver.get
-  lazy val db = DefaultDBConfig.database.get
+  val databaseDriver: (DatabaseDef, JdbcProfile) =
+    List(JNDIDBConfig, PropertiesDBConfig, DefaultDBConfig)
+      .flatMap(_.databaseDriver).head
+  val db = databaseDriver._1
+  val driver = databaseDriver._2
   import driver.api._
 
   // Run in transaction
@@ -84,12 +88,12 @@ object Slicky
   }
 
   /**
-   * Optionally filters on a column with a supplied predicate
- *
-   * @param query
-   * @tparam X
-   * @tparam Y
-   */
+    * Optionally filters on a column with a supplied predicate
+    *
+    * @param query
+    * @tparam X
+    * @tparam Y
+    */
   case class MaybeFilter[X, Y](query: Query[X, Y, Seq]) {
     def filter[T, R: CanBeQueryCondition](data: Option[T])(f: T => X => R) = {
       data.map(v => MaybeFilter(query.withFilter(f(v)))).getOrElse(this)

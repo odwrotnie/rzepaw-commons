@@ -8,7 +8,7 @@ import slick.jdbc.JdbcBackend._
 import scala.util.Try
 
 abstract class DBConfig {
-  def dbDriver: Option[(DatabaseDef, JdbcProfile)] = for {
+  def databaseDriver: Option[(DatabaseDef, JdbcProfile)] = for {
     db <- database
     dr <- driver
   } yield (db, dr)
