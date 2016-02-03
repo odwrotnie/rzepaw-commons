@@ -26,23 +26,10 @@ object Slicky
   implicit lazy val futureEC = scala.concurrent.ExecutionContext.Implicits.global
 
   val DURATION = Duration.Inf
-  lazy val CONNECTION_STRING: String = properties.get("slick.db.connection.string").getOrElse("jdbc:h2:mem:wext-slick;DB_CLOSE_DELAY=-1;MVCC=TRUE")
-  lazy val DRIVER_CLASS: String = properties.get("slick.db.driver").getOrElse("org.h2.Driver")
-  lazy val USER: Option[String] = properties.get("slick.db.user")
-  lazy val PASSWORD: Option[String] = properties.get("slick.db.password")
-  lazy val driver: JdbcDriver = DRIVER_CLASS match {
-    case "org.h2.Driver" => H2Driver
-    case "com.mysql.jdbc.Driver" => MySQLDriver
-  }
 
+  lazy val driver = DefaultDBConfig.driver.get
+  lazy val db = DefaultDBConfig.database.get
   import driver.api._
-
-  lazy val db = (USER, PASSWORD) match {
-    case (Some(u), Some(p)) =>
-      Database.forURL(CONNECTION_STRING, driver = DRIVER_CLASS, user = u, password = p)
-    case _ =>
-      Database.forURL(CONNECTION_STRING, driver = DRIVER_CLASS)
-  }
 
   // Run in transaction
   @deprecated("Use .future")

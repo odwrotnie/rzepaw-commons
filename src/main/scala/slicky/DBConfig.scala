@@ -8,8 +8,12 @@ import slick.jdbc.JdbcBackend._
 import scala.util.Try
 
 abstract class DBConfig {
+  def dbDriver: Option[(DatabaseDef, JdbcProfile)] = for {
+    db <- database
+    dr <- driver
+  } yield (db, dr)
   def driverClass: Option[String]
-  lazy val driverOption: Option[JdbcProfile] = driverClass map {
+  lazy val driver: Option[JdbcProfile] = driverClass map {
     case "org.h2.Driver" => H2Driver
     case "com.mysql.jdbc.Driver" => MySQLDriver
   }
@@ -22,7 +26,7 @@ object JNDIDBConfig
     val ic = new InitialContext()
     ic.lookup("java:comp/env/databaseClassDriver").asInstanceOf[String]
   } toOption
-  lazy val database = driverOption map { driver =>
+  lazy val database = driver map { driver =>
     Database.forName("???")
   }
 }
@@ -32,7 +36,7 @@ abstract class SimpleDBConfig
   def connectionString: Option[String]
   def user: Option[String]
   def password: Option[String]
-  lazy val database = driverOption flatMap { driver =>
+  lazy val database = driver flatMap { driver =>
     (connectionString, driverClass, user, password) match {
       case (Some(cs), Some(dc), Some(u), Some(p)) =>
         Some(Database.forURL(url = cs, driver = dc, user = u, password = p))
