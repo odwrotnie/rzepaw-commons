@@ -2,9 +2,12 @@ package commons.settings
 
 import java.util.Properties
 
+import commons.logger.Logger
+
 import scala.util.Try
 
-case class ResourceProperties(path: String) {
+case class ResourceProperties(path: String)
+  extends Logger {
 
   require(path.startsWith("/"), "Path should start with forward slash")
 
@@ -15,6 +18,7 @@ case class ResourceProperties(path: String) {
   }.toOption
 
   def get(prop: String): Option[String] = props flatMap { p =>
+    debug(s"Properties $path lookup: $prop")
     Try(p.getProperty(prop)).toOption.flatMap(Option(_))
   }
 }
