@@ -35,7 +35,7 @@ case class GoogleMobileNotification(name: String, key: String)
         "body" -> message,
         "icon" -> "ic_stat_ic_notification"
       )),
-      "to" -> s"/topics/$topic"
+      "to" -> s"/topics/${ GoogleMobileNotification.topic }"
     ))
     val jsonString = json.toString()
 
