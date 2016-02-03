@@ -1,7 +1,7 @@
 package slicky
 
 import javax.naming.InitialContext
-import commons.settings.ResourceProperties
+import commons.settings.{JNDI, ResourceProperties}
 import slick.driver.{JdbcProfile, MySQLDriver, H2Driver, JdbcDriver}
 import slick.jdbc.JdbcBackend._
 import scala.util.Try
@@ -22,12 +22,9 @@ abstract class DBConfig {
 
 object JNDIDBConfig
   extends DBConfig {
-  lazy val driverClass: Option[String] = Try {
-    val ic = new InitialContext()
-    ic.lookup("java:comp/env/databaseClassDriver").asInstanceOf[String]
-  } toOption
+  lazy val driverClass: Option[String] = JNDI.get("jdbc/driver")
   lazy val database = driver map { driver =>
-    Database.forName("???")
+    Database.forName("ds")
   }
 }
 
