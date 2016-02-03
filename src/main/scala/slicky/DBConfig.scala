@@ -24,7 +24,7 @@ object JNDIDBConfig
   extends DBConfig {
   lazy val driverClass: Option[String] = JNDI.get("jdbc/driver")
   lazy val database = driver map { driver =>
-    Database.forName("ds")
+    Database.forName("jdbc/database")
   }
 }
 

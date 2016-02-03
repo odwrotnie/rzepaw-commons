@@ -31,6 +31,7 @@ object Slicky
       .find(_.databaseDriver.isDefined).head
   infoAsciiArt("DB Configured")
   info(s"DB Config: $dbConfig")
+
   val databaseDriver = dbConfig.databaseDriver.get
   val db = databaseDriver._1
   val driver = databaseDriver._2
