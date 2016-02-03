@@ -1,5 +1,7 @@
 package commons.settings
 
+import scala.util.Try
+
 object JNDIOrProperties {
 
   def get(path: String*): Option[String] = {
@@ -9,4 +11,6 @@ object JNDIOrProperties {
     ).flatten
     results.headOption
   }
+
+  def getInt(path: String*): Option[Int] = get(path:_*).flatMap(s => Try(s.toInt).toOption)
 }
