@@ -6,7 +6,7 @@ import commons.files.ResourceProperties
 import commons.logger.Logger
 import org.joda.time.DateTime
 import slick.backend.DatabasePublisher
-import slick.driver.{H2Driver, MySQLDriver}
+import slick.driver.{JdbcDriver, H2Driver, MySQLDriver}
 import slick.lifted.CanBeQueryCondition
 import slicky.entity.{IdentEntity, Entity, IdEntity}
 
@@ -30,14 +30,12 @@ object Slicky
   lazy val DRIVER_CLASS: String = properties.get("slick.db.driver").getOrElse("org.h2.Driver")
   lazy val USER: Option[String] = properties.get("slick.db.user")
   lazy val PASSWORD: Option[String] = properties.get("slick.db.password")
-  lazy val driver = DRIVER_CLASS match {
+  lazy val driver: JdbcDriver = DRIVER_CLASS match {
     case "org.h2.Driver" => H2Driver
     case "com.mysql.jdbc.Driver" => MySQLDriver
   }
 
   import driver.api._
-
-  info(s"Database setup - connection: $CONNECTION_STRING, driver: $DRIVER_CLASS, user: $USER, password: $PASSWORD")
 
   lazy val db = (USER, PASSWORD) match {
     case (Some(u), Some(p)) =>
