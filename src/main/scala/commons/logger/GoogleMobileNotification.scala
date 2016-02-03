@@ -1,12 +1,21 @@
 package commons.logger
 
+import javax.naming.InitialContext
+
 import dispatch.Defaults._
 import dispatch._
 
 import scala.concurrent.{Future, Await}
 import scala.concurrent.duration.Duration
 import scala.util.parsing.json.JSONObject
-import scala.util.{Failure, Success}
+import scala.util.{Try, Failure, Success}
+
+object GoogleMobileNotification {
+  lazy val topic: String = Try {
+    val ic = new InitialContext()
+    ic.lookup("gmc/topic").asInstanceOf[String]
+  }.toOption.getOrElse("global")
+}
 
 case class GoogleMobileNotification(name: String, key: String)
   extends Logger {
@@ -26,7 +35,7 @@ case class GoogleMobileNotification(name: String, key: String)
         "body" -> message,
         "icon" -> "ic_stat_ic_notification"
       )),
-      "to" -> "/topics/global"
+      "to" -> s"/topics/$topic"
     ))
     val jsonString = json.toString()
 

@@ -18,6 +18,7 @@ abstract class DBConfig {
     case "com.mysql.jdbc.Driver" => MySQLDriver
   }
   def database: Option[DatabaseDef]
+  override def toString = s"${ getClass.getSimpleName.toUpperCase }"
 }
 
 object JNDIDBConfig
@@ -55,7 +56,7 @@ object PropertiesDBConfig
   lazy val user: Option[String] = properties.get("slick.db.user")
   lazy val password: Option[String] = properties.get("slick.db.password")
   lazy val driverClass: Option[String] = properties.get("slick.db.driver")
-  override def toString = s"Database setup - connection: $connectionString, driver: $driverClass, user: $user, password: $password"
+  override def toString = super.toString + s": connection: $connectionString, driver: $driverClass, user: $user, password: $password"
 }
 
 object DefaultDBConfig
