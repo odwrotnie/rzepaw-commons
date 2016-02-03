@@ -8,8 +8,6 @@ import scala.concurrent.duration.Duration
 import scala.util.parsing.json.JSONObject
 import scala.util.{Failure, Success}
 
-
-
 case class GoogleMobileNotification(name: String, key: String)
   extends Logger {
 
