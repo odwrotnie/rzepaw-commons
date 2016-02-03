@@ -1,4 +1,4 @@
-package commons.files
+package commons.settings
 
 import java.util.Properties
 

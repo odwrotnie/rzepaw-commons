@@ -1,8 +1,7 @@
 package slicky
 
 import javax.naming.InitialContext
-
-import commons.files.ResourceProperties
+import commons.settings.ResourceProperties
 import slick.driver.{JdbcProfile, MySQLDriver, H2Driver, JdbcDriver}
 import slick.jdbc.JdbcBackend._
 import scala.util.Try
@@ -51,7 +50,7 @@ abstract class SimpleDBConfig
 
 object PropertiesDBConfig
   extends SimpleDBConfig {
-  lazy val properties = ResourceProperties("/db.properties")
+  lazy val properties = ResourceProperties("/jdbc.properties")
   lazy val connectionString: Option[String] = properties.get("slick.db.connection.string")
   lazy val user: Option[String] = properties.get("slick.db.user")
   lazy val password: Option[String] = properties.get("slick.db.password")

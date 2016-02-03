@@ -1,9 +1,8 @@
 package slicky
 
 import java.sql.Timestamp
-
-import commons.files.ResourceProperties
 import commons.logger.Logger
+import commons.settings.ResourceProperties
 import org.joda.time.DateTime
 import slick.jdbc.JdbcBackend._
 import slick.backend.DatabasePublisher
