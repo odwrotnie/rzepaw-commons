@@ -155,6 +155,7 @@ abstract class DateInterval[DI <: DateInterval[DI]](val meta: DateIntervalMeta[D
 
 trait DateIntervalMeta[DI <: DateInterval[DI]] {
   def apply(dt: DateTime): DI
+  def apply(millis: Long): DI = apply(DateUtil.getDate(millis))
   def current = apply(DateTime.now)
   def surrounding(interval: Interval): Stream[DI] = surrounding(interval.getStart, interval.getEnd)
   def surrounding(after: DateTime, before: DateTime): Stream[DI] = apply(after).nextInclusiveStream.takeWhile(_.start isBefore before)
