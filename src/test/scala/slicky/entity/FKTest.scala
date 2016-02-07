@@ -18,22 +18,24 @@ class FKTest
   Bar.table.schema.create.await
 
   val foo = Foo("foo").insert.await
-  val bar = Bar("bar", FooFK(foo)).insert.await
+  val bar = Bar("bar", FooFK(Some(foo))).insert.await
 
   "Bar" should "have foo" in {
-    bar.foo.entity
+    assert(bar.foo.entity.isDefined)
   }
 }
 
 //
 
-case class FooFK(entity: Foo)
-  extends FK[Foo](entity)
+case class FooFK(entity: Option[Foo], id: Option[ID] = None)
+  extends FK[Foo](entity, id) {
+  override def meta = Foo
+}
 
 object FooFK {
   implicit val FKMapper = MappedColumnType.base[FooFK, ID](
-    fooFK => fooFK.id.get,
-    id => FooFK(Foo.byIdentGet(id).await)
+    fooFK => fooFK.ident.get,
+    id => FooFK(None, Some(id))
   )
 }
 
