@@ -58,11 +58,6 @@ case class IdName(var name: String,
 object IdName
   extends IdEntityMeta[IdName] {
 
-//  override def beforeSave(in: IdName): IdName = {
-//    in.name = in.name + " BEFORE_SAVE"
-//    in
-//  }
-
   val table = TableQuery[Tbl]
 
   class Tbl(tag: Tag) extends EntityTableWithId(tag) {
