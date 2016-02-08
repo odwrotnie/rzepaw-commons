@@ -53,7 +53,7 @@ libraryDependencies += "org.apache.poi" % "poi-scratchpad" % "3.10-FINAL"
 
 // SLICKY
 
-libraryDependencies += "com.typesafe.slick" %% "slick" % "3.1.0"
+libraryDependencies += "com.typesafe.slick" %% "slick" % "3.1.1"
 
 libraryDependencies += "com.wix" %% "accord-core" % "0.5"
 
