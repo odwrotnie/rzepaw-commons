@@ -11,10 +11,7 @@ import scala.util.Try
 object Properties
   extends Logger {
 
-  val PREFIX = "wext"
-
-  def get(pathWithoutPrefix: String*): Option[String] = {
-    val path = PREFIX ++ pathWithoutPrefix
+  def get(path: String*): Option[String] = {
     val results: List[String] = List(
       JNDI.get(path.mkString("/")),
       SystemProperties.get(path.mkString(("."))),

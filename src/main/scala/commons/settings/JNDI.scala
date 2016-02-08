@@ -12,7 +12,8 @@ object JNDI
   def ic = new InitialContext()
 
   def get(path: String): Option[String] = {
-    debug(s"JNDI lookup: $path")
-    Try(ic.lookup(path).asInstanceOf[String]).toOption
+    val res = Try(ic.lookup(path).asInstanceOf[String]).toOption
+    debug(s"JNDI lookup: $path - $res")
+    res
   }
 }

@@ -18,7 +18,8 @@ case class ResourceProperties(path: String)
   }.toOption
 
   def get(prop: String): Option[String] = props flatMap { p =>
-    debug(s"Properties $path lookup: $prop")
-    Try(p.getProperty(prop)).toOption.flatMap(Option(_))
+    val res = Try(p.getProperty(prop)).toOption.flatMap(Option(_))
+    debug(s"Properties $path lookup: $prop - $res")
+    res
   }
 }

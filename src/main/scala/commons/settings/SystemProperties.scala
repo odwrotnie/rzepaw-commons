@@ -10,7 +10,8 @@ object SystemProperties
   extends Logger {
 
   def get(prop: String): Option[String] = {
-    debug(s"System properties lookup: $prop")
-    Try(System.getProperty(prop)).toOption
+    val res = Try(System.getProperty(prop)).toOption.flatMap(Option(_))
+    debug(s"System properties lookup: $prop - $res")
+    res
   }
 }

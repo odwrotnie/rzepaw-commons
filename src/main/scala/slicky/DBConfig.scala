@@ -15,6 +15,7 @@ abstract class DBConfig {
   lazy val driver: Option[JdbcProfile] = driverClass map {
     case "org.h2.Driver" => H2Driver
     case "com.mysql.jdbc.Driver" => MySQLDriver
+    case d => throw new Exception(s"No such driver specified in DBConfig - $d")
   }
   def database: Option[DatabaseDef]
   override def toString = s"${ getClass.getSimpleName.toUpperCase }"
