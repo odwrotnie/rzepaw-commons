@@ -1,7 +1,7 @@
 package slicky
 
 import javax.naming.InitialContext
-import commons.settings.{JNDI, ResourceProperties}
+import commons.settings.{SystemProperties, JNDI, ResourceProperties}
 import slick.driver.{JdbcProfile, MySQLDriver, H2Driver, JdbcDriver}
 import slick.jdbc.JdbcBackend._
 import scala.util.Try
@@ -52,6 +52,15 @@ object PropertiesDBConfig
   lazy val user: Option[String] = properties.get("slick.db.user")
   lazy val password: Option[String] = properties.get("slick.db.password")
   lazy val driverClass: Option[String] = properties.get("slick.db.driver")
+  override def toString = super.toString + s": connection: $connectionString, driver: $driverClass, user: $user, password: $password"
+}
+
+object SystemPropertiesDBConfig
+  extends SimpleDBConfig {
+  lazy val connectionString: Option[String] = SystemProperties.get("slick.db.connection.string")
+  lazy val user: Option[String] = SystemProperties.get("slick.db.user")
+  lazy val password: Option[String] = SystemProperties.get("slick.db.password")
+  lazy val driverClass: Option[String] = SystemProperties.get("slick.db.driver")
   override def toString = super.toString + s": connection: $connectionString, driver: $driverClass, user: $user, password: $password"
 }
 

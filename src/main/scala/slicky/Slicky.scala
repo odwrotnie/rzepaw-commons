@@ -27,7 +27,7 @@ object Slicky
 
   val DURATION = Duration.Inf
 
-  val dbConfig: DBConfig = List(JNDIDBConfig, PropertiesDBConfig, DefaultDBConfig)
+  val dbConfig: DBConfig = List(SystemPropertiesDBConfig, JNDIDBConfig, PropertiesDBConfig, DefaultDBConfig)
       .find(_.databaseDriver.isDefined).head
   infoAsciiArt("DB Configured")
   info(s"DB Config: $dbConfig")
