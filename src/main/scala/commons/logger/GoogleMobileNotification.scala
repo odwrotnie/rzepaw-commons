@@ -2,7 +2,7 @@ package commons.logger
 
 import javax.naming.InitialContext
 
-import commons.settings.JNDIOrProperties
+import commons.settings.Properties
 import dispatch.Defaults._
 import dispatch._
 
@@ -12,7 +12,7 @@ import scala.util.parsing.json.JSONObject
 import scala.util.{Try, Failure, Success}
 
 object GoogleMobileNotification {
-  lazy val topic: String =  JNDIOrProperties.get("gmc", "topic").getOrElse("global")
+  lazy val topic: String =  Properties.get("gmc", "topic").getOrElse("global")
 }
 
 case class GoogleMobileNotification(name: String, key: String)
