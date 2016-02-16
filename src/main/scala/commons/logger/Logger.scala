@@ -20,7 +20,9 @@ Logger {
   def info(msg: => AnyRef) = if (logger.isInfoEnabled)
     logger.info(String.valueOf(msg))
   def infoAsciiArt(msg: => AnyRef) = if (logger.isInfoEnabled) {
+    logger.info("-------------------------------------------")
     logger.info(String.valueOf(msg))
+    logger.info("-------------------------------------------")
     // println("\n" + FigletFont.convertOneLine(String.valueOf(msg)))
   }
 
