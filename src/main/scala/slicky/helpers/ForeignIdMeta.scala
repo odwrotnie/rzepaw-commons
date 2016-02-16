@@ -2,8 +2,7 @@ package slicky.helpers
 
 import slicky.Slicky._
 import driver.api._
-import slicky.entity.{EntityMeta, Entity}
-import scala.concurrent.Future
+import slicky.entity._
 
 trait ForeignIdEntityMeta[FIE <: Entity[FIE] {def foreignId: Option[String]; def withForeignId(foreignId: String): FIE}] {
 
@@ -14,28 +13,36 @@ trait ForeignIdEntityMeta[FIE <: Entity[FIE] {def foreignId: Option[String]; def
     table.filter(_.foreignId === foreignId)
 
   def byForeignId(foreignId: String): Stream[FIE] = streamify(byForeignIdQuery(foreignId))
-
-  def updateByForeignId(entity: FIE): DBIO[Option[FIE]] = {
+  def fromDb(entity: FIE): Stream[FIE] = {
     require(entity.foreignId.nonEmpty)
-    val foreignId = entity.foreignId.get
-    byForeignIdQuery(foreignId).update(entity) map {
-      case rows if rows == 0 => None
-      case rows if rows == 1 => byForeignId(foreignId).headOption
-    }
+    byForeignId(entity.foreignId.get)
   }
-  def updateByForeignId(foreignId: String, entity: FIE): DBIO[Option[FIE]] = {
+
+  def updateByForeignId(e: FIE): DBIO[List[FIE]] = {
+    require(e.foreignId.nonEmpty)
+    val foreignId = e.foreignId.get
+    val entities: List[DBIO[FIE]] = fromDb(e).toList map {
+      case idEntity: IdEntity[_] => // Prevents overwriting auto-generated id with None (earlier it was given new id)
+        val ie: FIE = e.asInstanceOf[IdEntity[_]].withId(idEntity.ident).asInstanceOf[FIE]
+        byForeignIdQuery(foreignId).update(ie).map(_ => ie)
+      case entity =>
+        byForeignIdQuery(foreignId).update(entity).map(_ => entity)
+    }
+    DBIO.sequence(entities)
+  }
+  def updateByForeignId(foreignId: String, entity: FIE): DBIO[_] = {
     val e = entity.withForeignId(foreignId)
     updateByForeignId(e)
   }
 
   def insert(e: FIE): DBIO[FIE]
-  def updateOrInsertByForeignId(entity: FIE): DBIO[FIE] = {
+  def updateOrInsertByForeignId(entity: FIE): DBIO[List[FIE]] = {
     updateByForeignId(entity) flatMap {
-      case Some(e) => DBIO.successful(e)
-      case None => insert(entity)
+      case Nil => DBIO.sequence(insert(entity) :: Nil)
+      case list => DBIO.successful(list)
     }
   }
-  def updateOrInsertByForeignId(foreignId: String, entity: FIE): DBIO[FIE] = {
+  def updateOrInsertByForeignId(foreignId: String, entity: FIE): DBIO[_] = {
     val e = entity.withForeignId(foreignId)
     updateOrInsertByForeignId(e)
   }
