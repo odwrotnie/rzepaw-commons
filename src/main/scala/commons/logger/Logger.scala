@@ -3,7 +3,8 @@ package commons.logger
 import com.github.lalyos.jfiglet.FigletFont
 import org.slf4j._
 
-trait Logger {
+trait
+Logger {
 
   @transient
   private lazy val logger = LoggerFactory.getLogger(getClass)

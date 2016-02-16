@@ -3,6 +3,7 @@ package slicky
 import javax.naming.InitialContext
 import commons.settings.{SystemProperties, JNDI, ResourceProperties}
 import slick.driver.{JdbcProfile, MySQLDriver, H2Driver, JdbcDriver}
+import com.typesafe.slick.driver.ms.SQLServerDriver
 import slick.jdbc.JdbcBackend._
 import scala.util.Try
 
@@ -13,8 +14,9 @@ abstract class DBConfig {
   } yield (db, dr)
   def driverClass: Option[String]
   lazy val driver: Option[JdbcProfile] = driverClass map {
-    case "org.h2.Driver" => H2Driver
-    case "com.mysql.jdbc.Driver" => MySQLDriver
+    case "h2" | "org.h2.Driver" => H2Driver
+    case "mysql" | "com.mysql.jdbc.Driver" => MySQLDriver
+    case "mssql" | "com.typesafe.slick.driver.ms.SQLServerDriver" => SQLServerDriver
     case d => throw new Exception(s"No such driver specified in DBConfig - $d")
   }
   def database: Option[DatabaseDef]

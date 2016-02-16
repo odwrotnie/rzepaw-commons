@@ -9,6 +9,9 @@ lazy val rzepawCommons = (project in file(".")).
 net.virtualvoid.sbt.graph.Plugin.graphSettings
 
 
+resolvers += "Typesafe Releases" at "http://repo.typesafe.com/typesafe/maven-releases/"
+
+
 libraryDependencies += "org.scala-lang" % "scala-library" % "2.11.7"
 
 libraryDependencies += "commons-lang" % "commons-lang" % "2.6"
@@ -54,6 +57,8 @@ libraryDependencies += "org.apache.poi" % "poi-scratchpad" % "3.10-FINAL"
 // SLICKY
 
 libraryDependencies += "com.typesafe.slick" %% "slick" % "3.1.1"
+
+libraryDependencies += "com.typesafe.slick" %% "slick-extensions" % "3.1.0"
 
 libraryDependencies += "com.wix" %% "accord-core" % "0.5"
 
