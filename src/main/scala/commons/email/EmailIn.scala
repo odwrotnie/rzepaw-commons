@@ -12,6 +12,7 @@ import commons.text.Pattern
 import org.joda.time.DateTime
 
 import scala.util.Try
+import scala.xml.{XML, NodeSeq}
 
 case class IMAPServer(server: String,
                       username: String,
@@ -68,8 +69,8 @@ case class EmailIn(m: IMAPMessage)
   lazy val dateSent = m.getSentDate
 
   private lazy val strings: List[String] = content.filter(_.isInstanceOf[String]).map(_.asInstanceOf[String].trim)
-  lazy val text: Option[String] = strings.filter(!_.startsWith(HTML_START)).headOption
-  lazy val html: Option[String] = strings.filter(_.startsWith(HTML_START)).headOption
+  lazy val text: Option[String] = strings.find(!_.startsWith(HTML_START))
+  lazy val html: Option[NodeSeq] = strings.find(_.startsWith(HTML_START)).map(XML.loadString)
   lazy val files: List[Attachment] = content.filter(_.isInstanceOf[Attachment]).map(_.asInstanceOf[Attachment])
 
   lazy val content = {

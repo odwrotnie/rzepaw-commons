@@ -2,7 +2,7 @@ package commons.email
 
 import org.apache.commons.mail._
 import org.joda.time.DateTime
-import scala.xml.Elem
+import scala.xml.{NodeSeq, Elem}
 
 case class SMTPServer(address: String,
                       username: String,
@@ -30,7 +30,7 @@ case class EmailOut(smtp: SMTPServer)
   var date = new DateTime(DateTime.now())
 
   var files: List[commons.email.Attachment] = Nil
-  var html: Option[String] = None
+  var html: Option[NodeSeq] = None
   var identity: String = "?"
   var recipients: Seq[String] = Seq()
   var recipientsBCC: Seq[String] = Seq()

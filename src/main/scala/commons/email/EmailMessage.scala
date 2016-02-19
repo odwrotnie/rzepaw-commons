@@ -42,12 +42,10 @@ abstract class EmailMessage {
   def recipientsCC: Seq[String]
   def recipientsBCC: Seq[String]
   def subjectRaw: String
-  def subjectThread: Option[String] =
-    Pattern.pickFirst(THREAD_PATTERN, IN_THREAD_PATTERN)(subjectRaw)
-  def subject: String =
-    subjectRaw.replaceFirst(THREAD_PATTERN.regex, "").replaceAll("\\s+", " ").trim
+  def subjectThread: Option[String] = Pattern.pickFirst(THREAD_PATTERN, IN_THREAD_PATTERN)(subjectRaw)
+  def subject: String = subjectRaw.replaceFirst(THREAD_PATTERN.regex, "").replaceAll("\\s+", " ").trim
   def text: Option[String]
-  def html: Option[String]
+  def html: Option[NodeSeq]
   def files: List[Attachment]
   override def toString = s"$subject:(${ text.take(10) }...})"
 }
