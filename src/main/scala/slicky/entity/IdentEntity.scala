@@ -20,7 +20,8 @@ abstract class IdentEntity[IDENT, IE <: IdentEntity[IDENT, IE]](override val met
   def update: DBIO[IE] = meta.update(this)
   def delete: DBIO[IE] = meta.delete(this)
 
-  def updateOrInsert(query: Query[_, IE, Seq]): DBIO[IE] = meta.getOrInsert(query, this)
+  def updateOrInsert: DBIO[IE] = updateOrInsert(meta.byIdentQuery(ident))
+  def updateOrInsert(query: Query[_, IE, Seq]): DBIO[IE] = meta.getOrInsert(query, this).flatMap(_.save)
   def readFromDB: DBIO[Option[IE]] = meta.byIdent(ident)
 }
 
