@@ -53,8 +53,11 @@ case class EmailOut(smtp: SMTPServer)
       else Plain
 
     val email: Email = format match {
-      case Plain => new SimpleEmail().setMsg(text.get)
-      case Rich => new HtmlEmail().setHtmlMsg(html.get.toString).setTextMsg(text.get)
+      case Plain =>
+        new SimpleEmail().setMsg(text.get)
+      case Rich =>
+        val htmlString = "<!doctype html>\n" + html.get.toString
+        new HtmlEmail().setHtmlMsg(htmlString).setTextMsg(text.get)
       case MultiPart => {
         val mpe = new MultiPartEmail()
         mpe.setMsg(text.get)
