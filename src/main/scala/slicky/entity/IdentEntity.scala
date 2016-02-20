@@ -6,11 +6,12 @@ import driver.api._
 import scala.concurrent.Future
 
 /**
- * Entity identified by set of fields - IDENT
- * @param meta
- * @tparam IDENT set of fields, i.e. (Int, String)
- * @tparam IE
- */
+  * Entity identified by set of fields - IDENT
+  *
+  * @param meta
+  * @tparam IDENT set of fields, i.e. (Int, String)
+  * @tparam IE
+  */
 abstract class IdentEntity[IDENT, IE <: IdentEntity[IDENT, IE]](override val meta: IdentEntityMeta[IDENT, IE])
   extends Entity[IE](meta) {
   self: IE =>
@@ -25,7 +26,7 @@ abstract class IdentEntity[IDENT, IE <: IdentEntity[IDENT, IE]](override val met
 
 abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
   extends EntityMeta[IE]
-  with Logger {
+    with Logger {
 
   def byIdentQuery(ident: IDENT): Query[EntityTable, IE, Seq]
 
@@ -73,16 +74,19 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
 
   def update(ie: IE): DBIO[IE] = update(ie.ident, ie)
 
-  def getOrInsert(query: Query[_, IE, Seq], ie: IE): DBIO[IE] = query.length.result.flatMap {
-    case i if i == 0 => insert(ie)
-    case i if i == 1 => query.result.head
-    case _ => DBIO.failed(new Exception("The query returned more than 1 row"))
+  def getByIdentOrInsert(ie: IE): DBIO[IE] = {
+    val query = byIdentQuery(ie.ident)
+    query.length.result.flatMap {
+      case i if i == 0 => insert(ie)
+      case i if i == 1 => query.result.head
+      case _ => DBIO.failed(new Exception(s"Get or insert ${ getClass.getSimpleName } by ident ${ ie.ident } returned more than 1 row"))
+    }
   }
 
   def save(ie: IE): DBIO[IE] = byIdentQuery(ie.ident).length.result.flatMap {
     case i if i == 0 => insert(ie)
     case i if i == 1 => update(ie)
-    case _ => DBIO.failed(new Exception("The query returned more than 1 row"))
+    case _ => DBIO.failed(new Exception(s"Get or insert ${ getClass.getSimpleName } by ident ${ ie.ident } query returned more than 1 row"))
   }
 
   def delete(ie: IE): DBIO[IE] = {

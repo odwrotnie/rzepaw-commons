@@ -30,6 +30,12 @@ abstract class EntityMeta[E <: Entity[E]] {
     e
   }
 
+  def getOrInsert(query: Query[_, E, Seq], ie: E): DBIO[E] = query.length.result.flatMap {
+    case i if i == 0 => insert(ie)
+    case i if i == 1 => query.result.head
+    case _ => DBIO.failed(new Exception(s"Get or insert ${ getClass.getSimpleName } query ${ query } returned more than 1 row"))
+  }
+
   def allQuery: Query[EntityTable, E, Seq] = table
   def stream(query: Query[EntityTable, E, Seq]): Stream[E] = Slicky.streamify(query)
   def stream: Stream[E] = stream(allQuery)
