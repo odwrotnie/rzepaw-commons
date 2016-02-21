@@ -1,7 +1,7 @@
 package slicky.entity
 
 import commons.logger._
-import org.scalatest.FunSuite
+import org.scalatest.{FlatSpec, FunSuite}
 import slicky.Slicky._
 import driver.api._
 
@@ -10,14 +10,14 @@ sbt "~rzepawCommons/testOnly slicky.entity.EntityTest"
  */
 
 class EntityTest
-  extends FunSuite
+  extends FlatSpec
   with Logger {
 
   dbAwait {
     NameValue.table.schema.create
   }
 
-  test("Insert entity") {
+  "Entity stream" should "have 3 elements" in {
 
     val in1 = dbFuture(NameValue("one", 1).insert).await
     val in2 = dbFuture(NameValue("two", 2).insert).await
@@ -29,7 +29,7 @@ class EntityTest
     }
   }
 
-  test("Entity stream") {
+  it should "nothing" in {
     dbFutureSeq {
       (1 to 10) map { i =>
         NameValue(f"NV:$i%03d", i).insert
@@ -41,7 +41,7 @@ class EntityTest
     }
   }
 
-  test("Entity stream page") {
+  "Entity stream page" should "have 10 distinct elements" in {
 
     dbFuture(NameValue.deleteAll()).await
 
@@ -63,6 +63,36 @@ class EntityTest
     }
 
     assert(all.distinct.size == 10)
+  }
+
+  val query123 = NameValue.table.filter(_.value === 123)
+  "After get or insert stream" should "have 1 element" in {
+    NameValue("asdf", 123).getOrInsert(query123).await
+    val results: Seq[NameValue] = query123.result.await
+    println(s"Results: $results")
+    assert(results.size == 1)
+  }
+  it should "have 1 element after get or insert" in {
+    NameValue("qwer", 123).getOrInsert(query123).await
+    val results: Seq[NameValue] = query123.result.await
+    println(s"Results: $results")
+    assert(results.size == 1)
+  }
+  it should "have the old name" in {
+    val results: Seq[NameValue] = query123.result.await
+    println(s"Results: $results")
+    assert(results.head.name == "asdf")
+  }
+  it should "have 1 element after update or insert" in {
+    NameValue("qwer", 123).updateOrInsert(query123).await
+    val results: Seq[NameValue] = query123.result.await
+    println(s"Results: $results")
+    assert(results.size == 1)
+  }
+  it should "have the new name" in {
+    val results: Seq[NameValue] = query123.result.await
+    println(s"Results: $results")
+    assert(results.head.name == "qwer")
   }
 }
 
