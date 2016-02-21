@@ -33,7 +33,9 @@ abstract class EntityMeta[E <: Entity[E]] {
   def getOrInsert(query: Query[_, E, Seq], ie: E): DBIO[E] = query.length.result.flatMap {
     case i if i == 0 => insert(ie)
     case i if i == 1 => query.result.head
-    case _ => DBIO.failed(new Exception(s"Get or insert ${ getClass.getSimpleName } query ${ query } returned more than 1 row"))
+    case _ =>
+      val results: Seq[E] = query.result.await
+      DBIO.failed(new Exception(s"Get ${ getClass.getSimpleName } or insert $ie query returned more than 1 row: ${ results.mkString(", ") }"))
   }
 
   def allQuery: Query[EntityTable, E, Seq] = table
