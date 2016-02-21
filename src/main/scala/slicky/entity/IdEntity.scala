@@ -12,7 +12,7 @@ abstract class IdEntity[IE <: IdEntity[IE]](override val meta: IdEntityMeta[IE])
   def withId(id: ID): IE
   override def ident: ID = id match {
     case Some(id) => id
-    case _ => throw new Exception(s"$this has no id yet")
+    case _ => throw new Exception(s"Entity $this has no id yet")
   }
 }
 
@@ -47,5 +47,16 @@ abstract class IdEntityMeta[IE <: IdEntity[IE]]
         withId
       }
     }
+  }
+
+  def getOrInsert(query: Query[_, IE, Seq], e: IE { def copy(id: Option[ID]): IE }): DBIO[IE] = query.length.result.flatMap {
+    case i if i == 0 => insert(e.copy(id = None))
+    case i if i == 1 => super.getOrInsert(query, e)
+  }
+
+  def updateOrInsert(query: Query[_, IE, Seq], e: IE { def copy(id: Option[ID]): IE }): DBIO[IE] = query.length.result.flatMap {
+    case i if i == 0 => insert(e.copy(id = None))
+    case i if i == 1 => query.result.head flatMap { fromDb => update(e.copy(id = fromDb.id)) }
+    case i => super.updateOrInsert(query, e)
   }
 }

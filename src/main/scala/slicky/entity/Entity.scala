@@ -9,6 +9,8 @@ import scala.concurrent.Future
 abstract class Entity[E <: Entity[E]](val meta: EntityMeta[E]) {
   self: E =>
   def insert: DBIO[E] = meta.insert(this)
+  def getOrInsert(query: Query[_, E, Seq]): DBIO[E] = meta.getOrInsert(query, this)
+  def updateOrInsert(query: Query[_, E, Seq]): DBIO[E] = meta.updateOrInsert(query, this)
 }
 
 abstract class EntityMeta[E <: Entity[E]] {
@@ -30,12 +32,20 @@ abstract class EntityMeta[E <: Entity[E]] {
     e
   }
 
-  def getOrInsert(query: Query[_, E, Seq], ie: E): DBIO[E] = query.length.result.flatMap {
-    case i if i == 0 => insert(ie)
+  def getOrInsert(query: Query[_, E, Seq], e: E): DBIO[E] = query.length.result.flatMap {
+    case i if i == 0 => insert(e)
     case i if i == 1 => query.result.head
-    case _ =>
+    case i =>
       val results: Seq[E] = query.result.await
-      DBIO.failed(new Exception(s"Get ${ getClass.getSimpleName } or insert $ie query returned more than 1 row: ${ results.mkString(", ") }"))
+      DBIO.failed(new Exception(s"Get ${ getClass.getSimpleName } or insert $e query returned more than 1 ($i) row: ${ results.mkString(", ") }"))
+  }
+
+  def updateOrInsert(query: Query[_, E, Seq], e: E): DBIO[E] = query.length.result.flatMap {
+    case i if i == 0 => insert(e)
+    case i if i == 1 => query.update(e).map(_ => e)
+    case i =>
+      val results: Seq[E] = query.result.await
+      DBIO.failed(new Exception(s"Update ${ getClass.getSimpleName } or insert $e query returned more than 1 ($i) row: ${ results.mkString(", ") }"))
   }
 
   def allQuery: Query[EntityTable, E, Seq] = table
