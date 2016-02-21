@@ -1,7 +1,7 @@
 package slicky.entity
 
 import commons.logger._
-import org.scalatest.FunSuite
+import org.scalatest.{FlatSpec, FunSuite}
 import slicky.Slicky._
 import driver.api._
 
@@ -10,14 +10,14 @@ sbt "~rzepawCommons/testOnly slicky.entity.IdEntityTest"
  */
 
 class IdEntityTest
-  extends FunSuite
+  extends FlatSpec
   with Logger {
 
   dbAwait {
     IdName.table.schema.create
   }
 
-  ignore("Insert entity") {
+  "Inserted entity" should "have proper name" in {
 
     val in1 = dbAwait(IdName("one").insert)
     assert(in1.ident == 1l)
@@ -37,14 +37,51 @@ class IdEntityTest
     assert(dbAwait(IdName.byIdent(1)).get.name == "ONE")
   }
 
-  test("Update or insert with id") {
-    val in1 = dbAwait(IdName("one").updateOrInsert(IdName.table.filter(_.name === "one")))
-    println(IdName.stream.toList)
-    val in2 = dbAwait(IdName("one").updateOrInsert(IdName.table.filter(_.name === "one")))
-    println(IdName.stream.toList)
+//  "Update or insert with id" should "have id defined" in {
+//    val in1 = dbAwait(IdName("one").updateOrInsert(IdName.table.filter(_.name === "one")))
+//    println(IdName.stream.toList)
+//    val in2 = dbAwait(IdName("one").updateOrInsert(IdName.table.filter(_.name === "one")))
+//    println(IdName.stream.toList)
+//
+//    assert(in1.id.isDefined)
+//    assert(in1.id == in2.id)
+//  }
 
-    assert(in1.id.isDefined)
-    assert(in1.id == in2.id)
+  val queryAsdf = IdName.table.filter(_.name === "asdf")
+  val queryQwer = IdName.table.filter(_.name === "qwer")
+  "After get or insert stream" should "have 1 element" in {
+    IdName("asdf").getOrInsert(queryAsdf).await
+    val results: Seq[IdName] = queryAsdf.result.await
+    println(s"Results: $results")
+    assert(results.size == 1)
+  }
+  it should "have 1 element after get or insert" in {
+    IdName("qwer").getOrInsert(queryAsdf).await
+    val results: Seq[IdName] = queryAsdf.result.await
+    println(s"Results: $results")
+    assert(results.size == 1)
+  }
+  it should "have the old name" in {
+    val results: Seq[IdName] = queryAsdf.result.await
+    println(s"Results: $results")
+    assert(results.head.name == "asdf")
+  }
+  it should "have 0 elements after update or insert with old name" in {
+    IdName("qwer").updateOrInsert(queryAsdf).await
+    val results: Seq[IdName] = queryAsdf.result.await
+    println(s"Results: $results")
+    assert(results.isEmpty)
+  }
+  it should "have 1 elements after update or insert with new name" in {
+    IdName("qwer").updateOrInsert(queryQwer).await
+    val results: Seq[IdName] = queryQwer.result.await
+    println(s"Results: $results")
+    assert(results.size == 1)
+  }
+  it should "have the new name" in {
+    val results: Seq[IdName] = queryQwer.result.await
+    println(s"Results: $results")
+    assert(results.head.name == "qwer")
   }
 }
 
