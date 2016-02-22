@@ -27,23 +27,23 @@ class FKTest
 
 //
 
-case class FooFK(entity: Option[Foo], id: Option[ID] = None)
-  extends FK[Foo](entity, id) {
+case class FooFK(var entity: Option[Foo], var id: Option[ID] = None)
+  extends FK[Foo] {
   override def meta = Foo
 }
 
-object FooFK {
-  implicit val FKMapper = MappedColumnType.base[FooFK, ID](
-    fooFK => fooFK.ident.get,
-    id => FooFK(None, Some(id))
-  )
-}
+//object FooFK {
+//  implicit val FKMapper = MappedColumnType.base[FooFK, ID](
+//    fooFK => fooFK.id.get,
+//    id => FooFK(None, Some(id))
+//  )
+//}
 
 //
 
 case class Bar(var name: String,
-                 var foo: FooFK,
-                 id: Option[ID] = None)
+               var foo: FooFK,
+               id: Option[ID] = None)
   extends IdEntity[Bar](Bar) {
   override def withId(id: Option[ID]) = this.copy(id = id)
 }
@@ -53,7 +53,7 @@ object Bar
   val table = TableQuery[Tbl]
   class Tbl(tag: Tag) extends EntityTableWithId(tag) {
 
-    import FooFK.FKMapper._
+    implicit val FooFKMapper = FK.mapper[FooFK](id => FooFK(None, id = Some(id)), fooFK => fooFK.id.get)
 
     def name = column[String]("NAME")
     def foo = column[FooFK]("ID_NAME")

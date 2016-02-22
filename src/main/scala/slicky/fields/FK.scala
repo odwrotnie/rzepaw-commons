@@ -1,15 +1,25 @@
 package slicky.fields
 
 import slicky.Slicky._
-import slicky.entity.{IdEntityMeta, IdEntity}
+import driver.api._
+import slicky.entity._
 
-abstract class FK[E <: IdEntity[E]](var e: Option[E], var ident: Option[ID] = None) {
-  (e, ident) match {
-    case (Some(e), None) => ident = e.id
-    case (None, Some(i)) => e = meta.byIdent(i).await
-  }
+abstract class FK[E <: IdEntity[E]] {
   def meta: IdEntityMeta[E]
+  def entity: Option[E]
+  def entity_=(entity: Option[E]): Unit
+  def id: Option[ID]
+  def id_=(id: Option[ID]): Unit
+  (entity, id) match {
+    case (Some(e), None) => id = e.id
+    case (None, Some(i)) => entity = meta.byIdent(i).await
+  }
 }
 
-//case class CompanyFK
-//  extends FK[Company]
+object FK {
+  import scala.reflect.ClassTag
+  def mapper[F: ClassTag](create: (ID) => F, id: (F) => ID) = MappedColumnType.base[F, ID](
+    fk => id(fk),
+    id => create(id)
+  )
+}
