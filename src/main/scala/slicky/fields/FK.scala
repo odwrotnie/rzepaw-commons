@@ -4,7 +4,7 @@ import slicky.Slicky._
 import driver.api._
 import slicky.entity._
 
-abstract class FK[E <: IdEntity[E]] {
+abstract class ForeignKey[E <: IdEntity[E]] {
   def meta: IdEntityMeta[E]
   def entity: Option[E]
   def entity_=(entity: Option[E]): Unit

@@ -3,7 +3,7 @@ package slicky.entity
 import org.scalatest.FlatSpec
 import slicky.Slicky._
 import driver.api._
-import slicky.fields.FK
+import slicky.fields._
 
 import scala.concurrent.Future
 
@@ -18,7 +18,7 @@ class FKTest
   Bar.table.schema.create.await
 
   val foo = Foo("foo").insert.await
-  val bar = Bar("bar", FooFK(Some(foo))).insert.await
+  val bar = Bar("bar", Foo.FK(Some(foo))).insert.await
 
   "Bar" should "have foo" in {
     assert(bar.foo.entity.isDefined)
@@ -27,22 +27,8 @@ class FKTest
 
 //
 
-case class FooFK(var entity: Option[Foo], var id: Option[ID] = None)
-  extends FK[Foo] {
-  override def meta = Foo
-}
-
-//object FooFK {
-//  implicit val FKMapper = MappedColumnType.base[FooFK, ID](
-//    fooFK => fooFK.id.get,
-//    id => FooFK(None, Some(id))
-//  )
-//}
-
-//
-
 case class Bar(var name: String,
-               var foo: FooFK,
+               var foo: Foo.FK,
                id: Option[ID] = None)
   extends IdEntity[Bar](Bar) {
   override def withId(id: Option[ID]) = this.copy(id = id)
@@ -53,10 +39,10 @@ object Bar
   val table = TableQuery[Tbl]
   class Tbl(tag: Tag) extends EntityTableWithId(tag) {
 
-    implicit val FooFKMapper = FK.mapper[FooFK](id => FooFK(None, id = Some(id)), fooFK => fooFK.id.get)
+    implicit val fooFKMapper = FK.mapper[Foo.FK](id => Foo.FK(None, id = Some(id)), fooFK => fooFK.id.get)
 
     def name = column[String]("NAME")
-    def foo = column[FooFK]("ID_NAME")
+    def foo = column[Foo.FK]("ID_NAME")
     def id = column[ID]("ID", O.PrimaryKey, O.AutoInc)
     def * = (name, foo, id.?) <>
       ((Bar.apply _).tupled, Bar.unapply)
@@ -80,4 +66,5 @@ object Foo
     def * = (name, id.?) <>
       ((Foo.apply _).tupled, Foo.unapply)
   }
+  case class FK(var entity: Option[Foo], var id: Option[ID] = None, meta: IdEntityMeta[Foo] = Foo) extends ForeignKey[Foo]
 }
