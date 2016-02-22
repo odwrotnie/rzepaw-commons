@@ -1,25 +1,22 @@
 package slicky.fields
 
+import commons.reflection.Spiegel
 import slicky.Slicky._
 import driver.api._
 import slicky.entity._
+import scala.concurrent.Future
+import scala.reflect.runtime.universe._
 
-abstract class ForeignKey[E <: IdEntity[E]] {
-  def meta: IdEntityMeta[E]
-  def entity: Option[E]
-  def entity_=(entity: Option[E]): Unit
-  def id: Option[ID]
-  def id_=(id: Option[ID]): Unit
-  (entity, id) match {
-    case (Some(e), None) => id = e.id
-    case (None, Some(i)) => entity = meta.byIdent(i).await
-  }
+case class FK[E <: IdEntity[E]](id: Option[ID])(implicit tag: TypeTag[E]) {
+  lazy val meta = Spiegel.companion[E].asInstanceOf[IdEntityMeta[E]]
+  lazy val entity: Future[Option[E]] = meta.byIdent(id).future
 }
 
 object FK {
-  import scala.reflect.ClassTag
-  def mapper[F: ClassTag](create: (ID) => F, id: (F) => ID) = MappedColumnType.base[F, ID](
-    fk => id(fk),
-    id => create(id)
-  )
+  def mapper[E <: IdEntity[E]](implicit tag: TypeTag[E]) = {
+    MappedColumnType.base[FK[E], ID](
+      fk => fk.id.get,
+      id => FK[E](Some(id))
+    )
+  }
 }
