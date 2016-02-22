@@ -7,18 +7,19 @@ import slicky.entity._
 import scala.concurrent.Future
 import scala.reflect.runtime.universe._
 
-case class FK[E <: IdEntity[E]](id: Option[ID])(implicit tag: TypeTag[E]) {
+case class FK[E <: IdEntity[E]](id: ID)(implicit tag: TypeTag[E]) {
   lazy val meta = Spiegel.companion[E].asInstanceOf[IdEntityMeta[E]]
-  lazy val entity: Future[Option[E]] = meta.byIdent(id).future
-  override def toString = List(id, entity.await).flatten.mkString(" => ")
+  lazy val entity: Future[E] = meta.byIdentGet(id).future
+  override def toString = List(id, entity.await).mkString(" => ")
 }
 
 object FK {
-  def apply[E <: IdEntity[E]](entity: E)(implicit tag: TypeTag[E]): FK[E] = FK[E](entity.id)
+  def apply[E <: IdEntity[E]](entity: E)(implicit tag: TypeTag[E]): FK[E] =
+    FK[E](entity.ident)
   def mapper[E <: IdEntity[E]](implicit tag: TypeTag[E]) = {
     MappedColumnType.base[FK[E], ID](
-      fk => fk.id.get,
-      id => FK[E](Some(id))
+      fk => fk.id,
+      id => FK[E](id)
     )
   }
 }

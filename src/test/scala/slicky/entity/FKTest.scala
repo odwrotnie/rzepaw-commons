@@ -19,17 +19,14 @@ class FKTest
 
   val foo1 = Foo("foo1").insert.await
   val foo2 = Foo("foo2").insert.await
-  val fk1 = FK[Foo](foo1.id)
-  val bar = Bar("bar", fk1).insert.await
-
-  assert(bar.foo == fk1)
+  val bar = Bar("bar", FK(foo1)).insert.await
 
   "Bar" should "have foo" in {
-    assert(bar.foo.entity.await.get === foo1)
+    assert(bar.foo.entity.await === foo1)
   }
 
   "Bar from DB" should "have foo" in {
-    assert(Bar.table.result.await.head.foo == fk1)
+    assert(Bar.table.result.await.head.foo == FK(foo1))
   }
 
   "The query" should "return bar" in {
