@@ -28,8 +28,13 @@ class FKTest
     assert(bar.foo.entity.await.get === foo1)
   }
 
+  "Bar from DB" should "have foo" in {
+    assert(Bar.table.result.await.head.foo == fk1)
+  }
+
   "The query" should "return bar" in {
-    val query = Bar.table.filter(_.foo === fk1)
+    implicit val fooFKMapper = FK.mapper[Foo]
+    val query = Bar.table.filter(_.foo === FK(foo1))
     val results = query.result.await
     println(s"Res: $results")
     assert(results.contains(bar))

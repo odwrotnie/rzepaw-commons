@@ -14,6 +14,7 @@ case class FK[E <: IdEntity[E]](id: Option[ID])(implicit tag: TypeTag[E]) {
 }
 
 object FK {
+  def apply[E <: IdEntity[E]](entity: E)(implicit tag: TypeTag[E]): FK[E] = FK[E](entity.id)
   def mapper[E <: IdEntity[E]](implicit tag: TypeTag[E]) = {
     MappedColumnType.base[FK[E], ID](
       fk => fk.id.get,
