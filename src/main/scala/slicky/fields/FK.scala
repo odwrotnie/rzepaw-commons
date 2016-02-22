@@ -10,6 +10,7 @@ import scala.reflect.runtime.universe._
 case class FK[E <: IdEntity[E]](id: Option[ID])(implicit tag: TypeTag[E]) {
   lazy val meta = Spiegel.companion[E].asInstanceOf[IdEntityMeta[E]]
   lazy val entity: Future[Option[E]] = meta.byIdent(id).future
+  override def toString = List(id, entity.await).flatten.mkString(" => ")
 }
 
 object FK {

@@ -5,7 +5,6 @@ import org.scalatest.FlatSpec
 import slicky.Slicky._
 import driver.api._
 import slicky.fields._
-
 import scala.concurrent.Future
 
 /*
@@ -20,15 +19,17 @@ class FKTest
 
   val foo1 = Foo("foo1").insert.await
   val foo2 = Foo("foo2").insert.await
-  val bar = Bar("bar", FK[Foo](foo1.id)).insert.await
+  val fk1 = FK[Foo](foo1.id)
+  val bar = Bar("bar", fk1).insert.await
+
+  assert(bar.foo == fk1)
 
   "Bar" should "have foo" in {
-    assert(bar.foo.entity.await.isDefined)
+    assert(bar.foo.entity.await.get === foo1)
   }
-  it should "have foo1" in {
-    val query = for {
-      b <- Bar.table if b.foo === FK[Foo](foo1.id)
-    } yield b
+
+  "The query" should "return bar" in {
+    val query = Bar.table.filter(_.foo === fk1)
     val results = query.result.await
     println(s"Res: $results")
     assert(results.contains(bar))
