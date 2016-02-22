@@ -9,11 +9,13 @@ abstract class IdEntity[IE <: IdEntity[IE]](override val meta: IdEntityMeta[IE])
   extends IdentEntity[ID, IE](meta) {
   self: IE =>
   def id: Option[ID]
-  def withId(id: ID): IE
+  def withId(id: Option[ID]): IE
   override def ident: ID = id match {
     case Some(id) => id
     case _ => throw new Exception(s"Entity $this has no id yet")
   }
+  override def getOrInsert(query: Query[_, IE, Seq]): DBIO[IE] = meta.getOrInsert(query, this)
+  override def updateOrInsert(query: Query[_, IE, Seq]): DBIO[IE] = meta.updateOrInsert(query, this)
 }
 
 abstract class IdEntityMeta[IE <: IdEntity[IE]]
@@ -29,7 +31,7 @@ abstract class IdEntityMeta[IE <: IdEntity[IE]]
     val newIE = beforeInsert(ie)
     val idAction = (table returning table.map(_.id)) += ie
     idAction.map { id: ID =>
-      val withId = newIE.withId(id)
+      val withId = newIE.withId(Some(id))
       afterInsert(withId)
       withId
     }
@@ -49,14 +51,24 @@ abstract class IdEntityMeta[IE <: IdEntity[IE]]
     }
   }
 
-  def getOrInsert(query: Query[_, IE, Seq], e: IE { def copy(id: Option[ID]): IE }): DBIO[IE] = query.length.result.flatMap {
-    case i if i == 0 => insert(e.copy(id = None))
-    case i if i == 1 => super.getOrInsert(query, e)
+//  private def cleanId(e: IE): IE = {
+//    val clone = e
+//    clone.getClass.getMethods.find(_.getName == "id_$eq").get.invoke(clone, None)
+//    clone
+//  }
+
+  override def getOrInsert(query: Query[_, IE, Seq], e: IE): DBIO[IE] = {
+    query.length.result.flatMap {
+      case i if i == 0 => insert(e.withId(None))
+      case i if i == 1 => super.getOrInsert(query, e)
+    }
   }
 
-  def updateOrInsert(query: Query[_, IE, Seq], e: IE { def copy(id: Option[ID]): IE }): DBIO[IE] = query.length.result.flatMap {
-    case i if i == 0 => insert(e.copy(id = None))
-    case i if i == 1 => query.result.head flatMap { fromDb => update(e.copy(id = fromDb.id)) }
-    case i => super.updateOrInsert(query, e)
+  override def updateOrInsert(query: Query[_, IE, Seq], e: IE): DBIO[IE] = {
+    query.length.result.flatMap {
+      case i if i == 0 => insert(e.withId(None))
+      case i if i == 1 => query.result.head flatMap { fromDb => update(e.withId(fromDb.id)) }
+      case i => super.updateOrInsert(query, e)
+    }
   }
 }

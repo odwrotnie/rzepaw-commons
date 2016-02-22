@@ -45,7 +45,7 @@ case class Bar(var name: String,
                  var foo: FooFK,
                  id: Option[ID] = None)
   extends IdEntity[Bar](Bar) {
-  override def withId(id: ID) = this.copy(id = Some(id))
+  override def withId(id: Option[ID]) = this.copy(id = id)
 }
 
 object Bar
@@ -68,7 +68,7 @@ object Bar
 case class Foo(var name: String,
                id: Option[ID] = None)
   extends IdEntity[Foo](Foo) {
-  override def withId(id: ID) = this.copy(id = Some(id))
+  override def withId(id: Option[ID]) = this.copy(id = id)
 }
 
 object Foo

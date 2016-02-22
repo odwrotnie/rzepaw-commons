@@ -49,6 +49,7 @@ class IdEntityTest
 
   val queryAsdf = IdName.table.filter(_.name === "asdf")
   val queryQwer = IdName.table.filter(_.name === "qwer")
+  var id = -1l
   "After get or insert stream" should "have 1 element" in {
     IdName("asdf").getOrInsert(queryAsdf).await
     val results: Seq[IdName] = queryAsdf.result.await
@@ -83,13 +84,20 @@ class IdEntityTest
     println(s"Results: $results")
     assert(results.head.name == "qwer")
   }
+
+  "Updated entity" should "have the same id" in {
+    val erty = IdName("erty").updateOrInsert(IdName.table.filter(_.name === "erty")).await
+    val yuio = IdName("yuio").updateOrInsert(IdName.table.filter(_.name === "erty")).await
+    println(s"Erty: $erty, yuio: $yuio")
+    assert(erty.ident == yuio.ident)
+  }
 }
 
 case class IdName(var name: String,
                   id: Option[ID] = None)
   extends IdEntity[IdName](IdName) {
 
-  override def withId(id: ID) = this.copy(id = Some(id))
+  override def withId(id: Option[ID]) = this.copy(id = id)
 }
 
 object IdName

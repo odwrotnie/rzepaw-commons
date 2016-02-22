@@ -43,7 +43,7 @@ case class TreeName(var name: String,
                     var parentId: Option[ID] = None,
                     id: Option[ID] = None)
   extends TreeEntity[TreeName](TreeName) {
-  override def withId(id: ID) = this.copy(id = Some(id))
+  override def withId(id: Option[ID]) = this.copy(id = id)
   override def toString = name
 }
 
