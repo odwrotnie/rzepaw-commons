@@ -9,7 +9,6 @@ import slick.backend.DatabasePublisher
 import slick.lifted.CanBeQueryCondition
 import slicky.entity.{IdentEntity, Entity, IdEntity}
 import slick.driver._
-
 import scala.concurrent._
 import scala.concurrent.duration._
 
