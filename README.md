@@ -3,7 +3,7 @@
 ## build.sbt
 
 ```
-val rzc = RootProject(uri(uri("https://github.com/odwrotnie/rzepaw-commons.git#master"))
+val rzc = RootProject(uri("https://github.com/odwrotnie/rzepaw-commons.git#master"))
 val root = Project("root", file(".")) dependsOn(rzc)
 ```
 
