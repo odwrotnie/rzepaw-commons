@@ -10,8 +10,8 @@ val root = Project("root", file(".")) dependsOn(amn)
 ## build.scala
 
 ```
-lazy val commons = ProjectRef(uri("https://github.com/odwrotnie/rzepaw-commons.git#master"), "rzepawCommons")
+lazy val rzc = ProjectRef(uri("https://github.com/odwrotnie/rzepaw-commons.git#master"), "rzepawCommons")
 lazy val x = Project("x", file("x"),
     ...)
-    .dependsOn(commons)
+    .dependsOn(rzc)
 ```
