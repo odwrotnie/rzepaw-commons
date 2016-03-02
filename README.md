@@ -4,7 +4,7 @@
 
 ```
 val rzc = RootProject(uri(uri("https://github.com/odwrotnie/rzepaw-commons.git#master"))
-val root = Project("root", file(".")) dependsOn(amn)
+val root = Project("root", file(".")) dependsOn(rzc)
 ```
 
 ## build.scala
