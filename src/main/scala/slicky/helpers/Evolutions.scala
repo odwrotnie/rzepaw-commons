@@ -1,0 +1,43 @@
+package slicky.helpers
+
+import java.net.URI
+
+import commons.date.DateUtil
+import commons.logger.Logger
+import slicky.entity.EntityMeta
+import slicky.Slicky._
+import driver.api._
+import java.io._
+
+case class Evolutions(file: String, metas: EntityMeta[_]*)
+  extends Logger {
+
+  val HEADER = s"# --- Database schema ${ DateUtil.formatTime(DateUtil.now) }"
+  val UPS = "# --- !Ups"
+  val DOWNS = "# --- !Downs"
+
+  private def ups(schemas: driver.SchemaDescription*) = schemas.flatMap(_.createStatements)
+  private def downs(schemas: driver.SchemaDescription*) = schemas.flatMap(_.dropStatements)
+
+  private def ups(meta: EntityMeta[_]): Seq[String] = ups(meta.table.schema)
+  private def downs(meta: EntityMeta[_]): Seq[String] = downs(meta.table.schema)
+
+  lazy val lines: List[String] = {
+    s"\n$HEADER\n" ::
+      s"\n$UPS\n" ::
+      Nil :::
+      metas.flatMap(ups).toList :::
+      s"\n$DOWNS\n" ::
+      metas.flatMap(downs).toList :::
+      Nil
+  }
+
+  def generate(overwrite: Boolean = false): Unit = {
+    val outputFile = new File(file)
+    if (!outputFile.exists() || overwrite) {
+      val writer = new PrintWriter(outputFile)
+      lines.foreach(writer.println)
+      writer.close()
+    }
+  }
+}

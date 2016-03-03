@@ -4,6 +4,7 @@ import commons.logger._
 import org.scalatest.{FlatSpec, FunSuite}
 import slicky.Slicky._
 import driver.api._
+import slicky.helpers.Evolutions
 
 /*
 sbt "~rzepawCommons/testOnly slicky.entity.IdEntityTest"
@@ -90,6 +91,10 @@ class IdEntityTest
     val yuio = IdName("yuio").updateOrInsert(IdName.table.filter(_.name === "erty")).await
     println(s"Erty: $erty, yuio: $yuio")
     assert(erty.ident == yuio.ident)
+  }
+
+  "Evolutions file" should "be created" in {
+    Evolutions("evolutions.sql", IdName, IdName, IdName).generate(true)
   }
 }
 
