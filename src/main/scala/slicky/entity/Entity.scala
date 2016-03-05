@@ -18,6 +18,7 @@ abstract class EntityMeta[E <: Entity[E]] {
   val tableName: String = Slugify(getClass.getSimpleName, "_").toUpperCase
   abstract class EntityTable(tag: Tag) extends Table[E](tag, tableName)
 
+  class Tbl
   def table: TableQuery[_ <: EntityTable]
 
   def count: Int = dbAwait(table.size.result)
@@ -51,8 +52,10 @@ abstract class EntityMeta[E <: Entity[E]] {
   def allQuery: Query[EntityTable, E, Seq] = table
   def stream(query: Query[EntityTable, E, Seq]): Stream[E] = Slicky.streamify(query)
   def stream: Stream[E] = stream(allQuery)
-  def pages(pageSize: Int): Future[Long] = pages(allQuery, pageSize)
+
   def page(pageNum: Int, pageSize: Int): Future[Seq[E]] = page(allQuery, pageNum, pageSize)
+  def pages(pageSize: Int): Future[Long] = pages(allQuery, pageSize)
+
   def page(query: Query[EntityTable, E, Seq], pageNum: Int, pageSize: Int): Future[Seq[E]] = Slicky.page(query, pageNum, pageSize)
   def pages(query: Query[EntityTable, E, Seq], pageSize: Int): Future[Long] = Slicky.pages(query, pageSize)
 

@@ -1,7 +1,8 @@
 package slicky
 
 import commons.logger._
-import org.scalatest.FunSuite
+import commons.random.Lipsum
+import org.scalatest.{FlatSpec, FunSuite}
 import slicky.Slicky._
 import driver.api._
 import slicky.entity.Entity
@@ -12,14 +13,14 @@ sbt "~rzepawCommons/testOnly slicky.SlickyTest"
  */
 
 class SlickyTest
-  extends FunSuite
-  with Logger {
+  extends FlatSpec
+    with Logger {
 
   dbAwait {
     NameValue.table.schema.create
   }
 
-  test("Streamify") {
+  "Streamify" should "work" in {
     dbFutureSeq {
       (1 to 10) map { i =>
         NameValue(i.toString, i).insert
@@ -29,6 +30,22 @@ class SlickyTest
     stream foreach { nv =>
       println(s" - $nv")
     }
+  }
+
+  "Page" should "be sorted" in {
+    (1 to 10000) foreach { i =>
+      NameValue(Lipsum.generate(1, 3), i).insert.await
+    }
+    val l = NameValue("L", 0).insert.await
+    val query = NameValue.table
+      .filter(_.name.startsWith("L"))
+      .sortBy(_.name)
+      .sortBy(_.value)
+    val results = Slicky.page(query, 0, 10).await
+    println(results.mkString(", "))
+    assert(results.nonEmpty)
+    assert(results.head == l)
+    assert(results.size <= 10)
   }
 }
 

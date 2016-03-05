@@ -27,7 +27,7 @@ object Slicky
   val DURATION = Duration.Inf
 
   val dbConfig: DBConfig = List(SystemPropertiesDBConfig, JNDIDBConfig, PropertiesDBConfig, DefaultDBConfig)
-      .find(_.databaseDriver.isDefined).head
+    .find(_.databaseDriver.isDefined).head
   infoAsciiArt("DB Configured")
   info(s"DB Config: $dbConfig")
 
@@ -70,18 +70,17 @@ object Slicky
   implicit def dbioToSuperDBIO[T](a: DBIO[T]): SuperDBIO[T] = new SuperDBIO[T](a)
   class SuperDBIO[T](under: DBIO[T]) {
     def future: Future[T] = dbFuture(under)
-    @deprecated("Use .future.await instead")
     def await: T = Await.result(future, DURATION)
   }
 
-  def page[E](query: Query[_, E, Seq], pageNum: Int, pageSize: Int): Future[Seq[E]] = dbFuture {
-    query.drop(pageNum * pageSize).take(pageSize).result
-  }
-  def pages[E](query: Query[_, E, Seq], pageSize: Int): Future[Long] = dbFuture {
-    query.length.result
-  } map { length: Int =>
-    Math.round(Math.ceil(length.toFloat / pageSize))
-  }
+  def page[E](query: Query[_, E, Seq], pageNum: Int, pageSize: Int = 10): Future[Seq[E]] =
+    query.drop(pageNum * pageSize).take(pageSize).result.future
+
+  def pages[E](query: Query[_, E, Seq], pageSize: Int = 10): Future[Long] = query.length.result
+    .map { length: Int =>
+      Math.round(Math.ceil(length.toFloat / pageSize))
+    } future
+
   def streamify[E](query: Query[_, E, Seq], pageSize: Int = 128): Stream[E] = {
     Stream.from(0) map { pageNum =>
       page(query, pageNum, pageSize).await
