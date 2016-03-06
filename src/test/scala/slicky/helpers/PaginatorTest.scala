@@ -30,6 +30,10 @@ class PaginatorTest
   "First page" should "have only ones" in {
     firstPage.results.await.exists(_.value != 1) should be (false)
   }
+  it should "have no prev but next" in {
+    firstPage.hasPrev should equal (false)
+    firstPage.hasNext should equal (true)
+  }
 
   "Second page" should "have only twos" in {
     secondPage.results.await.exists(_.value != 2) should be (false)
@@ -38,10 +42,15 @@ class PaginatorTest
   "Second page" should "equal firsts next" in {
     secondPage should equal (firstPage.next.get)
   }
-//  it "should have next and prev" in {
-//    assert(secondPage.hasNext)
-//    assert(secondPage.hasPrev)
-//  }
+  it should "have next and prev" in {
+    secondPage.hasNext should equal (true)
+    secondPage.hasPrev should equal (true)
+  }
+
+  "Third page" should "have no next but prev" in {
+    thirdPage.hasPrev should equal (true)
+    thirdPage.hasNext should equal (false)
+  }
 }
 
 case class NameValue(var name: String, var value: Int)

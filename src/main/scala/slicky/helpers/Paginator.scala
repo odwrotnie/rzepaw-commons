@@ -9,7 +9,7 @@ import scala.concurrent.Future
 
 case class Page[E <: Entity[E]](paginator: Paginator[E], num: Long) {
   lazy val count: Future[Long] = paginator.count
-  lazy val hasNext: Boolean = count.map(_ > num).await
+  lazy val hasNext: Boolean = count.map(_ > num + 1).await
   lazy val next: Option[Page[E]] = if (hasNext)
     Some(Page(paginator, num + 1))
   else None
