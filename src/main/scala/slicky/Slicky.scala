@@ -73,10 +73,10 @@ object Slicky
     def await: T = Await.result(future, DURATION)
   }
 
-  def page[E](query: Query[_, E, Seq], pageNum: Int, pageSize: Int = 10): Future[Seq[E]] =
+  def page[E](query: Query[_, E, Seq], pageNum: Long, pageSize: Int = 10): Future[Seq[E]] =
     query.drop(pageNum * pageSize).take(pageSize).result.future
 
-  def pages[E](query: Query[_, E, Seq], pageSize: Int = 10): Future[Long] = query.length.result
+  def pages[E](query: Query[_, E, Seq], pageSize: Long = 10): Future[Long] = query.length.result
     .map { length: Int =>
       Math.round(Math.ceil(length.toFloat / pageSize))
     } future

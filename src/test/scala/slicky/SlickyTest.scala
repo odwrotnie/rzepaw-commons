@@ -16,9 +16,7 @@ class SlickyTest
   extends FlatSpec
     with Logger {
 
-  dbAwait {
-    NameValue.table.schema.create
-  }
+  NameValue.table.schema.create.await
 
   "Streamify" should "work" in {
     dbFutureSeq {
