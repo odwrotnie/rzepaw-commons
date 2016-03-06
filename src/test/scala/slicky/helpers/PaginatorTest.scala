@@ -11,7 +11,7 @@ sbt "~rzepawCommons/testOnly slicky.helpers.PaginatorTest"
 
 class PaginatorTest
   extends FlatSpec
-  with Matchers {
+    with Matchers {
 
   NameValue.table.schema.create.await
 
@@ -22,15 +22,16 @@ class PaginatorTest
   }
 
   val query = NameValue.table.sortBy(_.value)
-  val paginator = Paginator(query, 7)
-  val firstPage = paginator.page(0)
-  val secondPage = paginator.page(1)
-  val thirdPage = paginator.page(2)
+  val firstPage = Page(0, query, 7)
+  val secondPage = Page(1, query, 7)
+  val thirdPage = Page(2, query, 7)
 
   "First page" should "have only ones" in {
     firstPage.results.await.exists(_.value != 1) should be (false)
   }
   it should "have no prev but next" in {
+    firstPage.prev.isDefined should equal (false)
+    firstPage.next.isDefined should equal (true)
     firstPage.hasPrev should equal (false)
     firstPage.hasNext should equal (true)
   }
@@ -43,11 +44,15 @@ class PaginatorTest
     secondPage should equal (firstPage.next.get)
   }
   it should "have next and prev" in {
-    secondPage.hasNext should equal (true)
+    secondPage.prev.isDefined should equal (true)
+    secondPage.next.isDefined should equal (true)
     secondPage.hasPrev should equal (true)
+    secondPage.hasNext should equal (true)
   }
 
   "Third page" should "have no next but prev" in {
+    thirdPage.prev.isDefined should equal (true)
+    thirdPage.next.isDefined should equal (false)
     thirdPage.hasPrev should equal (true)
     thirdPage.hasNext should equal (false)
   }
