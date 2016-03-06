@@ -16,11 +16,11 @@ case class Evolutions(file: String, metas: EntityMeta[_]*)
   val UPS = "# --- !Ups"
   val DOWNS = "# --- !Downs"
 
-  private def ups(schemas: driver.SchemaDescription*) = schemas.flatMap(_.createStatements)
-  private def downs(schemas: driver.SchemaDescription*) = schemas.flatMap(_.dropStatements)
+  private def ups(schemas: driver.SchemaDescription*): List[String] = schemas.flatMap(_.createStatements).toList.map(_ + ";")
+  private def downs(schemas: driver.SchemaDescription*): List[String] = schemas.flatMap(_.dropStatements).toList.map(_ + ";")
 
-  private def ups(meta: EntityMeta[_]): Seq[String] = ups(meta.table.schema)
-  private def downs(meta: EntityMeta[_]): Seq[String] = downs(meta.table.schema)
+  private def ups(meta: EntityMeta[_]): List[String] = ups(meta.table.schema)
+  private def downs(meta: EntityMeta[_]): List[String] = downs(meta.table.schema)
 
   lazy val lines: List[String] = {
     s"\n$HEADER\n" ::
