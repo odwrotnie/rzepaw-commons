@@ -15,8 +15,6 @@ import scala.concurrent.duration._
 object Slicky
   extends Logger {
 
-  // val properties = ResourceProperties("/db.properties")
-
   type ID = Long
   type AnyEntity = Entity[_ <: Entity[_]]
   type AnyIdentEntity = IdentEntity[_, _ <: IdentEntity[_, _]]
@@ -26,7 +24,7 @@ object Slicky
 
   val DURATION = Duration.Inf
 
-  val dbConfig: DBConfig = List(SystemPropertiesDBConfig, JNDIDBConfig, PropertiesDBConfig, DefaultDBConfig)
+  var dbConfig: DBConfig = List(SystemPropertiesDBConfig, JNDIDBConfig, PropertiesDBConfig, DefaultDBConfig)
     .find(_.databaseDriver.isDefined).head
   infoAsciiArt("DB Configured")
   info(s"DB Config: $dbConfig")

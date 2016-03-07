@@ -70,7 +70,7 @@ object SystemPropertiesDBConfig
 object DefaultDBConfig
   extends SimpleDBConfig {
   lazy val connectionString: Option[String] = Some("jdbc:h2:mem:db;DB_CLOSE_DELAY=-1;MVCC=TRUE")
-  override def user: Option[String] = None
-  override def password: Option[String] = None
+  override def user: Option[String] = Some("sa")
+  override def password: Option[String] = Some("")
   lazy val driverClass: Option[String] = Some("org.h2.Driver")
 }
