@@ -22,15 +22,11 @@ case class Evolutions(file: String, metas: EntityMeta[_]*)
   private def ups(meta: EntityMeta[_]): List[String] = ups(meta.table.schema)
   private def downs(meta: EntityMeta[_]): List[String] = downs(meta.table.schema)
 
-  lazy val lines: List[String] = {
-    s"\n$HEADER\n" ::
-      s"\n$UPS\n" ::
-      Nil :::
-      metas.flatMap(ups).toList :::
-      s"\n$DOWNS\n" ::
-      metas.flatMap(downs).toList :::
-      Nil
-  }
+  lazy val lines: List[String] = HEADER ::
+    UPS ::
+    metas.flatMap(ups).toList :::
+    DOWNS ::
+    metas.flatMap(downs).toList
 
   def generate(overwrite: Boolean = false): Unit = {
     val outputFile = new File(file)
