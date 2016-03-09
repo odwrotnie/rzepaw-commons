@@ -5,7 +5,7 @@ import commons.logger.Logger
 import scala.util.Try
 
 /**
-  * Lookup for the property value in JNDI, than in system properties, than in resources
+  * Lookup for the property value in JNDI, then in system properties, then in resources
   */
 
 object Properties
@@ -13,8 +13,8 @@ object Properties
 
   def get(path: String*): Option[String] = {
     val results: List[String] = List(
-      JNDI.get(path.mkString("/")),
       SystemProperties.get(path.mkString(("."))),
+      JNDI.get(path.mkString("/")),
       ResourceProperties(s"/${ path.head }.properties").get(path.tail.mkString("."))
     ).flatten
     val result = results.headOption
