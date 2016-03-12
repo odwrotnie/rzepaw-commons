@@ -3,6 +3,7 @@ package commons.random
 import commons.date.DateUtil
 import org.joda.time.{DateTime, Seconds}
 
+import scala.collection.immutable.TreeMap
 import scala.util.Random
 
 object Rand {
@@ -14,9 +15,9 @@ object Rand {
     else Some(s(Random.nextInt(s.size)))
   }
 
-  def one[T](s: Seq[T]): T = {
+  def one[T](s: Iterable[T]): T = {
     require(s.nonEmpty)
-    s(Random.nextInt(s.size))
+    s.toSeq(Random.nextInt(s.size))
   }
 
   def list[T](s: Seq[T], n: Int): Seq[T] =
@@ -27,6 +28,17 @@ object Rand {
       if (probability < Random.nextFloat())
         f
     }
+  }
+
+  def random[T](probabilityResult: (Float, T)*): T = {
+    val random: Float = Random.nextFloat * probabilityResult.map(_._1).sum
+    var cumulativeProbability: Float = 0
+    val pr = probabilityResult find {
+      case (probability, result) =>
+        cumulativeProbability += probability
+        random < cumulativeProbability
+    }
+    pr.get._2
   }
 
   // BOOLEAN
