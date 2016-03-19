@@ -18,6 +18,17 @@ case class PivotTable[ROW, COL, AGG, NUM](rows: Iterable[ROW],
   private def c(col: COL): String = CELL_PATTERN format colToString(col) take CELL_WIDTH
   private def a(agg: AGG): String = CELL_PATTERN format aggToString(agg) take CELL_WIDTH
 
+  case class JsonCell(row: ROW, col: COL, value: AGG)
+  case class JsonRow(row: ROW, cells: List[JsonCell])
+  case class JsonTable(rows: List[JsonRow])
+  def toJson: JsonTable = JsonTable(
+    rows = rows.toList.map { row =>
+      JsonRow(row, cols.toList.map { col =>
+        JsonCell(row, col, agg(row, col))
+      })
+    }
+  )
+
   override def toString: String = {
     val _rows: Iterable[Iterable[AGG]] = rows.map { row =>
       cols.map { col =>

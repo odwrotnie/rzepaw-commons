@@ -12,9 +12,9 @@ class PivotTableTest
   val pt = PivotTable[String, Int, String, Int](
     List("A", "B", "C"),
     1 to 5,
-    (r: String, c: Int) => s"$r:$c")
+    (r: String, c: Int) => s"$r/$c")
 
   "Pivot table" should "be printable" in {
-    println(pt)
+    println(pt.toJson)
   }
 }
