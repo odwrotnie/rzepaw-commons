@@ -1,6 +1,11 @@
 package commons.data
 
 import org.scalatest.FlatSpec
+import net.liftweb.json._
+import net.liftweb.json.JsonDSL._
+import net.liftweb.json.Serialization.{read, write}
+
+import scala.util.Random
 
 /*
 sbt "~rzepawCommons/testOnly commons.data.PivotTableTest"
@@ -9,12 +14,15 @@ sbt "~rzepawCommons/testOnly commons.data.PivotTableTest"
 class PivotTableTest
   extends FlatSpec {
 
-  val pt = PivotTable[String, Int, String, Int](
+  implicit val formats = Serialization.formats(NoTypeHints)
+
+  val pt = PivotTable[String, Int, Int](
     List("A", "B", "C"),
     1 to 5,
-    (r: String, c: Int) => s"$r/$c")
+    (r: String, c: Int) => Random.nextInt(1000))
 
   "Pivot table" should "be printable" in {
-    println(pt.toJson)
+    println(pt)
+    println(write(pt.toJson))
   }
 }
