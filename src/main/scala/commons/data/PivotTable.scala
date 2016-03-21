@@ -1,8 +1,8 @@
 package commons.data
 
-case class JsonCell[ROW, COL, AGG](row: ROW, col: COL, value: AGG)
-case class JsonRow[ROW, COL, AGG](row: ROW, cells: List[JsonCell[ROW, COL, AGG]])
-case class JsonTable[ROW, COL, AGG](rows: List[JsonRow[ROW, COL, AGG]])
+case class JsonCell[AGG](row: String, col: String, value: AGG)
+case class JsonRow[AGG](row: String, cells: List[JsonCell[AGG]])
+case class JsonTable[AGG](rows: List[JsonRow[AGG]])
 
 case class PivotTable[ROW, COL, AGG](rows: Iterable[ROW],
                                           cols: Iterable[COL],
@@ -24,8 +24,8 @@ case class PivotTable[ROW, COL, AGG](rows: Iterable[ROW],
 
   def toJson = JsonTable(
     rows = rows.toList.map { row =>
-      JsonRow(row, cols.toList.map { col =>
-        JsonCell(row, col, agg(row, col))
+      JsonRow(row.toString, cols.toList.map { col =>
+        JsonCell(row.toString, col.toString, agg(row, col))
       })
     }
   )
