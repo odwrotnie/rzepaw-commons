@@ -1,10 +1,6 @@
 package commons.data
 
-case class JsonCell[AGG](row: String, col: String, value: AGG)
-case class JsonRow[AGG](row: String, cells: List[JsonCell[AGG]])
-case class JsonTable[AGG](rows: List[JsonRow[AGG]])
-
-case class PivotTable[ROW, COL, AGG](rows: Iterable[ROW],
+case class PivotTable[ROW, COL, AGG <: AnyVal](rows: Iterable[ROW],
                                           cols: Iterable[COL],
                                           agg: (ROW, COL) => AGG) {
 
@@ -21,14 +17,6 @@ case class PivotTable[ROW, COL, AGG](rows: Iterable[ROW],
   private def r(row: ROW): String = CELL_PATTERN format rowToString(row) take CELL_WIDTH
   private def c(col: COL): String = CELL_PATTERN format colToString(col) take CELL_WIDTH
   private def a(agg: AGG): String = CELL_PATTERN format aggToString(agg) take CELL_WIDTH
-
-  def toJson = JsonTable(
-    rows = rows.toList.map { row =>
-      JsonRow(row.toString, cols.toList.map { col =>
-        JsonCell(row.toString, col.toString, agg(row, col))
-      })
-    }
-  )
 
   override def toString: String = {
     val _rows: Iterable[Iterable[AGG]] = rows.map { row =>
