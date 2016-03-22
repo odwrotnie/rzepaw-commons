@@ -14,4 +14,10 @@ class PatternTest
     val text = s"asdf${s}qwer"
     assert(Pattern.pickFirstString(s, text).isDefined)
   }
+
+  "Pattern" should "not be found in the text" in {
+    val s = "żółć"
+    val text = s"asdfqwer"
+    assert(Pattern.pickFirstString(s, text).isEmpty)
+  }
 }
