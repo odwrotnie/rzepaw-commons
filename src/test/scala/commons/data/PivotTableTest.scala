@@ -23,6 +23,5 @@ class PivotTableTest
 
   "Pivot table" should "be printable" in {
     println(pt)
-    println(write(pt.toJson))
   }
 }

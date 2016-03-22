@@ -15,6 +15,8 @@ object Pattern {
       (s, p) => s.flatMap(s => p.findFirstIn(s))
     )
 
+  def pickFirstString(s: String, text: String): Option[String] =
+    pickFirst(s.r)(text)
 
   def pickFirstInteger(text: String): Option[Int] =
     Try(pickFirst(INTEGER_PATTERN)(text).get.toInt).toOption
