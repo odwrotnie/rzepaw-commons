@@ -18,16 +18,16 @@ abstract class TreeEntity[TE <: TreeEntity[TE]](meta: TreeEntityMeta[TE])
   }
   def isRoot: DBIO[Boolean] = parent.map(_.isDefined)
 
-  def children: DBIO[List[TE]] = meta.table.filter(_.parentId === id).result.map(_.toList)
+  def children: DBIO[Set[TE]] = meta.table.filter(_.parentId === id).result.map(_.toSet)
 
   def childrenCount: DBIO[Int] = meta.table.filter(_.parentId === id).length.result
 
-  def descendants: DBIO[List[TE]] = {
-    val childrenChildren: DBIO[List[TE]] = children.flatMap { list: List[TE] =>
-      if (list.isEmpty) {
-        DBIO.successful(Nil)
+  def descendants: DBIO[Set[TE]] = {
+    val childrenChildren: DBIO[Set[TE]] = children.flatMap { set: Set[TE] =>
+      if (set.isEmpty) {
+        DBIO.successful(Set())
       } else {
-        DBIO.sequence(list.map(_.descendants)).map(_.flatten)
+        DBIO.sequence(set.toSeq.map(_.descendants)).map(_.flatten.toSet)
       }
     }
     for {
@@ -37,8 +37,8 @@ abstract class TreeEntity[TE <: TreeEntity[TE]](meta: TreeEntityMeta[TE])
   }
 
   def descendantsCount: DBIO[Int] = {
-    val childrenChildrenCount: DBIO[Int] = children.map { seq: Seq[TE] =>
-      seq.foldLeft(0)((sum, childrenF) => sum + childrenF.descendantsCount.await)
+    val childrenChildrenCount: DBIO[Int] = children.map { set: Set[TE] =>
+      set.foldLeft(0)((sum, childrenF) => sum + childrenF.descendantsCount.await)
     }
     for {
       ccc <- childrenChildrenCount
