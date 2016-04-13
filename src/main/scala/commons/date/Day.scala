@@ -1,5 +1,8 @@
 package commons.date
 
+import java.time.ZoneId
+
+import de.jollyday.{HolidayCalendar, HolidayManager}
 import org.joda.time._
 
 object Day extends DateIntervalMeta[Day] {
@@ -24,6 +27,8 @@ object Day extends DateIntervalMeta[Day] {
     daytimeIntervals(intervals:_*).foldLeft(new Duration(0))((d, i) => d plus i.toDuration)
   def daytimeDurationHours(intervals: Interval*): Float =
     DateUtil.hours(daytimeDuration(intervals:_*))
+
+  def holidayManager = HolidayManager.getInstance(HolidayCalendar.POLAND)
 }
 
 case class Day(dt: DateTime)
@@ -42,7 +47,9 @@ case class Day(dt: DateTime)
   def firstHour = Hour(start)
   def hours = firstHour.nextInclusive(24)
 
-  def isHoliday = dayOfWeek >= 6
+  def isHoliday =
+    (dayOfWeek >= 6) ||
+      Day.holidayManager.isHoliday(start.toDate.toInstant.atZone(ZoneId.systemDefault()).toLocalDate)
 
   override def toString = "%s - %s/%s/%s" format (start.dayOfWeek.getAsText,
     start.getYear, start.getMonthOfYear, start.getDayOfMonth)
