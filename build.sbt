@@ -26,8 +26,6 @@ libraryDependencies += "net._01001111" % "jlorem" % "1.3"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.1.7"
 
-// libraryDependencies += "org.slf4j" % "slf4j-log4j12" % "1.7.12"
-
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.3"
 
 libraryDependencies += "org.ocpsoft.prettytime" % "prettytime" % "3.2.7.Final"
