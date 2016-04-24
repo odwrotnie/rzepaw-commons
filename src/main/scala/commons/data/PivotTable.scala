@@ -1,8 +1,10 @@
 package commons.data
 
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics
+
 case class PivotTable[ROW, COL, AGG <: AnyVal](rows: Iterable[ROW],
-                                          cols: Iterable[COL],
-                                          agg: (ROW, COL) => AGG) {
+                                               cols: Iterable[COL],
+                                               _agg: (ROW, COL) => AGG) {
 
   val COL_SEPARATOR = " "
   val COL_HEAD_SEPARATOR = " | "
@@ -17,6 +19,17 @@ case class PivotTable[ROW, COL, AGG <: AnyVal](rows: Iterable[ROW],
   private def r(row: ROW): String = CELL_PATTERN format rowToString(row) take CELL_WIDTH
   private def c(col: COL): String = CELL_PATTERN format colToString(col) take CELL_WIDTH
   private def a(agg: AGG): String = CELL_PATTERN format aggToString(agg) take CELL_WIDTH
+
+  val aggCacheMap = collection.mutable.HashMap[(ROW, COL), AGG]()
+  def agg(r: ROW, c: COL): AGG = aggCacheMap.getOrElse((r, c), {
+    val computed = _agg(r, c)
+    aggCacheMap += (r, c) -> computed
+    computed
+  })
+  lazy val aggList = for {
+    row <- rows
+    col <- cols
+  } yield agg(row, col)
 
   override def toString: String = {
     val _rows: Iterable[Iterable[AGG]] = rows.map { row =>

@@ -56,6 +56,8 @@ libraryDependencies += "org.apache.poi" % "poi-scratchpad" % "3.10-FINAL"
 
 libraryDependencies += "net.liftweb" %% "lift-json" % "2.6"
 
+libraryDependencies += "org.apache.commons" % "commons-math3" % "3.6.1"
+
 // SLICKY
 
 libraryDependencies += "com.typesafe.slick" %% "slick" % "3.1.1"

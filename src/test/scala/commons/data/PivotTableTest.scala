@@ -21,7 +21,13 @@ class PivotTableTest
     1 to 5,
     (r: String, c: Int) => Random.nextInt(1000))
 
+  val ds = DescStats(List(1, 1, 1, 5))
+
   "Pivot table" should "be printable" in {
     println(pt)
+  }
+
+  "Descriptive statistics" should "be printable" in {
+    println(ds)
   }
 }
