@@ -25,7 +25,7 @@ object Rand {
 
   def maybe(probability: Float = 0.5f, repeats: Int = 1)(f: => Any) {
     (1 to repeats) foreach { r =>
-      if (probability < Random.nextFloat())
+      if (Random.nextFloat() < probability)
         f
     }
   }
