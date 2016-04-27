@@ -34,7 +34,12 @@ abstract class DateInterval[DI <: DateInterval[DI]](val meta: DateIntervalMeta[D
     def s(di: DI): Stream[DI] = Stream.cons(di.prev, s(di.prev))
     s(this)
   }
+  def prevInclusiveStream: Stream[DI] = {
+    def s(di: DI): Stream[DI] = Stream.cons(di, s(di.prev))
+    s(this)
+  }
   def prev(n: Int) = prevStream.take(n).toList
+  def prevInclusive(n: Int) = prevInclusiveStream.take(n).toList
 
   def period = new Period(start, end)
   def interval = new Interval(start, end)
