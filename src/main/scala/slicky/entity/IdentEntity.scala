@@ -92,7 +92,7 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
   def delete(ie: IE): DBIO[IE] = {
     val newIE = beforeDelete(ie)
     byIdentQuery(ie.ident).delete map { rows =>
-      require(rows == 1)
+      require(rows == 1, s"There are $rows for $ie in delete")
       afterDelete(newIE)
       newIE
     }
