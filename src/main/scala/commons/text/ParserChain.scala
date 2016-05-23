@@ -25,8 +25,17 @@ case class ParserChain[T](s: String)
     }
   }
 
-  def parseOrElse(t: T) = {
+  def parseOrElse(t: T): T = {
     warn(s"Unable to parse $s, returning default")
     parse.getOrElse(t)
+  }
+
+  def parseOrThrowException(message: String): T = {
+    val m = s"Unable to parse $s, throwing exception - $message"
+    error(m)
+    parse match {
+      case Some(t) => t
+      case _ => throw new Exception(m)
+    }
   }
 }
