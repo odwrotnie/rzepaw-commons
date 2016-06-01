@@ -2,6 +2,7 @@ package commons.docs
 
 import org.apache.poi.ss.usermodel.{Cell, Row}
 import org.apache.poi.ss.util.{NumberToTextConverter, CellReference}
+import org.joda.time.DateTime
 
 import scala.collection.JavaConversions._
 import scala.util.Try
@@ -28,6 +29,10 @@ case class RowHelper(row: Row) {
   def valueNumeric(col: Int): Option[Double] = Try(row.getCell(col).getNumericCellValue).toOption
   def valueNumeric(col: String): Option[Double] = letterToIndex(col).flatMap(valueNumeric)
   def valueNumericByLabel(col: String, labelsIndex: Int = 0): Option[Double] = labelToIndexByHeaderRow(col, labelsIndex).flatMap(valueNumeric)
+
+  def valueDate(col: Int): Option[DateTime] = Try(new DateTime(row.getCell(col).getDateCellValue)).toOption
+  def valueDate(col: String): Option[DateTime] = letterToIndex(col).flatMap(valueDate)
+  def valueDateByLabel(col: String, labelsIndex: Int = 0): Option[DateTime] = labelToIndexByHeaderRow(col, labelsIndex).flatMap(valueDate)
 
   def cell(col: Int): Option[Cell] = Option(row.getCell(col))
   def cell(col: String): Option[Cell] = letterToIndex(col).flatMap(cell)

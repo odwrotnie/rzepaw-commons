@@ -1,6 +1,7 @@
 package commons.docs
 
 import org.apache.poi.ss.util.CellReference
+import org.joda.time.DateTime
 
 import scala.collection.JavaConversions._
 import org.apache.poi.ss.usermodel.{Cell, Row, Sheet}
@@ -44,6 +45,11 @@ case class SheetHelper(sheet: Sheet, dropFirstRows: Int = 0)
   def valueNumeric(row: Int, col: Int): Option[Double] = RowHelper(sheet.getRow(row)).valueNumeric(col)
   def valueNumeric(row: Row, col: String): Option[Double] = RowHelper(row).valueNumeric(col)
   def valueNumeric(row: Int, col: String): Option[Double] = RowHelper(sheet.getRow(row)).valueNumeric(col)
+
+  def valueDate(row: Row, col: Int): Option[DateTime] = RowHelper(row).valueDate(col)
+  def valueDate(row: Int, col: Int): Option[DateTime] = RowHelper(sheet.getRow(row)).valueDate(col)
+  def valueDate(row: Row, col: String): Option[DateTime] = RowHelper(row).valueDate(col)
+  def valueDate(row: Int, col: String): Option[DateTime] = valueDate(sheet.getRow(row), col)
 
   def set(rowIndex: Int, col: Int, values: Any*): Seq[Cell] = {
     val row: Row = Option(sheet.getRow(rowIndex)).getOrElse(sheet.createRow(rowIndex))
