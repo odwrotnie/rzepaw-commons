@@ -36,4 +36,8 @@ case class Evolutions(file: String, metas: EntityMeta[_]*)
       writer.close()
     }
   }
+
+  override def toString: String = {
+    lines.mkString("\n")
+  }
 }
