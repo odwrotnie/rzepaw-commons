@@ -1,6 +1,6 @@
 //package commons.text
 //
-//implicit class PrettyPrintMap[K, V](val map: Map[K, V]) {
+//object MapPrinter {
 //  def prettyPrint: PrettyPrintMap[K, V] = this
 //
 //  override def toString: String = {
