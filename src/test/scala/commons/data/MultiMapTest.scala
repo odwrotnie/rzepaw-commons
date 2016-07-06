@@ -12,7 +12,7 @@ class MultiMapTest
 
   "MultiMap" should "work" in {
     val mm = MultiMap.empty[String, String]()
-    mm.insert("person", "name")("John")§
+    mm.insert("person", "name")("John")
     mm.insert("person", "company", "name")("Subeli")
     mm.insert("person", "days", "1", "start-hour")("1")
     mm.insert("person", "days", "1", "end-hour")("1")

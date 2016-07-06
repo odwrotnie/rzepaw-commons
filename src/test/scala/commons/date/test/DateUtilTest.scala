@@ -1,6 +1,6 @@
 package commons.date.test
 
-import commons.date.{Day, DateUtil}
+import commons.date.{Hour, Day, DateUtil}
 import commons.logger.Logger
 import org.joda.time.{Interval, Duration}
 import org.joda.time.format.DateTimeFormat
@@ -71,5 +71,9 @@ class DateUtilTest
   "Days surrounding 24 hours" should "have 2 elements" in {
     val i = new Interval(DateUtil.date(2016, 1, 6).withHourOfDay(10), DateUtil.date(2016, 1, 7).withHourOfDay(10))
     assert(Day.surrounding(i).force.size == 2)
+  }
+
+  "Hour 12:30 to float" should "be 12.5" in {
+    assert(Hour.toFloat(DateUtil.now.withTimeAtStartOfDay().plusHours(12).plusMinutes(30)) == 12.5)
   }
 }

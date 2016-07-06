@@ -17,6 +17,8 @@ abstract class DateInterval[DI <: DateInterval[DI]](val meta: DateIntervalMeta[D
   lazy val endTimestamp = new Timestamp(end.getMillis)
   lazy val endMillis = end.getMillis
 
+  def millis = endMillis - startMillis
+
   def next = meta.apply(endDT)
   def nextStream: Stream[DI] = {
     def s(di: DI): Stream[DI] = Stream.cons(di.next, s(di.next))
