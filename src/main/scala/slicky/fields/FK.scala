@@ -14,7 +14,7 @@ case class FK[E <: IdEntity[E]](id: ID)(implicit tag: TypeTag[E]) extends Mapped
   lazy val meta = Spiegel.companion[E].asInstanceOf[IdEntityMeta[E]]
   lazy val entity: Future[E] = meta.byIdentGet(value).future
 
-  override def toString = List(value, entity.await).mkString(" => ")
+  override def toString = List(id, entity.await).mkString(" => ")
 }
 
 object FK {
