@@ -24,3 +24,5 @@ object FK {
     FK[E](entity.ident)
   }
 }
+
+trait SlickyId extends MappedTo[Long]
