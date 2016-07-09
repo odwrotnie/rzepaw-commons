@@ -2,6 +2,7 @@ package slicky.helpers
 
 import org.joda.time.DateTime
 import slicky.entity.IdEntity
+import slicky.fields.ID
 
 import scala.concurrent.Future
 import slicky.Slicky._
@@ -12,7 +13,7 @@ trait VersionableEntity[E <: IdEntity[E] with CreatedableEntity]
 
   //def meta: VersionableEntityMeta[E]
 
-  def previousVersionId: Option[ID]
+  def previousVersionId: Option[ID[_]]
   //def previousVersion: Option[E] = previousVersionId.map(id => meta.byIdentGet(id).future)
 
   def deepCopy: Future[E]

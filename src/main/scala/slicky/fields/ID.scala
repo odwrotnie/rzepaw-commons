@@ -7,7 +7,7 @@ import slicky.entity._
 import scala.concurrent.Future
 import scala.reflect.runtime.universe._
 
-case class FK[E <: IdEntity[E]](id: Long)(implicit tag: TypeTag[E]) extends MappedTo[Long] {
+case class ID[E <: IdEntity[E]](id: Long)(implicit tag: TypeTag[E]) extends MappedTo[Long] {
 
   override def value: Long = id
 

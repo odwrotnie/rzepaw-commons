@@ -2,15 +2,15 @@ package slicky.entity
 
 import slicky.Slicky._
 import driver.api._
-import slicky.fields.FK
+import slicky.fields.ID
 import scala.reflect.runtime.universe._
 
 abstract class IdEntity[IE <: IdEntity[IE]](override val meta: IdEntityMeta[IE])
-  extends IdentEntity[FK[IE], IE](meta) {
+  extends IdentEntity[ID[IE], IE](meta) {
   self: IE =>
-  def id: Option[FK[IE]]
-  def withId(id: Option[FK[IE]]): IE
-  override def ident: FK[IE] = id match {
+  def id: Option[ID[IE]]
+  def withId(id: Option[ID[IE]]): IE
+  override def ident: ID[IE] = id match {
     case Some(id) => id
     case _ => throw new Exception(s"Entity $this has no id yet")
   }
@@ -19,18 +19,18 @@ abstract class IdEntity[IE <: IdEntity[IE]](override val meta: IdEntityMeta[IE])
 }
 
 abstract class IdEntityMeta[IE <: IdEntity[IE]](implicit tag: TypeTag[IE])
-  extends IdentEntityMeta[FK[IE], IE] {
+  extends IdentEntityMeta[ID[IE], IE] {
 
   abstract class EntityTableWithId(tag: Tag)
-    extends EntityTable(tag) { def id: Rep[FK[IE]] }
+    extends EntityTable(tag) { def id: Rep[ID[IE]] }
   override def table: TableQuery[_ <: EntityTableWithId]
-  override def byIdentQuery(ident: FK[IE]): Query[EntityTableWithId, IE, Seq] = table.filter(_.id === ident)
+  override def byIdentQuery(ident: ID[IE]): Query[EntityTableWithId, IE, Seq] = table.filter(_.id === ident)
 
   override def insert(ie: IE): DBIO[IE] = {
     require(ie.id.isEmpty, s"Inserting entity $ie with defined id: ${ ie.ident }")
     val newIE = beforeInsert(ie)
     val idAction = (table returning table.map(_.id)) += ie
-    idAction.map { id: FK[IE] =>
+    idAction.map { id: ID[IE] =>
       val withId = newIE.withId(Some(id))
       afterInsert(withId)
       withId

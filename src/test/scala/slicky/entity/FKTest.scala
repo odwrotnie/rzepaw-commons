@@ -40,10 +40,10 @@ class FKTest
 //
 
 case class Bar(var name: String,
-               var foo: FK[Foo],
-               id: Option[FK[Bar]] = None)
+               var foo: ID[Foo],
+               id: Option[ID[Bar]] = None)
   extends IdEntity[Bar](Bar) {
-  override def withId(id: Option[FK[Bar]]) = this.copy(id = id)
+  override def withId(id: Option[ID[Bar]]) = this.copy(id = id)
 }
 
 object Bar
@@ -51,8 +51,8 @@ object Bar
   val table = TableQuery[Tbl]
   class Tbl(tag: Tag) extends EntityTableWithId(tag) {
     def name = column[String]("NAME")
-    def foo = column[FK[Foo]]("FOO")
-    def id = column[FK[Bar]]("ID", O.PrimaryKey, O.AutoInc)
+    def foo = column[ID[Foo]]("FOO")
+    def id = column[ID[Bar]]("ID", O.PrimaryKey, O.AutoInc)
     def * = (name, foo, id.?) <>
       ((Bar.apply _).tupled, Bar.unapply)
   }
@@ -61,9 +61,9 @@ object Bar
 //
 
 case class Foo(var name: String,
-               id: Option[FK[Foo]] = None)
+               id: Option[ID[Foo]] = None)
   extends IdEntity[Foo](Foo) {
-  override def withId(id: Option[FK[Foo]]) = this.copy(id = id)
+  override def withId(id: Option[ID[Foo]]) = this.copy(id = id)
 }
 
 object Foo
@@ -71,7 +71,7 @@ object Foo
   val table = TableQuery[Tbl]
   class Tbl(tag: Tag) extends EntityTableWithId(tag) {
     def name = column[String]("NAME")
-    def id = column[FK[Foo]]("ID", O.PrimaryKey, O.AutoInc)
+    def id = column[ID[Foo]]("ID", O.PrimaryKey, O.AutoInc)
     def * = (name, id.?) <>
       ((Foo.apply _).tupled, Foo.unapply)
   }

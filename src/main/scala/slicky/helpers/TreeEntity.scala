@@ -3,14 +3,14 @@ package slicky.helpers
 import slicky.Slicky._
 import slicky.Slicky.driver.api._
 import slicky.entity._
-import slicky.fields.FK
+import slicky.fields.ID
 import scala.reflect.runtime.universe._
 
 abstract class TreeEntity[TE <: TreeEntity[TE]](meta: TreeEntityMeta[TE])(implicit tag: TypeTag[TE])
   extends IdEntity[TE](meta) {
   self: TE =>
-  def parentId: Option[FK[TE]]
-  def parentId_=(id: Option[FK[TE]]): Unit
+  def parentId: Option[ID[TE]]
+  def parentId_=(id: Option[ID[TE]]): Unit
 
   def parent: DBIO[Option[TE]] = parentId match {
     case Some(id) => meta.byIdent(id)
@@ -65,7 +65,7 @@ abstract class TreeEntity[TE <: TreeEntity[TE]](meta: TreeEntityMeta[TE])(implic
 abstract class TreeEntityMeta[TE <: TreeEntity[TE]](implicit tag: TypeTag[TE])
   extends IdEntityMeta[TE] {
   abstract class EntityTableWithIdAndParent(tag: Tag)
-    extends EntityTableWithId(tag) { def parentId: Rep[Option[FK[TE]]]}
+    extends EntityTableWithId(tag) { def parentId: Rep[Option[ID[TE]]]}
   override def table: TableQuery[_ <: EntityTableWithIdAndParent]
 
   def roots: DBIO[Seq[TE]] = table.filter(_.parentId isEmpty).result
