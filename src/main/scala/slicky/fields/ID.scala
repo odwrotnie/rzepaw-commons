@@ -7,12 +7,10 @@ import slicky.entity._
 import scala.concurrent.Future
 import scala.reflect.runtime.universe._
 
-case class ID[E <: IdEntity[E]](id: Long)(implicit tag: TypeTag[E]) extends MappedTo[Long] {
-
-  override def value: Long = id
+case class ID[E <: IdEntity[E]](value: Long)(implicit tag: TypeTag[E]) extends MappedTo[Long] {
 
   lazy val meta: IdEntityMeta[E] = Spiegel.companion[E].asInstanceOf[IdEntityMeta[E]]
   lazy val entity: Future[E] = meta.byIdentGet(this).future
 
-  override def toString = s"${ meta.tableName }->$id"
+  override def toString = value.toString
 }
