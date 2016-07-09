@@ -4,6 +4,7 @@ import commons.logger._
 import org.scalatest.{FlatSpec, FunSuite}
 import slicky.Slicky._
 import driver.api._
+import slicky.fields.FK
 import slicky.helpers.Evolutions
 
 /*
@@ -21,10 +22,10 @@ class IdEntityTest
   "Inserted entity" should "have proper name" in {
 
     val in1 = dbAwait(IdName("one").insert)
-    assert(in1.ident == 1l)
+    assert(in1.ident == FK[IdName](1l))
 
     val in2 = dbAwait(IdName("two").save)
-    assert(in2.ident == 2l)
+    assert(in2.ident == FK[IdName](2l))
 
     val in3 = dbAwait(IdName("three").save)
     assert(IdName.stream.toList.size == 3)
@@ -35,7 +36,7 @@ class IdEntityTest
 
     in1.name = "ONE"
     assert(dbAwait(in1.update).name == "ONE")
-    assert(dbAwait(IdName.byIdent(1)).get.name == "ONE")
+    assert(dbAwait(IdName.byIdent(FK[IdName](1))).get.name == "ONE")
   }
 
 //  "Update or insert with id" should "have id defined" in {
@@ -99,10 +100,10 @@ class IdEntityTest
 }
 
 case class IdName(var name: String,
-                  id: Option[ID] = None)
+                  id: Option[FK[IdName]] = None)
   extends IdEntity[IdName](IdName) {
 
-  override def withId(id: Option[ID]) = this.copy(id = id)
+  override def withId(id: Option[FK[IdName]]) = this.copy(id = id)
 }
 
 object IdName
@@ -113,7 +114,7 @@ object IdName
   class Tbl(tag: Tag) extends EntityTableWithId(tag) {
 
     def name = column[String]("NAME")
-    def id = column[ID]("ID", O.PrimaryKey, O.AutoInc)
+    def id = column[FK[IdName]]("ID", O.PrimaryKey, O.AutoInc)
 
     def * = (name, id.?) <>
       ((IdName.apply _).tupled, IdName.unapply)

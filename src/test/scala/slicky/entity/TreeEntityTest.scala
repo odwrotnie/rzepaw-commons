@@ -4,6 +4,7 @@ import commons.logger._
 import org.scalatest.FunSuite
 import slicky.Slicky._
 import driver.api._
+import slicky.fields.FK
 import slicky.helpers.{TreeEntityMeta, TreeEntity}
 
 /*
@@ -21,10 +22,10 @@ class TreeEntityTest
   test("Insert entity") {
 
     val in1 = dbAwait(TreeName("one").insert)
-    assert(in1.ident == 1l)
+    assert(in1.ident == FK[TreeName](1l))
 
     val in2 = dbAwait(TreeName("two", in1.id).save)
-    assert(in2.ident == 2l)
+    assert(in2.ident == FK[TreeName](2l))
 
     val in3 = dbAwait(TreeName("three", in2.id).save)
     assert(TreeName.stream.toList.size == 3)
@@ -40,10 +41,10 @@ class TreeEntityTest
 }
 
 case class TreeName(var name: String,
-                    var parentId: Option[ID] = None,
-                    id: Option[ID] = None)
+                    var parentId: Option[FK[TreeName]] = None,
+                    id: Option[FK[TreeName]] = None)
   extends TreeEntity[TreeName](TreeName) {
-  override def withId(id: Option[ID]) = this.copy(id = id)
+  override def withId(id: Option[FK[TreeName]]) = this.copy(id = id)
   override def toString = name
 }
 
@@ -55,8 +56,8 @@ object TreeName
   class Tbl(tag: Tag) extends EntityTableWithIdAndParent(tag) {
 
     def name = column[String]("NAME")
-    def parentId = column[Option[ID]]("PARENT")
-    def id = column[ID]("ID", O.PrimaryKey, O.AutoInc)
+    def parentId = column[Option[FK[TreeName]]]("PARENT")
+    def id = column[FK[TreeName]]("ID", O.PrimaryKey, O.AutoInc)
 
     def * = (name, parentId, id.?) <>
       ((TreeName.apply _).tupled, TreeName.unapply)

@@ -9,13 +9,14 @@ import slick.backend.DatabasePublisher
 import slick.lifted.CanBeQueryCondition
 import slicky.entity.{IdentEntity, Entity, IdEntity}
 import slick.driver._
+import slicky.fields.FK
 import scala.concurrent._
 import scala.concurrent.duration._
 
 object Slicky
   extends Logger {
 
-  type ID = Long
+  type ID = FK[_]
   type AnyEntity = Entity[_ <: Entity[_]]
   type AnyIdentEntity = IdentEntity[_, _ <: IdentEntity[_, _]]
   type AnyIdEntity = IdEntity[_ <: IdEntity[_]]
