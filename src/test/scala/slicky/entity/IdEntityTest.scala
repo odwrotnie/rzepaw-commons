@@ -19,6 +19,15 @@ class IdEntityTest
     IdName.table.schema.create
   }
 
+  "Any entity" should "work" in {
+    val anyEntity: AnyIdEntity = IdName("asdf")
+    def method(idEntity: AnyIdEntity): AnyEntity = {
+      println(s"Entity: $idEntity")
+      idEntity
+    }
+    method(anyEntity)
+  }
+
   "Inserted entity" should "have proper name" in {
 
     val in1 = dbAwait(IdName("one").insert)

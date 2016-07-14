@@ -17,8 +17,8 @@ object Slicky
   extends Logger {
 
   type AnyEntity = Entity[_ <: Entity[_]]
-  type AnyIdentEntity = IdentEntity[_, _ <: IdentEntity[_, _]]
-  type AnyIdEntity = IdEntity[_ <: IdEntity[_]]
+  type AnyIdentEntity = IdentEntity[_, _ <: IdentEntity[_, _]] with AnyEntity
+  type AnyIdEntity = IdEntity[_ <: IdEntity[_]] with AnyIdentEntity
 
   implicit lazy val futureEC = scala.concurrent.ExecutionContext.Implicits.global
 
