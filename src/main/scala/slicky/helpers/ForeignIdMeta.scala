@@ -22,8 +22,8 @@ trait ForeignIdEntityMeta[FIE <: Entity[FIE] {def foreignId: Option[String]; def
     require(e.foreignId.nonEmpty)
     val foreignId = e.foreignId.get
     val entities: List[DBIO[FIE]] = fromDb(e).toList map {
-      case idEntity: IdEntity[_] => // Prevents overwriting auto-generated id with None (earlier it was given new id)
-//        val ie: FIE = e.asInstanceOf[IdEntity[_]].withId(idEntity.id).asInstanceOf[FIE]
+      case idEntity: AnyIdEntity => // Prevents overwriting auto-generated id with None (earlier it was given new id)
+//        val ie: FIE = e.asInstanceOf[AnyIdEntity].withId(idEntity.id).asInstanceOf[FIE]
 //        byForeignIdQuery(foreignId).update(ie).map(_ => ie)
         ???
       case entity =>

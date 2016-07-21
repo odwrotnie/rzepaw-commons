@@ -1,12 +1,9 @@
-lazy val rzepawCommons = (project in file(".")).
-  settings(
+lazy val rzepawCommons = (project in file("."))
+  .settings(
     name := "rzepaw-commons",
     version := "0.1-SNAPSHOT",
-    scalaVersion := "2.11.7"
+    scalaVersion := "2.11.8"
   )
-
-
-net.virtualvoid.sbt.graph.Plugin.graphSettings
 
 
 resolvers += "Typesafe Releases" at "http://repo.typesafe.com/typesafe/maven-releases/"
@@ -57,6 +54,8 @@ libraryDependencies += "org.apache.poi" % "poi-scratchpad" % "3.10-FINAL"
 libraryDependencies += "net.liftweb" %% "lift-json" % "2.6"
 
 libraryDependencies += "org.apache.commons" % "commons-math3" % "3.6.1"
+
+libraryDependencies += "org.clapper" %% "classutil" % "1.0.11"
 
 // SLICKY
 

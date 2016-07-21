@@ -21,6 +21,9 @@ class IdEntityTest
 
   "Any entity" should "work" in {
     val anyEntity: AnyIdEntity = IdName("asdf")
+    case class Klass[E <: AnyEntity](idEntity: E)
+    val klass = Klass(anyEntity)
+    println(klass)
     def method(idEntity: AnyIdEntity): AnyEntity = {
       println(s"Entity: $idEntity")
       idEntity

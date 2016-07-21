@@ -17,8 +17,21 @@ object Spiegel {
   }
 
   def companion[T](implicit tt: TypeTag[T]): Any = {
-    val m = runtimeMirror(getClass.getClassLoader)
     val module = tt.tpe.typeSymbol.asClass.companion.asModule
     m.reflectModule(module).instance
+  }
+
+  def companion(a: Any): Any = companion(a.getClass)
+  def companion(c: Class[_]): Any = {
+    val module = m.classSymbol(c).companion.asModule
+    m.reflectModule(module).instance
+  }
+
+  def caseObjects[Root: TypeTag]: Set[Symbol] = {
+    val symbol = typeOf[Root].typeSymbol
+    val internal = symbol.asInstanceOf[scala.reflect.internal.Symbols#Symbol]
+    val x = internal.sealedDescendants.filter(_.isValue)
+    println(s"\n\n\n X: $x\n\n")
+    internal.sealedDescendants.map(_.asInstanceOf[Symbol])
   }
 }

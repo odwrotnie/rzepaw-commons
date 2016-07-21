@@ -1,29 +1,30 @@
 package slicky.entity
 
-import commons.text.Slugify
 import slicky.Slicky
 import slicky.Slicky._
 import driver.api._
 import scala.concurrent.Future
 
-abstract class Entity[E <: Entity[E]](val meta: EntityMeta[E]) {
+abstract class Entity[E <: Entity[E]](val meta: EntityMeta[E])
+  extends AnyEntity {
+
   self: E =>
+
   def insert: DBIO[E] = meta.insert(this)
   def getOrInsert(query: Query[_, E, Seq]): DBIO[E] = meta.getOrInsert(query, this)
   def updateOrInsert(query: Query[_, E, Seq]): DBIO[E] = meta.updateOrInsert(query, this)
 }
 
-abstract class EntityMeta[E <: Entity[E]] {
+abstract class EntityMeta[E <: Entity[E]]
+  extends AnyEntityMeta {
 
-  val tableName: String = Slugify(getClass.getSimpleName, "_").toUpperCase
   abstract class EntityTable(tag: Tag) extends Table[E](tag, tableName)
 
   class Tbl
   def table: TableQuery[_ <: EntityTable]
 
-  def count: Int = dbAwait(table.size.result)
-  def deleteAll(): DBIO[Int] = delete(allQuery)
   def delete(query: Query[EntityTable, E, Seq]): DBIO[Int] = query.delete
+  def deleteAll(): DBIO[Int] = delete(allQuery)
 
   def insert(e: E): DBIO[E] = {
     val newE = beforeInsert(e)

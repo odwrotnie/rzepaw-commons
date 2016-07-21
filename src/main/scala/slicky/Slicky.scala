@@ -7,7 +7,7 @@ import org.joda.time.DateTime
 import slick.jdbc.JdbcBackend._
 import slick.backend.DatabasePublisher
 import slick.lifted.CanBeQueryCondition
-import slicky.entity.{IdentEntity, Entity, IdEntity}
+import slicky.entity._
 import slick.driver._
 import slicky.fields.ID
 import scala.concurrent._
@@ -15,10 +15,6 @@ import scala.concurrent.duration._
 
 object Slicky
   extends Logger {
-
-  type AnyEntity = Entity[_ <: Entity[_]]
-  type AnyIdentEntity = IdentEntity[_, _ <: IdentEntity[_, _]] with AnyEntity
-  type AnyIdEntity = IdEntity[_ <: IdEntity[_]] with AnyIdentEntity
 
   implicit lazy val futureEC = scala.concurrent.ExecutionContext.Implicits.global
 

@@ -6,23 +6,28 @@ import slicky.fields.ID
 import scala.reflect.runtime.universe._
 
 abstract class IdEntity[IE <: IdEntity[IE]](override val meta: IdEntityMeta[IE])
-  extends IdentEntity[ID[IE], IE](meta) {
+  extends IdentEntity[ID[IE], IE](meta)
+    with AnyIdEntity {
+
   self: IE =>
+
   def id: Option[ID[IE]]
   def withId(id: Option[ID[IE]]): IE
   override def ident: ID[IE] = id match {
     case Some(id) => id
     case _ => throw new Exception(s"Entity $this has no id yet")
   }
+
   override def getOrInsert(query: Query[_, IE, Seq]): DBIO[IE] = meta.getOrInsert(query, this)
   override def updateOrInsert(query: Query[_, IE, Seq]): DBIO[IE] = meta.updateOrInsert(query, this)
 }
 
 abstract class IdEntityMeta[IE <: IdEntity[IE]](implicit tag: TypeTag[IE])
-  extends IdentEntityMeta[ID[IE], IE] {
+  extends IdentEntityMeta[ID[IE], IE]
+    with AnyIdEntityMeta {
 
-  abstract class EntityTableWithId(tag: Tag)
-    extends EntityTable(tag) { def id: Rep[ID[IE]] }
+  abstract class EntityTableWithId(tag: Tag) extends EntityTable(tag) { def id: Rep[ID[IE]] }
+
   override def table: TableQuery[_ <: EntityTableWithId]
   override def byIdentQuery(ident: ID[IE]): Query[EntityTableWithId, IE, Seq] = table.filter(_.id === ident)
 
@@ -56,12 +61,11 @@ abstract class IdEntityMeta[IE <: IdEntity[IE]](implicit tag: TypeTag[IE])
   def byIdent(id: Option[Long]): DBIO[Option[IE]] = super.byIdent(id.map(l => ID[IE](l)))
   def byIdentGet(id: Option[Long]): DBIO[Option[IE]] = super.byIdentGet(id.map(l => ID[IE](l)))
 
-
   //  private def cleanId(e: IE): IE = {
-//    val clone = e
-//    clone.getClass.getMethods.find(_.getName == "id_$eq").get.invoke(clone, None)
-//    clone
-//  }
+  //    val clone = e
+  //    clone.getClass.getMethods.find(_.getName == "id_$eq").get.invoke(clone, None)
+  //    clone
+  //  }
 
   override def getOrInsert(query: Query[_, IE, Seq], e: IE): DBIO[IE] = {
     query.length.result.flatMap {

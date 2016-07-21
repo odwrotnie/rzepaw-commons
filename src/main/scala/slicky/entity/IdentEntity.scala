@@ -13,8 +13,11 @@ import scala.concurrent.Future
   * @tparam IE
   */
 abstract class IdentEntity[IDENT, IE <: IdentEntity[IDENT, IE]](override val meta: IdentEntityMeta[IDENT, IE])
-  extends Entity[IE](meta) {
+  extends Entity[IE](meta)
+    with AnyIdentEntity {
+
   self: IE =>
+
   def ident: IDENT
   def save: DBIO[IE] = meta.save(this)
   def update: DBIO[IE] = meta.update(this)
@@ -26,6 +29,7 @@ abstract class IdentEntity[IDENT, IE <: IdentEntity[IDENT, IE]](override val met
 
 abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
   extends EntityMeta[IE]
+    with AnyIdentEntityMeta
     with Logger {
 
   def byIdentQuery(ident: IDENT): Query[EntityTable, IE, Seq]
