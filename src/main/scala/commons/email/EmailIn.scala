@@ -17,7 +17,7 @@ import scala.xml.{XML, NodeSeq}
 case class IMAPServer(server: String,
                       username: String,
                       password: String,
-                      folderName: String,
+                      folderName: String = "Inbox",
                       port: Int = 993)
   extends Logger {
 
@@ -44,7 +44,7 @@ case class IMAPServer(server: String,
 
   def messages: List[EmailIn] = folder match {
     case Some(folder) =>
-      val messages = folder.getMessages()
+      val messages = folder.getMessages().filterNot(_.isExpunged)
       debug(s"Folder ($folder) messages: ${ messages.size }")
       messages.map(m => EmailIn(m.asInstanceOf[IMAPMessage])).reverse.toList
     case _ =>
@@ -97,9 +97,10 @@ case class EmailIn(m: IMAPMessage)
 
   def delete_! = m.setFlag(Flags.Flag.DELETED, true)
 
-  def recipients: Seq[String] = m.getRecipients(RecipientType.TO).map(_.toString)
-  def recipientsCC: Seq[String] = m.getRecipients(RecipientType.CC).map(_.toString)
-  def recipientsBCC: Seq[String] = m.getRecipients(RecipientType.BCC).map(_.toString)
+  def recipients: List[String] = Try(m.getRecipients(RecipientType.TO).map(_.toString).toList).toOption.toList.flatten
+  def recipientsCC: List[String] = Try(m.getRecipients(RecipientType.CC).map(_.toString).toList).toOption.toList.flatten
+  def recipientsBCC: List[String] = Try(m.getRecipients(RecipientType.BCC).map(_.toString).toList).toOption.toList.flatten
+  def recipientsAll: List[String] = recipients ::: recipientsCC ::: recipientsBCC
   def senderAddress: String = m.getSender.toString
   def senderName: String = senderAddress
 

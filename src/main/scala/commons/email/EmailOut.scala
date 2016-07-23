@@ -37,6 +37,7 @@ case class EmailOut(smtp: SMTPServer)
   var recipientsCC: Seq[String] = Seq()
   var senderAddress: String = ""
   var senderName: String = ""
+  var replyTo: Seq[String] = Seq()
   var subjectRaw: String = ""
   var text: Option[String] = None
 
@@ -77,6 +78,8 @@ case class EmailOut(smtp: SMTPServer)
     recipients foreach (email.addTo(_))
     recipientsCC foreach (email.addCc(_))
     recipientsBCC foreach (email.addBcc(_))
+
+    replyTo foreach (email.addReplyTo(_))
 
     email.setFrom(senderAddress, senderName).
       setSubject(subject).
