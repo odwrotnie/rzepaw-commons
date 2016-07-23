@@ -60,9 +60,7 @@ case class EmailIn(m: IMAPMessage)
 
   lazy val identity = m.getMessageID
   lazy val date = new DateTime(m.getReceivedDate)
-  val ADDRESS_PATTERN = "<.+>".r
-  val IN_ADDRESS_PATTERN = "[^<>]+".r
-  lazy val sender = Pattern.pickFirst(ADDRESS_PATTERN, IN_ADDRESS_PATTERN)(m.getSender.toString).get
+  lazy val sender = Pattern.pickFirstEmail(m.getSender.toString).get
 
   lazy val subjectRaw = m.getSubject
   lazy val contentType = m.getContentType
