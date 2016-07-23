@@ -7,6 +7,7 @@ object Pattern {
 
   lazy val INTEGER_PATTERN = "\\d+".r
   lazy val DOUBLE_PATTERN = "\\d+([\\.,]\\d+)?".r
+  lazy val EMAIL_PATTERN = """([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+""".r
 
   // FIRST
 
@@ -24,6 +25,9 @@ object Pattern {
   def pickFirstDouble(text: String): Option[Double] =
     Try(pickFirst(DOUBLE_PATTERN)(text).get.replace(",", ".").toDouble).toOption
 
+  def pickFirstEmail(text: String): Option[String] =
+    pickFirst(EMAIL_PATTERN)(text)
+
   // ALL
 
   def pickAll(pattern: Regex)(text: String): List[String] =
@@ -37,4 +41,7 @@ object Pattern {
       case s: String if s.nonEmpty => Some(s)
       case _ => None
     }
+
+  def pickAllEmails(text: String): List[String] =
+    pickAll(EMAIL_PATTERN)(text)
 }
