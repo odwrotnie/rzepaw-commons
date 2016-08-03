@@ -14,8 +14,10 @@ trait AnyEntity {
 
 trait AnyEntityMeta {
 
+  type EntityTable <: Table[_ <: AnyEntity]
+
   val tableName: String = Slugify(getClass.getSimpleName, "_").toUpperCase
-  def table: TableQuery[_]
+  def table: TableQuery[_ <: EntityTable]
 
   def count: Int = table.size.result.await
   def stream: Stream[AnyEntity]
