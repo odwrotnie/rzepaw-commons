@@ -25,7 +25,7 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "2.1.7"
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.3"
 
-libraryDependencies += "org.ocpsoft.prettytime" % "prettytime" % "3.2.7.Final"
+libraryDependencies += "org.ocpsoft.prettytime" % "prettytime" % "4.0.1.Final"
 
 libraryDependencies += "io.github.cloudify" %% "spdf" % "1.3.1"
 

@@ -29,6 +29,7 @@ object DateUtil {
   def todayString = formatDate(now)
   private val pt = new PrettyTime
   def humanReadable(date: AbstractInstant) = pt.format(date.toDate)
+  //TODO def humanReadable(duration: Duration) = pt.format(duration)
 
   def format(date: AbstractInstant, format: String): String = DateTimeFormat.forPattern(format).print(date)
 

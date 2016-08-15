@@ -76,4 +76,20 @@ class DateUtilTest
   "Hour 12:30 to float" should "be 12.5" in {
     assert(Hour.toFloat(DateUtil.now.withTimeAtStartOfDay().plusHours(12).plusMinutes(30)) == 12.5)
   }
+
+  "Human readable date" should "work" in {
+    val now = DateUtil.now.minusHours(3)
+    Stream.from(0, 31).map(min => now.plusMinutes(min)).take(10) foreach { dt =>
+      val hr = DateUtil.humanReadable(dt)
+      info(s"Human readable $dt: $hr")
+    }
+  }
+
+//  "Human readable duration" should "work" in {
+//    val now = DateUtil.now.minusHours(3)
+//    Stream.from(0, 31).map(min => now.plusMinutes(min)).take(10) foreach { dt =>
+//      val hr = DateUtil.humanReadable(dt)
+//      info(s"Human readable $dt: $hr")
+//    }
+//  }
 }
