@@ -56,6 +56,11 @@ abstract class IdEntityMeta[IE <: IdEntity[IE]](implicit tag: TypeTag[IE])
     }
   }
 
+  def byId(id: ID[IE]): DBIO[Option[IE]] = super.byIdent(id)
+  def byIdGet(id: ID[IE]): DBIO[IE] = super.byIdentGet(id)
+  def byId(id: Option[ID[IE]]): DBIO[Option[IE]] = super.byIdent(id)
+  def byIdGet(id: Option[ID[IE]]): DBIO[Option[IE]] = super.byIdentGet(id)
+
   def byIdent(id: Long): DBIO[Option[IE]] = super.byIdent(ID[IE](id))
   def byIdentGet(id: Long): DBIO[IE] = super.byIdentGet(ID[IE](id))
   def byIdent(id: Option[Long]): DBIO[Option[IE]] = super.byIdent(id.map(l => ID[IE](l)))
