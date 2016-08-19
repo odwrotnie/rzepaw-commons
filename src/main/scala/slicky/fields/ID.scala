@@ -10,6 +10,7 @@ import scala.util
 
 trait AnyID {
   def value: Long
+  def meta: Option[AnyIdEntityMeta]
 }
 
 case class ID[E <: IdEntity[E]](value: Long)(implicit tag: TypeTag[E])

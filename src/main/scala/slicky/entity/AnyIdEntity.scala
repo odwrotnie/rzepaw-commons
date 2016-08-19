@@ -1,6 +1,6 @@
 package slicky.entity
 
-import slicky.fields.ID
+import slicky.fields.{AnyID, ID}
 import slicky.Slicky._
 import driver.api._
 
@@ -8,9 +8,9 @@ trait AnyIdEntity
   extends AnyIdentEntity {
 
   def meta: AnyIdEntityMeta
-  def id: Option[ID[_]]
+  def id: Option[AnyID]
   def idNumber: Option[Long] = id.map(_.value)
-  def ident: ID[_]
+  def ident: AnyID
   def identNumber: Long = ident.value
 
   def save: DBIO[AnyIdEntity]
