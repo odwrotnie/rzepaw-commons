@@ -75,11 +75,10 @@ object Slicky
       Math.round(Math.ceil(length.toFloat / pageSize))
     } future
 
-  def streamify[E](query: Query[_, E, Seq], pageSize: Int = 128): Stream[E] = {
+  def streamify[E](query: Query[_, E, Seq], pageSize: Int = 128): Stream[E] =
     Stream.from(0) map { pageNum =>
       page(query, pageNum, pageSize).await
     } takeWhile(_.nonEmpty) flatten
-  }
 
   /**
     * Optionally filters on a column with a supplied predicate
