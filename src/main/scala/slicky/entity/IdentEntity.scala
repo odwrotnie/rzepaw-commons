@@ -70,7 +70,7 @@ abstract class IdentEntityMeta[IDENT, IE <: IdentEntity[IDENT, IE]]
     val newIE = beforeUpdate(ie)
     query.update(newIE) map { rows =>
       require(rows == 1, s"IdentEntity update query in ${ getClass.getSimpleName } should return exactly 1 row: " +
-        s"${ dbFuture(query.result).await } you should probably use save method instead")
+        s"${ query.result.await } you should probably use save method instead")
       afterUpdate(newIE)
       newIE
     }

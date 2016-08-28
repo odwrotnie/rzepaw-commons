@@ -30,14 +30,6 @@ object Slicky
   val driver = databaseDriver._2
   import driver.api._
 
-  // Run in transaction
-  @deprecated("Use .future")
-  def dbFuture[R](f: => DBIO[R]): Future[R] = db.run(f)
-  def dbFutureSeq[R](f: => Seq[DBIO[R]]): Future[Unit] = db.run(DBIO.seq(f:_*))
-
-  // Run in transaction and wait for the result
-  def dbAwait[R](f: => DBIO[R]): R = await(dbFuture(f))
-
   // Wait for the result
   def await[R](f: => Future[R]): R = Await.result(f, DURATION)
   def await[R](futures: Seq[Future[R]]): Seq[R] = {
@@ -63,8 +55,10 @@ object Slicky
 
   implicit def dbioToSuperDBIO[T](a: DBIO[T]): SuperDBIO[T] = new SuperDBIO[T](a)
   class SuperDBIO[T](under: DBIO[T]) {
-    def future: Future[T] = dbFuture(under)
+    def future: Future[T] = db.run(under)
+    def futureTransactionally: Future[T] = db.run(under.transactionally)
     def await: T = Await.result(future, DURATION)
+    def awaitTransactionally: T = Await.result(futureTransactionally, DURATION)
   }
 
   def page[E](query: Query[_, E, Seq], pageNum: Long, pageSize: Int = 10): Future[Seq[E]] =
