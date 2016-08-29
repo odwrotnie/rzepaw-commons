@@ -15,9 +15,7 @@ class IdEntityTest
   extends FlatSpec
   with Logger {
 
-  dbAwait {
-    IdName.table.schema.create
-  }
+  IdName.table.schema.create.await
 
   "Any entity" should "work" in {
     val anyEntity: AnyIdEntity = IdName("asdf")
@@ -33,13 +31,13 @@ class IdEntityTest
 
   "Inserted entity" should "have proper name" in {
 
-    val in1 = dbAwait(IdName("one").insert)
+    val in1 = IdName("one").insert.await
     assert(in1.ident == ID[IdName](1l))
 
-    val in2 = dbAwait(IdName("two").save)
+    val in2 = IdName("two").save.await
     assert(in2.ident == ID[IdName](2l))
 
-    val in3 = dbAwait(IdName("three").save)
+    val in3 = IdName("three").save.await
     assert(IdName.stream.toList.size == 3)
 
     IdName.stream.foreach { e =>
@@ -47,8 +45,8 @@ class IdEntityTest
     }
 
     in1.name = "ONE"
-    assert(dbAwait(in1.update).name == "ONE")
-    assert(dbAwait(IdName.byIdent(ID[IdName](1))).get.name == "ONE")
+    assert(in1.update.await.name == "ONE")
+    assert(IdName.byIdent(ID[IdName](1)).await.get.name == "ONE")
   }
 
 //  "Update or insert with id" should "have id defined" in {

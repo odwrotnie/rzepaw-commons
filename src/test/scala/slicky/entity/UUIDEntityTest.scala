@@ -14,18 +14,16 @@ sbt "~rzepawCommons/testOnly slicky.entity.UUIDEntityTest"
 
 class UUIDEntityTest
   extends FunSuite
-  with Logger {
+    with Logger {
 
-  dbAwait {
-    UuidName.table.schema.create >>
-      UuidValue.table.schema.create
-  }
+  (UuidName.table.schema.create >>
+    UuidValue.table.schema.create).await
 
   test("Insert entity") {
 
-    val in1 = dbAwait(UuidName("one").insert)
-    val in2 = dbAwait(UuidName("two").save)
-    val in3 = dbAwait(UuidName("three").save)
+    val in1 = UuidName("one").insert.await
+    val in2 = UuidName("two").save.await
+    val in3 = UuidName("three").save.await
     assert(UuidName.stream.toList.size == 3)
 
     UuidName.stream.foreach { e =>
@@ -33,22 +31,22 @@ class UUIDEntityTest
     }
 
     in1.name = "ONE"
-    assert(dbAwait(in1.update).name == "ONE")
-    assert(dbAwait(UuidName.byIdent(in1.id)).get.name == "ONE")
+    assert(in1.update.await.name == "ONE")
+    assert(UuidName.byIdent(in1.id).await.get.name == "ONE")
   }
 
   test("Update or insert with id") {
-    val in1 = dbAwait(UuidName("one").updateOrInsert(UuidName.table.filter(_.name === "one")))
+    val in1 = UuidName("one").updateOrInsert(UuidName.table.filter(_.name === "one")).await
     println(UuidName.stream.toList)
-    val in2 = dbAwait(UuidName("one").updateOrInsert(UuidName.table.filter(_.name === "one")))
+    val in2 = UuidName("one").updateOrInsert(UuidName.table.filter(_.name === "one")).await
     println(UuidName.stream.toList)
     assert(in1.id.isDefined)
     assert(in1.id == in2.id)
   }
 
   test("Polymorphic filter") {
-    val nUUID: UUID = dbAwait(UuidName("a").insert).ident
-    val vUUID: UUID = dbAwait(UuidValue(1).insert).ident
+    val nUUID: UUID = UuidName("a").insert.await.ident
+    val vUUID: UUID = UuidValue(1).insert.await.ident
     assert(UUIDEntities.byIdent(nUUID).get.isInstanceOf[UuidName])
     assert(UUIDEntities.byIdent(vUUID).get.isInstanceOf[UuidValue])
     val randomUUID: UUID = Rand.one(List(nUUID, vUUID))

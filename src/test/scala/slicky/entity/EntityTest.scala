@@ -11,17 +11,15 @@ sbt "~rzepawCommons/testOnly slicky.entity.EntityTest"
 
 class EntityTest
   extends FlatSpec
-  with Logger {
+    with Logger {
 
-  dbAwait {
-    NameValue.table.schema.create
-  }
+  NameValue.table.schema.create.await
 
   "Entity stream" should "have 3 elements" in {
 
-    val in1 = dbFuture(NameValue("one", 1).insert).await
-    val in2 = dbFuture(NameValue("two", 2).insert).await
-    val in3 = dbFuture(NameValue("three", 3).insert).await
+    val in1 = NameValue("one", 1).insert.await
+    val in2 = NameValue("two", 2).insert.await
+    val in3 = NameValue("three", 3).insert.await
     assert(NameValue.stream.toList.size == 3)
 
     NameValue.stream.foreach { e =>
@@ -30,12 +28,9 @@ class EntityTest
   }
 
   it should "nothing" in {
-    dbFutureSeq {
-      (1 to 10) map { i =>
-        NameValue(f"NV:$i%03d", i).insert
-      }
-    } await
-
+    (1 to 10) map { i =>
+      NameValue(f"NV:$i%03d", i).insert.await
+    }
     NameValue.stream.foreach { nv =>
       println(" *** " + nv)
     }
@@ -43,15 +38,14 @@ class EntityTest
 
   "Entity stream page" should "have 10 distinct elements" in {
 
-    dbFuture(NameValue.deleteAll()).await
+    NameValue.deleteAll().await
 
     val PAGE_SIZE = 3
 
-    dbFutureSeq {
-      (1 to 10) map { i =>
-        NameValue(f"NV:$i%03d", i).insert
-      }
-    } await
+    (1 to 10) map { i =>
+      NameValue(f"NV:$i%03d", i).insert.await
+    }
+
     val pages = NameValue.pages(PAGE_SIZE).await
     println(s"Pages: $pages")
     assert(pages == 4)

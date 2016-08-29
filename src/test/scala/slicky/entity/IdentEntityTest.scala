@@ -13,19 +13,17 @@ class IdentEntityTest
   extends FunSuite
   with Logger {
 
-  dbAwait {
-    XYName.table.schema.create
-  }
+  XYName.table.schema.create.await
 
   test("Insert entity") {
 
-    val xyn1 = dbAwait(XYName(1, 1, "one").insert)
-    assert(dbAwait(XYName.byIdent((1, 1))).get.name == "one")
+    val xyn1 = XYName(1, 1, "one").insert.await
+    assert(XYName.byIdent((1, 1)).await.get.name == "one")
 
-    val xyn2 = dbAwait(XYName(2, 2, "two").save)
-    assert(dbAwait(XYName.byIdent((2, 2))).get.name == "two")
+    val xyn2 = XYName(2, 2, "two").save.await
+    assert(XYName.byIdent((2, 2)).await.get.name == "two")
 
-    val xyn3 = dbAwait(XYName(3, 3, "three").save)
+    val xyn3 = XYName(3, 3, "three").save.await
     assert(XYName.stream.toList.size == 3)
 
     XYName.stream.foreach { e =>
@@ -33,8 +31,8 @@ class IdentEntityTest
     }
 
     xyn1.name = "11"
-    dbAwait(xyn1.save)
-    assert(dbAwait(XYName.byIdent((1, 1))).get.name == "11")
+    xyn1.save.await
+    assert(XYName.byIdent((1, 1)).await.get.name == "11")
   }
 }
 

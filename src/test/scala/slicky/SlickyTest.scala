@@ -19,11 +19,9 @@ class SlickyTest
   NameValue.table.schema.create.await
 
   "Streamify" should "work" in {
-    dbFutureSeq {
       (1 to 10) map { i =>
-        NameValue(i.toString, i).insert
+        NameValue(i.toString, i).insert.await
       }
-    }.await
     val stream = Slicky.streamify(NameValue.table, 3)
     stream foreach { nv =>
       println(s" - $nv")

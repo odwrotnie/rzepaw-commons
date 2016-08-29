@@ -15,23 +15,21 @@ class TreeEntityTest
   extends FunSuite
   with Logger {
 
-  dbAwait {
-    TreeName.table.schema.create
-  }
+  TreeName.table.schema.create.await
 
   test("Insert entity") {
 
-    val in1 = dbAwait(TreeName("one").insert)
+    val in1 = TreeName("one").insert.await
     assert(in1.ident == ID[TreeName](1l))
 
-    val in2 = dbAwait(TreeName("two", in1.id).save)
+    val in2 = TreeName("two", in1.id).save.await
     assert(in2.ident == ID[TreeName](2l))
 
-    val in3 = dbAwait(TreeName("three", in2.id).save)
+    val in3 = TreeName("three", in2.id).save.await
     assert(TreeName.stream.toList.size == 3)
 
     TreeName.stream.foreach { e =>
-      println(s" - $e path: ${ dbAwait(e.path).mkString(" / ") }")
+      println(s" - $e path: ${ e.path.await.mkString(" / ") }")
     }
 
     assert(in1.descendantsCount.await == 2)
