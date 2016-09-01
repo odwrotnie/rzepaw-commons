@@ -19,7 +19,7 @@ object Slicky
   implicit lazy val futureEC = scala.concurrent.ExecutionContext.Implicits.global
 
   // val DURATION = Duration.Inf
-  val DURATION = 10 seconds
+  val DURATION = 60 seconds
 
   var dbConfig: DBConfig = List(SystemPropertiesDBConfig, JNDIDBConfig, PropertiesDBConfig, DefaultDBConfig)
     .find(_.databaseDriver.isDefined).head
