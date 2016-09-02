@@ -7,7 +7,7 @@ import org.joda.time.DateTime
 import scala.collection.JavaConversions._
 import scala.util.Try
 
-case class RowHelper(row: Row) {
+case class RowHelper(row: Row, sh: SheetHelper) {
 
   protected def letterToIndex(letter: String): Option[Int] =
     Try(CellReference.convertColStringToIndex(letter)).toOption

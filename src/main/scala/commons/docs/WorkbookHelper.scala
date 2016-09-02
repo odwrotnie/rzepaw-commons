@@ -28,7 +28,7 @@ case class WorkbookHelper(wb: Option[Workbook] = None,
 
   val sheetHelpers: Stream[SheetHelper] = sheets.map(s => SheetHelper.apply(s, dropFirstRows))
   val rows: Stream[Row] = sheetHelpers.flatMap(_.rows)
-  val rowHelpers: Stream[RowHelper] = rows.map(RowHelper.apply)
+  val rowHelpers: Stream[RowHelper] = sheetHelpers.flatMap(_.rowHelpers)
 
   def rows[R](convert: (RowHelper => R)): Stream[R] = rowHelpers.flatMap { rh =>
     try {
