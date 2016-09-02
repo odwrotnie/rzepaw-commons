@@ -31,6 +31,8 @@ abstract class AbstractSheetHelper {
 case class SheetHelper(sheet: Sheet, dropFirstRows: Int = 0)
   extends AbstractSheetHelper {
 
+  def name = sheet.getSheetName
+
   def valueString(row: Row, col: Int): Option[String] = RowHelper(row, this).valueString(col)
   def valueString(row: Int, col: Int): Option[String] = RowHelper(sheet.getRow(row), this).valueString(col)
   def valueString(row: Row, col: String): Option[String] = RowHelper(row, this).valueString(col)
