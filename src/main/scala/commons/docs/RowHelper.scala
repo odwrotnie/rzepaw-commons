@@ -9,9 +9,12 @@ import scala.util.Try
 
 case class RowHelper(row: Row) {
 
-  protected def letterToIndex(letter: String): Option[Int] = Try(CellReference.convertColStringToIndex(letter)).toOption
-  protected def labelToIndexByHeaderRow(label: String, row: Row): Option[Int] = row.cellIterator().find(_.getStringCellValue == label).map(_.getColumnIndex)
-  protected def labelToIndexByHeaderRow(label: String, rowIndex: Int): Option[Int] = labelToIndexByHeaderRow(label, row.getSheet.getRow(rowIndex))
+  protected def letterToIndex(letter: String): Option[Int] =
+    Try(CellReference.convertColStringToIndex(letter)).toOption
+  protected def labelToIndexByHeaderRow(label: String, row: Row): Option[Int] =
+    row.cellIterator().find(_.getStringCellValue == label).map(_.getColumnIndex)
+  protected def labelToIndexByHeaderRow(label: String, rowIndex: Int): Option[Int] =
+    labelToIndexByHeaderRow(label, row.getSheet.getRow(rowIndex))
 
   def valueString(col: Int): Option[String] = {
     val c = row.getCell(col)
