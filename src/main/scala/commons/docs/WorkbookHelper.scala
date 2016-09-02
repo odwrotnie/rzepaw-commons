@@ -30,7 +30,13 @@ case class WorkbookHelper(wb: Option[Workbook] = None,
   val rows: Stream[Row] = sheetHelpers.flatMap(_.rows)
   val rowHelpers: Stream[RowHelper] = rows.map(RowHelper.apply)
 
-  def rows[R](convert: (RowHelper => R)): Stream[R] = rowHelpers.map { rh =>
-    Try(convert(rh)).toOption
-  }.flatten
+  def rows[R](convert: (RowHelper => R)): Stream[R] = rowHelpers.flatMap { rh =>
+    try {
+      Some(convert(rh))
+    } catch {
+      case t: Throwable =>
+        warn(s"Parsing $rh exception: ${ t.getMessage }")
+        None
+    }
+  }
 }
