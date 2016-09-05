@@ -12,7 +12,10 @@ object Excel {
 
   def workbook(file: File): Workbook = WorkbookFactory.create(file)
   def workbook(bytes: Array[Byte]): Workbook = workbook(new ByteArrayInputStream(bytes))
-  def workbook(is: InputStream): Workbook = WorkbookFactory.create(is)
+  def workbook(is: InputStream): Workbook = {
+    require(is != null, "The input stream is null")
+    WorkbookFactory.create(is)
+  }
   def workbook(path: String): Workbook = try {
     workbook(new FileInputStream(path)) // Needs more memory
   } catch {
