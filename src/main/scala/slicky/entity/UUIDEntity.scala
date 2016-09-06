@@ -31,29 +31,14 @@ abstract class UUIDEntityMeta[IE <: UUIDEntity[IE]](tableName: String)
   override def table: TableQuery[_ <: EntityTableWithUUID]
   override def byIdentQuery(ident: UUID): Query[EntityTableWithUUID, IE, Seq] = table.filter(_.id === ident)
 
-  override def insert(ie: IE): DBIO[IE] = {
-    require(ie.id.isEmpty)
-    val newIE = beforeInsert(ie)
-    val withId: IE = newIE.withId(UUID.randomUUID())
-    val insertDBIO: DBIO[Int] = table += withId
-    insertDBIO.map { count: Int =>
-      afterInsert(withId)
-      withId
-    }
+  override def insert(ie: IE): driver.api.DBIO[IE] = {
+    super.insert(ie.withId(UUID.randomUUID()))
   }
 
-  override def save(ie: IE): DBIO[IE] = {
-    val newIE = beforeSave(ie)
-    ie.id match {
-      case Some(id) => update(ie.ident, newIE).map { _ =>
-        afterSave(newIE)
-        newIE
-      }
-      case _ => insert(newIE).map { withId =>
-        afterSave(withId)
-        withId
-      }
-    }
+  override def save(ie: IE): driver.api.DBIO[IE] = if (ie.id.isDefined) {
+    super.save(ie)
+  } else {
+    insert(ie)
   }
 }
 

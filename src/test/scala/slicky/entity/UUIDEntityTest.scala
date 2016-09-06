@@ -35,24 +35,24 @@ class UUIDEntityTest
     assert(UuidName.byIdent(in1.id).await.get.name == "ONE")
   }
 
-  test("Update or insert with id") {
-    val in1 = UuidName("one").updateOrInsert(UuidName.table.filter(_.name === "one")).await
-    println(UuidName.stream.toList)
-    val in2 = UuidName("one").updateOrInsert(UuidName.table.filter(_.name === "one")).await
-    println(UuidName.stream.toList)
-    assert(in1.id.isDefined)
-    assert(in1.id == in2.id)
-  }
-
-  test("Polymorphic filter") {
-    val nUUID: UUID = UuidName("a").insert.await.ident
-    val vUUID: UUID = UuidValue(1).insert.await.ident
-    assert(UUIDEntities.byIdent(nUUID).get.isInstanceOf[UuidName])
-    assert(UUIDEntities.byIdent(vUUID).get.isInstanceOf[UuidValue])
-    val randomUUID: UUID = Rand.one(List(nUUID, vUUID))
-    val entity = UUIDEntities.byIdent(randomUUID)
-    assert(entity.isDefined)
-  }
+//  test("Update or insert with id") {
+//    val in1 = UuidName("one").updateOrInsert(UuidName.table.filter(_.name === "one")).await
+//    println(UuidName.stream.toList)
+//    val in2 = UuidName("one").updateOrInsert(UuidName.table.filter(_.name === "one")).await
+//    println(UuidName.stream.toList)
+//    assert(in1.id.isDefined)
+//    assert(in1.id == in2.id)
+//  }
+//
+//  test("Polymorphic filter") {
+//    val nUUID: UUID = UuidName("a").insert.await.ident
+//    val vUUID: UUID = UuidValue(1).insert.await.ident
+//    assert(UUIDEntities.byIdent(nUUID).get.isInstanceOf[UuidName])
+//    assert(UUIDEntities.byIdent(vUUID).get.isInstanceOf[UuidValue])
+//    val randomUUID: UUID = Rand.one(List(nUUID, vUUID))
+//    val entity = UUIDEntities.byIdent(randomUUID)
+//    assert(entity.isDefined)
+//  }
 }
 
 // Name
