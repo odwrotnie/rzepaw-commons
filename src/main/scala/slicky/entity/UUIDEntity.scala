@@ -40,6 +40,18 @@ abstract class UUIDEntityMeta[IE <: UUIDEntity[IE]](tableName: String)
   } else {
     insert(ie)
   }
+
+  // Prevent id == None
+  override def updateByQuery(query: driver.api.Query[_, IE, Seq], e: IE): DBIO[IE] = if (e.id.isDefined) {
+    super.updateByQuery(query, e)
+  } else {
+    query.result flatMap { ies: Seq[IE] =>
+      val sq = ies.map { ie =>
+        super.updateByQuery(query, ie.withId(ie.ident))
+      }
+      DBIO.sequence(sq).flatMap(_ => sq.head)
+    }
+  }
 }
 
 object UUIDEntities

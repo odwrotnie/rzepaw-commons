@@ -42,9 +42,10 @@ abstract class EntityMeta[E <: Entity[E]]
       DBIO.failed(new Exception(s"Get ${ getClass.getSimpleName } or insert $e query returned more than 1 ($i) row: ${ results.mkString(", ") }"))
   }
 
+  def updateByQuery(query: Query[_, E, Seq], e: E): DBIO[E] = query.update(e).map(_ => e)
   def updateOrInsert(query: Query[_, E, Seq], e: E): DBIO[E] = query.length.result.flatMap {
     case i if i == 0 => insert(e)
-    case i if i == 1 => query.update(e).map(_ => e)
+    case i if i == 1 => updateByQuery(query, e)
     case i =>
       val results: Seq[E] = query.result.await
       DBIO.failed(new Exception(s"Update ${ getClass.getSimpleName } or insert $e query returned more than 1 ($i) row: ${ results.mkString(", ") }"))
