@@ -8,6 +8,12 @@ import slick.jdbc.JdbcBackend._
 import scala.util.Try
 
 abstract class DBConfig {
+
+  val DB_URL = "slick.db.connection.string"
+  val DB_USER = "slick.db.user"
+  val DB_PASS = "slick.db.password"
+  val DB_DRIVER = "slick.db.driver"
+
   def databaseDriver: Option[(DatabaseDef, JdbcProfile)] = for {
     db <- database
     dr <- driver
@@ -19,7 +25,9 @@ abstract class DBConfig {
     case "mssql" | "com.typesafe.slick.driver.ms.SQLServerDriver" => SQLServerDriver
     case d => throw new Exception(s"No such driver specified in DBConfig - $d")
   }
+
   def database: Option[DatabaseDef]
+
   override def toString = s"${ getClass.getSimpleName.toUpperCase }"
 }
 
@@ -27,7 +35,7 @@ object JNDIDBConfig
   extends DBConfig {
   lazy val driverClass: Option[String] = JNDI.get("jdbc/driver")
   lazy val database = driver map { driver =>
-    Database.forName("jdbc/database")
+    Database.forName("default-data-source")
   }
 }
 
@@ -51,19 +59,19 @@ abstract class SimpleDBConfig
 object PropertiesDBConfig
   extends SimpleDBConfig {
   lazy val properties = ResourceProperties("/jdbc.properties")
-  lazy val connectionString: Option[String] = properties.get("slick.db.connection.string")
-  lazy val user: Option[String] = properties.get("slick.db.user")
-  lazy val password: Option[String] = properties.get("slick.db.password")
-  lazy val driverClass: Option[String] = properties.get("slick.db.driver")
+  lazy val connectionString: Option[String] = properties.get(DB_URL)
+  lazy val user: Option[String] = properties.get(DB_USER)
+  lazy val password: Option[String] = properties.get(DB_PASS)
+  lazy val driverClass: Option[String] = properties.get(DB_DRIVER)
   override def toString = super.toString + s": connection: $connectionString, driver: $driverClass, user: $user, password: $password"
 }
 
 object SystemPropertiesDBConfig
   extends SimpleDBConfig {
-  lazy val connectionString: Option[String] = SystemProperties.get("slick.db.connection.string")
-  lazy val user: Option[String] = SystemProperties.get("slick.db.user")
-  lazy val password: Option[String] = SystemProperties.get("slick.db.password")
-  lazy val driverClass: Option[String] = SystemProperties.get("slick.db.driver")
+  lazy val connectionString: Option[String] = SystemProperties.get(DB_URL)
+  lazy val user: Option[String] = SystemProperties.get(DB_USER)
+  lazy val password: Option[String] = SystemProperties.get(DB_PASS)
+  lazy val driverClass: Option[String] = SystemProperties.get(DB_DRIVER)
   override def toString = super.toString + s": connection: $connectionString, driver: $driverClass, user: $user, password: $password"
 }
 
