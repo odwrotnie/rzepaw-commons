@@ -18,9 +18,12 @@ case class RowHelper(row: Row, sh: SheetHelper) {
 
   def valueString(col: Int): Option[String] = {
     val c = row.getCell(col)
-    val tries = Try(c.getStringCellValue).toOption ::
-      Try(NumberToTextConverter.toText(c.getNumericCellValue)).toOption :: Nil
-    tries.flatten.headOption.filter(_.nonEmpty)
+    c.getCellType match {
+      case Cell.CELL_TYPE_STRING | Cell.CELL_TYPE_FORMULA => Try(c.getStringCellValue).toOption
+      case Cell.CELL_TYPE_NUMERIC => Try(NumberToTextConverter.toText(c.getNumericCellValue)).toOption
+      case Cell.CELL_TYPE_BLANK => None
+      case _ => None
+    }
   }
   def valueString(col: String): Option[String] = letterToIndex(col).flatMap(valueString)
   def valueStringByLabel(col: String, labelsIndex: Int = 0): Option[String] = labelToIndexByHeaderRow(col, labelsIndex).flatMap(valueString)
