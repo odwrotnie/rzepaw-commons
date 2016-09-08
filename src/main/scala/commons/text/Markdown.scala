@@ -1,10 +1,13 @@
 package commons.text
 
+import org.pegdown.PegDownProcessor
+
 //import com.tristanhunt.knockoff.DefaultDiscounter._
 
 object Markdown {
 
-  def toHtml(markdownString: String) =
-    //toXHTML(knockoff(markdownString))
-  <h1>{ markdownString }</h1>
+  val pegDown = new PegDownProcessor()
+
+  def toHtmlString(markdownString: String) =
+    pegDown.markdownToHtml(markdownString)
 }

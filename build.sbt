@@ -86,3 +86,5 @@ libraryDependencies += "io.spray" %% "spray-can" % SPRAY_VERSION
 libraryDependencies += "io.spray" %%  "spray-json" % SPRAY_JSON_VERSION
 
 libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.3.4"
+
+libraryDependencies += "org.pegdown" % "pegdown" % "1.6.0"
