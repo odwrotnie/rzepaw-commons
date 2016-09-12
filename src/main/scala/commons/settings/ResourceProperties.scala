@@ -6,14 +6,18 @@ import commons.logger.Logger
 
 import scala.util.Try
 
-case class ResourceProperties(path: String)
+case class ResourceProperties(path: String*)
   extends Logger {
 
-  require(path.startsWith("/"), "Path should start with forward slash")
+  lazy val CONFIG_RESOURCE_KEY = "config.resource"
+  lazy val DEFAULT_CONFIG_RESOURCE = "config"
+
+  lazy val configResource = System.getProperty(CONFIG_RESOURCE_KEY, DEFAULT_CONFIG_RESOURCE)
+  lazy val pathString = path.mkString("/", "/", "")
 
   private val props: Option[Properties] = Try {
     val p = new Properties()
-    p.load(getClass.getResourceAsStream(path))
+    p.load(getClass.getResourceAsStream(pathString))
     p
   }.toOption
 

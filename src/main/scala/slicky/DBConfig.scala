@@ -9,7 +9,6 @@ import scala.util.Try
 
 abstract class DBConfig {
 
-  val JDBC_PROPERTIES = "/jdbc.properties"
   val DB_URL = "slick.db.connection.string"
   val DB_USER = "slick.db.user"
   val DB_PASS = "slick.db.password"
@@ -61,7 +60,7 @@ abstract class SimpleDBConfig
 
 object PropertiesDBConfig
   extends SimpleDBConfig {
-  lazy val properties = ResourceProperties(JDBC_PROPERTIES)
+  lazy val properties = ResourceProperties("jdbc", "properties")
   lazy val connectionString: Option[String] = properties.get(DB_URL)
   lazy val user: Option[String] = properties.get(DB_USER)
   lazy val password: Option[String] = properties.get(DB_PASS)
