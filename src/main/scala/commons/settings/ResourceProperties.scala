@@ -16,6 +16,9 @@ case class ResourceProperties(path: String*)
   lazy val configPathString = (configResource + path).mkString("/", "/", "")
   lazy val defaultPathString = path.mkString("/", "/", "")
 
+  /**
+    * Load configPath properties or defaultPath
+    */
   private val props: Option[Properties] = (configPathString :: defaultPathString :: Nil)
     .flatMap { pathString =>
       Try {
