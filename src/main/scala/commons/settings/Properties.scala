@@ -11,14 +11,38 @@ import scala.util.Try
 object Properties
   extends Logger {
 
+  lazy val CONFIG_RESOURCE_KEY = "config.resource"
+  lazy val DEFAULT_CONFIG_RESOURCE = "config"
+
+  lazy val configResource: String = System.getProperty(CONFIG_RESOURCE_KEY, DEFAULT_CONFIG_RESOURCE)
+
   def get(path: String*): Option[String] = {
+
+    val configPath: List[String] = configResource :: path.toList
+
+    val systemPropertiesConfigPath = configPath.mkString(".")
+    val systemPropertiesPath = path.mkString(".")
+    val jndiConfigPath = configPath.mkString(".")
+    val jndiPath = path.mkString(".")
+    val resourceConfigPath = s"/${ configResource + "/" + path.head }.properties"
+    val resourcePath = s"/${ path.head }.properties"
+    val property = path.tail.mkString(".")
+
     val results: List[String] = List(
-      SystemProperties.get(path.mkString(".")),
-      JNDI.get(path.mkString("/")),
-      ResourceProperties(s"${ path.head }.properties").get(path.tail.mkString("."))
+      SystemProperties.get(systemPropertiesConfigPath),
+      SystemProperties.get(systemPropertiesPath),
+      JNDI.get(jndiConfigPath),
+      JNDI.get(jndiPath),
+      ResourceProperties(resourceConfigPath).get(property),
+      ResourceProperties(resourcePath).get(property)
     ).flatten
+
     val result = results.headOption
-    debug(s"JNDI or properties lookup: ${ path.mkString("/") } = $result")
+    debug(s"System properties lookup: $systemPropertiesConfigPath or $systemPropertiesPath, " +
+      s"JNDI lookup: $jndiConfigPath or $jndiPath, " +
+      s"resource properties lookup: $resourceConfigPath or $resourcePath " +
+      s"= $result")
+
     result
   }
 

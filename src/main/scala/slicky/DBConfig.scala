@@ -1,7 +1,7 @@
 package slicky
 
 import javax.naming.InitialContext
-import commons.settings.{SystemProperties, JNDI, ResourceProperties}
+import commons.settings.{Properties, SystemProperties, JNDI}
 import slick.driver.{JdbcProfile, MySQLDriver, H2Driver, JdbcDriver}
 import com.typesafe.slick.driver.ms.SQLServerDriver
 import slick.jdbc.JdbcBackend._
@@ -9,10 +9,10 @@ import scala.util.Try
 
 abstract class DBConfig {
 
-  val DB_URL = "slick.db.connection.string"
-  val DB_USER = "slick.db.user"
-  val DB_PASS = "slick.db.password"
-  val DB_DRIVER = "slick.db.driver"
+  val DB_URL = "slick" :: "db" :: "connection" :: "string" :: Nil
+  val DB_USER = "slick" :: "db" :: "user" :: Nil
+  val DB_PASS = "slick" :: "db" :: "password" :: Nil
+  val DB_DRIVER = "slick" :: "db" :: "driver" :: Nil
   val JNDI_NAME = "default-data-source"
   val DEFAULT_CONNECTION = "jdbc:h2:mem:db;DB_CLOSE_DELAY=-1;MVCC=TRUE"
 
@@ -31,14 +31,6 @@ abstract class DBConfig {
   def database: Option[DatabaseDef]
 
   override def toString = s"${ getClass.getSimpleName.toUpperCase }"
-}
-
-object JNDIDBConfig
-  extends DBConfig {
-  lazy val driverClass: Option[String] = JNDI.get(DB_DRIVER)
-  lazy val database = driver map { driver =>
-    Database.forName(JNDI_NAME)
-  }
 }
 
 abstract class SimpleDBConfig
@@ -60,20 +52,10 @@ abstract class SimpleDBConfig
 
 object PropertiesDBConfig
   extends SimpleDBConfig {
-  lazy val properties = ResourceProperties("jdbc", "properties")
-  lazy val connectionString: Option[String] = properties.get(DB_URL)
-  lazy val user: Option[String] = properties.get(DB_USER)
-  lazy val password: Option[String] = properties.get(DB_PASS)
-  lazy val driverClass: Option[String] = properties.get(DB_DRIVER)
-  override def toString = super.toString + s": connection: $connectionString, driver: $driverClass, user: $user, password: $password"
-}
-
-object SystemPropertiesDBConfig
-  extends SimpleDBConfig {
-  lazy val connectionString: Option[String] = SystemProperties.get(DB_URL)
-  lazy val user: Option[String] = SystemProperties.get(DB_USER)
-  lazy val password: Option[String] = SystemProperties.get(DB_PASS)
-  lazy val driverClass: Option[String] = SystemProperties.get(DB_DRIVER)
+  lazy val connectionString: Option[String] = Properties.get(DB_URL:_*)
+  lazy val user: Option[String] = Properties.get(DB_USER:_*)
+  lazy val password: Option[String] = Properties.get(DB_PASS:_*)
+  lazy val driverClass: Option[String] = Properties.get(DB_DRIVER:_*)
   override def toString = super.toString + s": connection: $connectionString, driver: $driverClass, user: $user, password: $password"
 }
 
