@@ -13,7 +13,7 @@ case class ResourceProperties(path: String*)
   lazy val DEFAULT_CONFIG_RESOURCE = "config"
 
   lazy val configResource = System.getProperty(CONFIG_RESOURCE_KEY, DEFAULT_CONFIG_RESOURCE)
-  lazy val pathString = path.mkString("/", "/", "")
+  lazy val pathString = (configResource + path).mkString("/", "/", "")
 
   private val props: Option[Properties] = Try {
     val p = new Properties()
@@ -23,7 +23,7 @@ case class ResourceProperties(path: String*)
 
   def get(prop: String): Option[String] = props flatMap { p =>
     val res = Try(p.getProperty(prop)).toOption.flatMap(Option(_))
-    debug(s"Properties $path lookup: $prop - $res")
+    debug(s"Properties $pathString lookup: $prop - $res")
     res
   }
 }
