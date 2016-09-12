@@ -9,10 +9,13 @@ import scala.util.Try
 
 abstract class DBConfig {
 
+  val JDBC_PROPERTIES = "/jdbc.properties"
   val DB_URL = "slick.db.connection.string"
   val DB_USER = "slick.db.user"
   val DB_PASS = "slick.db.password"
   val DB_DRIVER = "slick.db.driver"
+  val JNDI_NAME = "default-data-source"
+  val DEFAULT_CONNECTION = "jdbc:h2:mem:db;DB_CLOSE_DELAY=-1;MVCC=TRUE"
 
   def databaseDriver: Option[(DatabaseDef, JdbcProfile)] = for {
     db <- database
@@ -33,9 +36,9 @@ abstract class DBConfig {
 
 object JNDIDBConfig
   extends DBConfig {
-  lazy val driverClass: Option[String] = JNDI.get("jdbc/driver")
+  lazy val driverClass: Option[String] = JNDI.get(DB_DRIVER)
   lazy val database = driver map { driver =>
-    Database.forName("default-data-source")
+    Database.forName(JNDI_NAME)
   }
 }
 
@@ -58,7 +61,7 @@ abstract class SimpleDBConfig
 
 object PropertiesDBConfig
   extends SimpleDBConfig {
-  lazy val properties = ResourceProperties("/jdbc.properties")
+  lazy val properties = ResourceProperties(JDBC_PROPERTIES)
   lazy val connectionString: Option[String] = properties.get(DB_URL)
   lazy val user: Option[String] = properties.get(DB_USER)
   lazy val password: Option[String] = properties.get(DB_PASS)
@@ -77,7 +80,7 @@ object SystemPropertiesDBConfig
 
 object DefaultDBConfig
   extends SimpleDBConfig {
-  lazy val connectionString: Option[String] = Some("jdbc:h2:mem:db;DB_CLOSE_DELAY=-1;MVCC=TRUE")
+  lazy val connectionString: Option[String] = Some(DEFAULT_CONNECTION)
   override def user: Option[String] = Some("sa")
   override def password: Option[String] = Some("")
   lazy val driverClass: Option[String] = Some("org.h2.Driver")
