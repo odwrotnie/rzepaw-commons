@@ -24,7 +24,7 @@ object Properties
     val systemPropertiesPath = path.mkString(".")
     val jndiConfigPath = configPath.mkString(".")
     val jndiPath = path.mkString(".")
-    val resourceConfigPath = s"/${ configResource + "/" + path.head }.properties"
+    val resourceConfigPath = s"/${ configResource + "." + path.head }.properties"
     val resourcePath = s"/${ path.head }.properties"
     val property = path.tail.mkString(".")
 
