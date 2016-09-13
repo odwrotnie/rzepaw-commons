@@ -21,7 +21,7 @@ libraryDependencies += "net.databinder.dispatch" %% "dispatch-core" % "0.11.3"
 
 libraryDependencies += "net._01001111" % "jlorem" % "1.3"
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "2.1.7"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.0"
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.3"
 

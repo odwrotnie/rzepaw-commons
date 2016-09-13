@@ -4,6 +4,8 @@ import org.joda.time.DateTime
 
 object Year
   extends DateIntervalMeta[Year] {
+
+  def byNumber(ad: Int) = Year(DateUtil.date(ad, 1, 1))
 }
 
 case class Year(dt: DateTime)
@@ -23,6 +25,8 @@ case class Year(dt: DateTime)
   lazy val months: Stream[Month] = firstMonth
     .nextInclusiveStream
     .takeWhile(m => m.start.isBefore(end))
+
+  def month(number: Int): Month = months(number - 1)
 
   override def toString =
     "%s %s" format (start.monthOfYear.getAsShortText, start.yearOfEra.getAsText)
