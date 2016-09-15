@@ -5,6 +5,7 @@ import commons.text.Slugify
 import slicky.Slicky._
 import driver.api._
 
+import scala.collection.mutable.Set
 import scala.concurrent.Future
 
 trait AnyEntity {
@@ -43,31 +44,9 @@ object TblEntityMetaMap
 
   lazy val listId: Set[AnyIdEntityMeta] = list.collect { case x: AnyIdEntityMeta => x }
 
+  private var list: Set[AnyEntityMeta] = Set()
   private[entity] def add(aem: AnyEntityMeta): Unit = {
-    list = list + aem
+    list += aem
     info(s"Added $aem to the list: ${ list.mkString(", ") }")
   }
-  private var list: Set[AnyEntityMeta] = Set()
-  //    Attribute,
-  //    AttributeCategory,
-  //    AttributeValue,
-  //    Address,
-  //    Company,
-  //    Contract,
-  //    Document,
-  //    Event,
-  //    File,
-  //    Note,
-  //    KeyValue,
-  //    Label,
-  //    Person,
-  //    Product,
-  //    ProductVariant,
-  //    Receipt,
-  //    Schedule,
-  //    Step,
-  //    Storage,
-  //    PriceList,
-  //    StorageChange,
-  //    Task)
 }
