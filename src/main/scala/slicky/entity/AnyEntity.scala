@@ -31,7 +31,7 @@ trait AnyEntityMeta {
   // TODO Create schema
 //    if (MTable.getTables(tableName).await.nonEmpty) {
 //      debug(s"Creating table $tableName")
-      table.schema.create
+//      table.schema.create
 //    } else {
 //      warn(s"Table $tableName already exists")
 //    }
