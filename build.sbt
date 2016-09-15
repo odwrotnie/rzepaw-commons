@@ -75,6 +75,8 @@ val SPRAY_VERSION = "1.3.1"
 
 val SPRAY_JSON_VERSION = "1.2.6"
 
+val AKKA_VERSION = "2.4.9"
+
 libraryDependencies += "io.spray" %% "spray-client" % SPRAY_VERSION
 
 libraryDependencies += "io.spray" %% "spray-io" % SPRAY_VERSION
@@ -85,6 +87,10 @@ libraryDependencies += "io.spray" %% "spray-can" % SPRAY_VERSION
 
 libraryDependencies += "io.spray" %%  "spray-json" % SPRAY_JSON_VERSION
 
-libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.3.4"
+libraryDependencies += "com.typesafe.akka" %% "akka-actor" % AKKA_VERSION
+
+libraryDependencies += "com.typesafe.akka" %% "akka-http-core" % AKKA_VERSION
+
+libraryDependencies += "com.typesafe.akka" %% "akka-http-spray-json-experimental" % AKKA_VERSION
 
 libraryDependencies += "org.pegdown" % "pegdown" % "1.6.0"
