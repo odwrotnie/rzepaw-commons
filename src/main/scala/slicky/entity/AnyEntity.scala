@@ -2,6 +2,7 @@ package slicky.entity
 
 import commons.logger.Logger
 import commons.text.Slugify
+import slick.jdbc.meta.MTable
 import slicky.Slicky._
 import driver.api._
 
@@ -18,8 +19,6 @@ trait AnyEntityMeta {
 
   type EntityTable <: Table[_ <: AnyEntity]
 
-  TblEntityMetaMap.add(this)
-
   val tableName: String = Slugify(getClass.getSimpleName, "_").toUpperCase
   def table: TableQuery[_ <: EntityTable]
 
@@ -28,6 +27,16 @@ trait AnyEntityMeta {
 
   def page(pageNum: Int, pageSize: Int): Future[Seq[AnyEntity]]
   def pages(pageSize: Int): Future[Long]
+
+  // TODO Create schema
+//    if (MTable.getTables(tableName).await.nonEmpty) {
+//      debug(s"Creating table $tableName")
+      table.schema.create
+//    } else {
+//      warn(s"Table $tableName already exists")
+//    }
+  // Add table to map
+  TblEntityMetaMap.add(this)
 }
 
 // TODO Refactor to AnyEntityMeta
