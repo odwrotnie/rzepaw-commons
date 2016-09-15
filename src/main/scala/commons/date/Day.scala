@@ -6,10 +6,13 @@ import de.jollyday.{HolidayCalendar, HolidayManager}
 import org.joda.time._
 
 object Day extends DateIntervalMeta[Day] {
+
   val WORKTIME_START_HOUR = 8
   val WORKTIME_END_HOUR = 16
   val DAYTIME_START_HOUR = 6
   val DAYTIME_END_HOUR = 22
+
+  def apply(year: Int, month: Int, day: Int): Day = Day(DateUtil.date(year, month, day))
 
   def daytimeIntervals(intervals: Interval*): Seq[Interval] = {
     if (intervals.isEmpty) Seq[Interval]() else {

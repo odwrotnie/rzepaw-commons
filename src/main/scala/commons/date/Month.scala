@@ -4,6 +4,7 @@ import org.joda.time.DateTime
 
 object Month
   extends DateIntervalMeta[Month] {
+
   def apply(year: Int, month: Int): Month = Month(DateUtil.date(year, month, 1))
 }
 
