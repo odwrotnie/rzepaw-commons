@@ -68,4 +68,6 @@ abstract class EntityMeta[E <: Entity[E]]
   def afterInsert(e: E): Unit = {
     debug(s"Inserted (${ getClass.getSimpleName.replace("$", "") }): $e")
   }
+
+  override def toString: String = tableName
 }
