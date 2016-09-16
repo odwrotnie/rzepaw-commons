@@ -93,4 +93,8 @@ libraryDependencies += "com.typesafe.akka" %% "akka-http-core" % AKKA_VERSION
 
 libraryDependencies += "com.typesafe.akka" %% "akka-http-spray-json-experimental" % AKKA_VERSION
 
+libraryDependencies += "com.typesafe.akka" %% "akka-http-xml-experimental" % AKKA_VERSION
+
+libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "1.0.2"
+
 libraryDependencies += "org.pegdown" % "pegdown" % "1.6.0"

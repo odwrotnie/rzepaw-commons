@@ -12,6 +12,7 @@ import slick.driver._
 import slicky.fields.ID
 import scala.concurrent._
 import scala.concurrent.duration._
+import scala.util.Try
 
 object Slicky
   extends Logger {
@@ -50,6 +51,7 @@ object Slicky
   implicit def futureToSuperFuture[T](f: Future[T]): SuperFuture[T] = new SuperFuture[T](f)
   class SuperFuture[T](under: Future[T]) {
     def await: T = Await.result(under, DURATION)
+    def awaitSafe: Option[T] = Try(await).toOption
   }
 
   implicit def dbioToSuperDBIO[T](a: DBIO[T]): SuperDBIO[T] = new SuperDBIO[T](a)
@@ -57,6 +59,7 @@ object Slicky
     def future: Future[T] = db.run(under)
     def futureTransactionally: Future[T] = db.run(under.transactionally)
     def await: T = Await.result(future, DURATION)
+    def awaitSafe: Option[T] = Try(await).toOption
     def awaitTransactionally: T = Await.result(futureTransactionally, DURATION)
   }
 

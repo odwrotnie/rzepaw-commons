@@ -1,43 +1,43 @@
 package commons.map
 
+import akka.actor.ActorSystem
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.marshallers.xml.ScalaXmlSupport
+import akka.http.scaladsl.model.Uri.Query
+import akka.http.scaladsl.model._
+import akka.stream.ActorMaterializer
+import akka.stream.scaladsl._
+import akka.http.scaladsl.unmarshalling.Unmarshal
 import commons.logger.Logger
-import dispatch._, Defaults._
-import scala.concurrent.Await
-import scala.concurrent.duration._
+import scala.concurrent.Future
+import scala.util._
+import scala.xml._
 
 object Geolocation
-  extends Logger {
+  extends Logger
+    with ScalaXmlSupport {
 
   case class L(lat: Double, lng: Double)
 
-  val h = host("maps.googleapis.com")
-  val req = h / "maps" / "api" / "geocode" / "xml"
-  def params(address: String) =
-    req <<? Map("address" -> address,
-      "language" -> "pl")
+  implicit val system = ActorSystem()
+  implicit val materializer = ActorMaterializer()
+  implicit val executionContext = system.dispatcher
 
-  private def geolocation(address: String): xml.Elem = {
-    val http = new Http
-    val futureDM: Future[xml.Elem] = http(params(address) OK as.xml.Elem)
-    val dm = Await.result(futureDM, 15.seconds)
-    http.shutdown()
-    dm
+  val ADDRESS = "address"
+  val URI = "http://maps.googleapis.com/maps/api/geocode/xml"
+
+  def location(address: String): Future[L] = geocode(address).map { xml =>
+    val location = xml \\ "geometry" \\ "location"
+    val lat = (location \ "lat").text.toDouble
+    val lng = (location \ "lng").text.toDouble
+    L(lat, lng)
   }
 
-  def calculate(address: String): Option[L] = try {
-    val xml = geolocation(address)
-    val l = L((xml \\ "location" \ "lat" text).toDouble,
-      (xml \\ "location" \ "lng" text).toDouble)
-    Some(l)
-  } catch {
-    case _: Throwable => None
-  }
-
-  private def geocode(address: String): xml.Elem = {
-    val http = new Http
-    val futureGC: Future[xml.Elem] = http(params(address) OK as.xml.Elem)
-    val dm = Await.result(futureGC, 15.seconds)
-    http.shutdown()
-    dm
+  private def geocode(address: String): Future[NodeSeq] = {
+    val uri = Uri(URI).withQuery(Query(ADDRESS -> address))
+    for {
+      response <- Http().singleRequest(HttpRequest(uri = uri))
+      entity <- Unmarshal(response.entity).to[NodeSeq]
+    } yield entity
   }
 }
