@@ -17,8 +17,6 @@ libraryDependencies += "joda-time" % "joda-time" % "2.8.2"
 
 libraryDependencies += "de.jollyday" % "jollyday" % "0.5.1"
 
-libraryDependencies += "net.databinder.dispatch" %% "dispatch-core" % "0.11.3"
-
 libraryDependencies += "net._01001111" % "jlorem" % "1.3"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.0"
