@@ -50,7 +50,13 @@ object Slicky
 
   implicit def futureToSuperFuture[T](f: Future[T]): SuperFuture[T] = new SuperFuture[T](f)
   class SuperFuture[T](under: Future[T]) {
-    def await: T = Await.result(under, DURATION)
+    def await: T = Await.result({
+      val f = under
+      f.onFailure {
+        case t => error(s"Await error: ${ t.getMessage }")
+      }
+      f
+    }, DURATION)
     def awaitSafe: Option[T] = Try(await).toOption
   }
 
@@ -58,9 +64,10 @@ object Slicky
   class SuperDBIO[T](under: DBIO[T]) {
     def future: Future[T] = db.run(under)
     def futureTransactionally: Future[T] = db.run(under.transactionally)
-    def await: T = Await.result(future, DURATION)
-    def awaitSafe: Option[T] = Try(await).toOption
-    def awaitTransactionally: T = Await.result(futureTransactionally, DURATION)
+    def await: T = futureToSuperFuture(future).await
+    def awaitSafe: Option[T] = futureToSuperFuture(future).awaitSafe
+    def awaitTransactionally: T = futureToSuperFuture(futureTransactionally).await
+    def awaitTransactionallySafe: Option[T] = futureToSuperFuture(futureTransactionally).awaitSafe
   }
 
   def page[E](query: Query[_, E, Seq], pageNum: Long, pageSize: Int = 10): Future[Seq[E]] =

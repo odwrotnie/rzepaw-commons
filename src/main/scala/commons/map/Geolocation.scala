@@ -17,14 +17,16 @@ object Geolocation
   extends Logger
     with ScalaXmlSupport {
 
-  case class L(lat: Double, lng: Double)
+  val ADDRESS = "address"
+  val URI = "http://maps.googleapis.com/maps/api/geocode/xml"
+
+  case class L(lat: Double, lng: Double) {
+    override def toString: String = s"$lat/$lng"
+  }
 
   implicit val system = ActorSystem()
   implicit val materializer = ActorMaterializer()
   implicit val executionContext = system.dispatcher
-
-  val ADDRESS = "address"
-  val URI = "http://maps.googleapis.com/maps/api/geocode/xml"
 
   def location(address: String): Future[L] = geocode(address).map { xml =>
     val location = xml \\ "geometry" \\ "location"
@@ -34,6 +36,7 @@ object Geolocation
   }
 
   private def geocode(address: String): Future[NodeSeq] = {
+    debug(s"Asking Google API for geocode of $address")
     val uri = Uri(URI).withQuery(Query(ADDRESS -> address))
     for {
       response <- Http().singleRequest(HttpRequest(uri = uri))

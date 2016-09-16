@@ -16,7 +16,7 @@ class GeolocationTest
   val b = "Berlin"
 
   test("Distance test") {
-    println("Distance: " + Distance.between(a, b))
+    println("Distance: " + Distance.between(a, b).awaitSafe)
     println("Location: " + Geolocation.location(a).awaitSafe)
     println("Location: " + Geolocation.location(b).awaitSafe)
   }

@@ -1,12 +1,25 @@
 package commons.map
 
+import akka.actor.ActorSystem
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.marshallers.xml.ScalaXmlSupport
+import akka.http.scaladsl.model.Uri.Query
+import akka.http.scaladsl.model._
+import akka.stream.ActorMaterializer
+import akka.stream.scaladsl._
+import akka.http.scaladsl.unmarshalling.Unmarshal
 import commons.logger.Logger
-import dispatch._, Defaults._
-import scala.concurrent.Await
-import scala.concurrent.duration._
+import scala.concurrent.Future
+import scala.util._
+import scala.xml._
 
 object Distance
-  extends Logger {
+  extends Logger
+  with ScalaXmlSupport {
+
+  val ORIGINS = "origins"
+  val DESTINATIONS = "destinations"
+  val URI = "http://maps.googleapis.com/maps/api/distancematrix/xml"
 
   case class D(seconds: Long, meters: Long) {
     lazy val kilometers: Float = meters.toFloat / 1000
@@ -16,31 +29,28 @@ object Distance
     override def toString = f"$kilometers%2.2fKm|$hours%2.2fh"
   }
 
-  val h = host("maps.googleapis.com")
-  val req = h / "maps" / "api" / "distancematrix" / "xml"
-  def params(origins: String, destinations: String) =
-    req <<? Map("origins" -> origins,
+  implicit val system = ActorSystem()
+  implicit val materializer = ActorMaterializer()
+  implicit val executionContext = system.dispatcher
+
+  private def distanceMatrix(origins: String, destinations: String): Future[NodeSeq] = {
+    debug(s"Asking Google API for distance between $origins and $destinations")
+    val query = Query("origins" -> origins,
       "destinations" -> destinations,
       "language" -> "pl")
-
-  private def distanceMatrix(origins: String, destinations: String): xml.Elem = {
-    val http = new Http
-    val futureDM: Future[xml.Elem] = http(params(origins, destinations) OK as.xml.Elem)
-    val dm = Await.result(futureDM, 15.seconds)
-    http.shutdown()
-    dm
+    val uri = Uri(URI).withQuery(query)
+    for {
+      response <- Http().singleRequest(HttpRequest(uri = uri))
+      entity <- Unmarshal(response.entity).to[NodeSeq]
+    } yield entity
   }
 
-  def between(origin: String, destination: String): Option[D] = try {
-    if (origin.isEmpty || destination.isEmpty)
-      error("The origin or destination string is empty")
-    val xml = distanceMatrix(origin, destination)
+  def between(origin: String, destination: String): Future[D] = distanceMatrix(origin, destination).map { xml =>
+    require(origin.nonEmpty && destination.nonEmpty, "The origin or destination string is empty")
     val d = D((xml \\ "duration" \ "value" text).toLong,
       (xml \\ "distance" \ "value" text).toLong)
     d.durationText = (xml \\ "duration" \ "text" text)
     d.distanceText = (xml \\ "distance" \ "text" text)
-    Some(d)
-  } catch {
-    case _: Throwable => None
+    d
   }
 }
