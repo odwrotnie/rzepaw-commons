@@ -30,10 +30,8 @@ class SpiegelTest
   val orangeJuice = new OrangeJuice
 
   "Instance" should "return an instance" in {
-    val cola = Spiegel.instance(classOf[Cola])
-    info(s"Cola: $cola")
+    val cola = Spiegel.instance[Cola]()
     assert(cola.isInstanceOf[Cola])
-    assert(!cola.isInstanceOf[TonicWater])
   }
 
   "Companion" should "return proper class" in {
