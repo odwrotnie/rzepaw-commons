@@ -34,4 +34,9 @@ object Spiegel {
     println(s"\n\n\n X: $x\n\n")
     internal.sealedDescendants.map(_.asInstanceOf[Symbol])
   }
+
+  def instance[T](clazz: Class[T], constructorArgs: Object*): T = {
+    val constructor = clazz.getConstructor(constructorArgs.map(_.getClass):_*)
+    constructor.newInstance(constructorArgs:_*).asInstanceOf[T]
+  }
 }

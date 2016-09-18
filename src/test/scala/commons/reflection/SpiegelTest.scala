@@ -29,35 +29,16 @@ class SpiegelTest
   val appleJuice = new AppleJuice
   val orangeJuice = new OrangeJuice
 
+  "Instance" should "return an instance" in {
+    val cola = Spiegel.instance(classOf[Cola])
+    info(s"Cola: $cola")
+    assert(cola.isInstanceOf[Cola])
+    assert(!cola.isInstanceOf[TonicWater])
+  }
+
   "Companion" should "return proper class" in {
     assert(Cola == Spiegel.companion[Cola])
     assert(Cola == Spiegel.companion(cola.getClass))
     assert(Cola == Spiegel.companion(cola))
-  }
-
-//  "asdf" should "qwer" in {
-//    val cola = new Cola
-//    println(cola)
-//    val finder = ClassFinder()
-//    val classes = finder.getClasses
-//    println("Classpath: " + System.getProperty("java.class.path"))
-//    classes foreach { c =>
-//      println(s" > $c")
-//    }
-//    //val drinks = ClassFinder.concreteSubclasses(classOf[SoftDrink], classes)
-//    val drinks = ClassFinder.concreteSubclasses("commons.reflection", classes)
-//    println("Drinks: " + drinks)
-//  }
-
-  object Test {
-    sealed class SuperParent
-    sealed class Parent extends SuperParent
-    object A extends Parent
-    object B extends Parent
-    object C extends Parent
-  }
-
-  "Class descendants" should "return proper list" in {
-    println(Spiegel.caseObjects[Test.SuperParent])
   }
 }
