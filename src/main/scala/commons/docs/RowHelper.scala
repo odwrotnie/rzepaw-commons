@@ -17,12 +17,13 @@ case class RowHelper(row: Row, sh: SheetHelper) {
     labelToIndexByHeaderRow(label, row.getSheet.getRow(rowIndex))
 
   def valueString(col: Int): Option[String] = {
-    val c = row.getCell(col)
-    c.getCellType match {
-      case Cell.CELL_TYPE_STRING | Cell.CELL_TYPE_FORMULA => Try(c.getStringCellValue).toOption
-      case Cell.CELL_TYPE_NUMERIC => Try(NumberToTextConverter.toText(c.getNumericCellValue)).toOption
-      case Cell.CELL_TYPE_BLANK => None
-      case _ => None
+    Option(row.getCell(col)) flatMap { c =>
+      c.getCellType match {
+        case Cell.CELL_TYPE_STRING | Cell.CELL_TYPE_FORMULA => Try(c.getStringCellValue).toOption
+        case Cell.CELL_TYPE_NUMERIC => Try(NumberToTextConverter.toText(c.getNumericCellValue)).toOption
+        case Cell.CELL_TYPE_BLANK => None
+        case _ => None
+      }
     }
   }
   def valueString(col: String): Option[String] = letterToIndex(col).flatMap(valueString)
