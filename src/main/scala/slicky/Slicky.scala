@@ -94,7 +94,7 @@ object Slicky
     def filter[T, R: CanBeQueryCondition](data: Option[T])(f: T => X => R) = {
       data.map(v => MaybeFilter(query.withFilter(f(v)))).getOrElse(this)
     }
-    def filter[T, R: CanBeQueryCondition](list: List[T])(f: List[T] => X => R) = if (list.nonEmpty) {
+    def filter[T, R: CanBeQueryCondition](list: Iterable[T])(f: Iterable[T] => X => R) = if (list.nonEmpty) {
       MaybeFilter(query.withFilter(f(list)))
     } else {
       this
