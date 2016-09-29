@@ -15,6 +15,7 @@ case class Month(dt: DateTime)
 
   lazy val daysCount: Int = dt.dayOfMonth().getMaximumValue
 
+  lazy val year = start.getYear
   lazy val monthOfYear = start.getMonthOfYear
   lazy val firstHour = Hour(start)
   lazy val firstDay = Day(start)
