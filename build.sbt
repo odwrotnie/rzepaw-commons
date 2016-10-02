@@ -1,9 +1,8 @@
-lazy val rzepawCommons = (project in file("."))
-  .settings(
-    name := "rzepaw-commons",
-    version := "0.1-SNAPSHOT",
-    scalaVersion := "2.11.8"
-  )
+name := "rzepaw-commons"
+
+version := "0.1-SNAPSHOT"
+
+scalaVersion := "2.11.8"
 
 
 resolvers += "Typesafe Releases" at "http://repo.typesafe.com/typesafe/maven-releases/"
