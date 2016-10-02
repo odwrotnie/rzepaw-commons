@@ -9,7 +9,7 @@ lazy val rzepawCommons = (project in file("."))
 resolvers += "Typesafe Releases" at "http://repo.typesafe.com/typesafe/maven-releases/"
 
 
-libraryDependencies += "org.scala-lang" % "scala-library" % "2.11.7"
+//libraryDependencies += "org.scala-lang" % "scala-library" % "2.11.7"
 
 libraryDependencies += "commons-lang" % "commons-lang" % "2.6"
 
@@ -27,7 +27,7 @@ libraryDependencies += "org.ocpsoft.prettytime" % "prettytime" % "4.0.1.Final"
 
 libraryDependencies += "io.github.cloudify" %% "spdf" % "1.3.1"
 
-libraryDependencies += "org.scala-lang" % "scala-actors" % "2.11.7"
+//libraryDependencies += "org.scala-lang" % "scala-actors" % "2.11.7"
 
 libraryDependencies += "org.apache.commons" % "commons-email" % "1.3.3"
 
