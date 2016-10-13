@@ -26,7 +26,7 @@ case class ParserChain[T](s: String)
   }
 
   def parseOrElse(t: T): T = {
-    warn(s"Unable to parse $s, returning default")
+    warn(s"Unable to parse $s, returning default - $t")
     parse.getOrElse(t)
   }
 
