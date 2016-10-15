@@ -12,8 +12,8 @@ trait ForeignIdEntityMeta[FIE <: Entity[FIE] {def foreignId: Option[String]; def
   def byForeignIdQuery(foreignId: String): Query[FIT, FIE, Seq] =
     table.filter(_.foreignId === foreignId)
 
-  def byForeignId(foreignId: String): Stream[FIE] = streamify(byForeignIdQuery(foreignId))
-  def fromDb(entity: FIE): Stream[FIE] = {
+  def byForeignId(foreignId: String): DBIO[List[FIE]] = byForeignIdQuery(foreignId).result.map(_.toList)
+  def fromDb(entity: FIE): DBIO[List[FIE]] = {
     require(entity.foreignId.nonEmpty)
     byForeignId(entity.foreignId.get)
   }
@@ -21,14 +21,13 @@ trait ForeignIdEntityMeta[FIE <: Entity[FIE] {def foreignId: Option[String]; def
   def updateByForeignId(e: FIE): DBIO[List[FIE]] = {
     require(e.foreignId.nonEmpty)
     val foreignId = e.foreignId.get
-    val entities: List[DBIO[FIE]] = fromDb(e).toList map {
-      case idEntity: AnyIdEntity => // Prevents overwriting auto-generated id with None (earlier it was given new id)
+    val entities: List[DBIO[FIE]] = ??? //{fromDb(e) map {
+//      case idEntity: AnyIdEntity => // Prevents overwriting auto-generated id with None (earlier it was given new id)
 //        val ie: FIE = e.asInstanceOf[AnyIdEntity].withId(idEntity.id).asInstanceOf[FIE]
 //        byForeignIdQuery(foreignId).update(ie).map(_ => ie)
-        ???
-      case entity =>
-        byForeignIdQuery(foreignId).update(entity).map(_ => entity)
-    }
+//      case entity =>
+//        byForeignIdQuery(foreignId).update(entity).map(_ => entity)
+//    }
     DBIO.sequence(entities)
   }
   def updateByForeignId(foreignId: String, entity: FIE): DBIO[_] = {
