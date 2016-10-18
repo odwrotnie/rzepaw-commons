@@ -13,12 +13,13 @@ class ForeignIdMetaTest
   extends FlatSpec {
 
   NameFID.table.schema.create.await
-  NameFID("1", None).insert.await
+  NameFID("0", None).insert.await
   NameFID("1", Some("1")).insert.await
   NameFID("2a", Some("2")).insert.await
   NameFID("2b", Some("2")).insert.await
 
   "By foreign id" should "return proper entity" in {
+    assert(NameFID.withNoForeignId.await.size == 1)
     assert(NameFID.byForeignId("1").await.size == 1)
     assert(NameFID.byForeignId("2").await.size == 2)
   }

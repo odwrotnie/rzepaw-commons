@@ -13,9 +13,12 @@ trait ForeignIdEntityMeta[FIE <: Entity[FIE] {def foreignId: Option[String]; def
   type FIT = Table[FIE] { def foreignId: Rep[Option[String]] }
   def table: TableQuery[_ <: FIT]
 
+  def withNoForeignIdQuery: Query[FIT, FIE, Seq] =
+    table.filter(_.foreignId.isEmpty)
   def byForeignIdQuery(foreignId: String): Query[FIT, FIE, Seq] =
     table.filter(_.foreignId === foreignId)
 
+  def withNoForeignId: DBIO[List[FIE]] = withNoForeignIdQuery.result.map(_.toList)
   def byForeignId(foreignId: String): DBIO[List[FIE]] = byForeignIdQuery(foreignId).result.map(_.toList)
   def fromDb(entity: FIE): DBIO[List[FIE]] = {
     require(entity.foreignId.nonEmpty)
