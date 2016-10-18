@@ -3,7 +3,7 @@ package commons.text
 import org.scalatest.FlatSpec
 
 /*
-sbt "~rzepawCommons/testOnly commons.text.PatternTest"
+sbt "~rzepaw-commons/testOnly commons.text.PatternTest"
  */
 
 class PatternTest

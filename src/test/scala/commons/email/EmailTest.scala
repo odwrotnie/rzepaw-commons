@@ -4,7 +4,7 @@ import commons.logger.Logger
 import org.scalatest.FunSuite
 
 /*
-sbt "~rzepawCommons/testOnly commons.email.EmailTest"
+sbt "~rzepaw-commons/testOnly commons.email.EmailTest"
 */
 
 class EmailTest

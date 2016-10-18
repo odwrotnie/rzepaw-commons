@@ -4,7 +4,7 @@ import org.clapper.classutil.ClassFinder
 import org.scalatest.FlatSpec
 
 /*
-sbt "~rzepawCommons/testOnly commons.reflection.SpiegelTest"
+sbt "~rzepaw-commons/testOnly commons.reflection.SpiegelTest"
  */
 
 abstract class Drink {

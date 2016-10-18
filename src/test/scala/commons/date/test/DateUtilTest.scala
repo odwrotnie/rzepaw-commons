@@ -8,7 +8,7 @@ import org.ocpsoft.prettytime.PrettyTime
 import org.scalatest.{FlatSpec, FunSuite}
 
 /*
-sbt "~rzepawCommons/testOnly commons.date.test.DateUtilTest"
+sbt "~rzepaw-commons/testOnly commons.date.test.DateUtilTest"
  */
 
 class DateUtilTest

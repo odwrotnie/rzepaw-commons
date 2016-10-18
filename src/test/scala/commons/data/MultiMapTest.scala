@@ -4,7 +4,7 @@ import commons.text.MapPrinter
 import org.scalatest.FlatSpec
 
 /*
-sbt "~rzepawCommons/testOnly commons.data.MultiMapTest"
+sbt "~rzepaw-commons/testOnly commons.data.MultiMapTest"
  */
 
 class MultiMapTest

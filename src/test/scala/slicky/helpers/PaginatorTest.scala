@@ -6,7 +6,7 @@ import org.scalatest.{Matchers, FlatSpec}
 import slicky.entity._
 
 /*
-sbt "~rzepawCommons/testOnly slicky.helpers.PaginatorTest"
+sbt "~rzepaw-commons/testOnly slicky.helpers.PaginatorTest"
  */
 
 class PaginatorTest

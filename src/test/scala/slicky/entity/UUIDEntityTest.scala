@@ -9,7 +9,7 @@ import slicky.Slicky._
 import driver.api._
 
 /*
-sbt "~rzepawCommons/testOnly slicky.entity.UUIDEntityTest"
+sbt "~rzepaw-commons/testOnly slicky.entity.UUIDEntityTest"
  */
 
 class UUIDEntityTest

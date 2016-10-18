@@ -8,7 +8,7 @@ import slicky.fields.ID
 import slicky.helpers.Evolutions
 
 /*
-sbt "~rzepawCommons/testOnly slicky.entity.IdEntityTest"
+sbt "~rzepaw-commons/testOnly slicky.entity.IdEntityTest"
  */
 
 class IdEntityTest

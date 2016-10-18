@@ -4,7 +4,7 @@ import commons.logger.Logger
 import org.scalatest.FunSuite
 
 /*
-sbt "~rzepawCommons/testOnly commons.text.ParserChainTest"
+sbt "~rzepaw-commons/testOnly commons.text.ParserChainTest"
  */
 
 class ParserChainTest

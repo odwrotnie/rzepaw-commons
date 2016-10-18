@@ -4,7 +4,7 @@ import org.scalatest.FlatSpec
 import CurrencyAmount._
 
 /*
-sbt "~rzepawCommons/testOnly commons.money.CurrencyTest"
+sbt "~rzepaw-commons/testOnly commons.money.CurrencyTest"
  */
 
 class CurrencyTest

@@ -4,6 +4,10 @@ import slicky.Slicky._
 import driver.api._
 import slicky.entity._
 
+trait ForeignIdEntity {
+
+}
+
 trait ForeignIdEntityMeta[FIE <: Entity[FIE] {def foreignId: Option[String]; def withForeignId(foreignId: String): FIE}] {
 
   type FIT = Table[FIE] { def foreignId: Rep[Option[String]] }

@@ -6,7 +6,7 @@ import slicky.Slicky._
 import driver.api._
 
 /*
-sbt "~rzepawCommons/testOnly slicky.entity.EntityTest"
+sbt "~rzepaw-commons/testOnly slicky.entity.EntityTest"
  */
 
 class EntityTest

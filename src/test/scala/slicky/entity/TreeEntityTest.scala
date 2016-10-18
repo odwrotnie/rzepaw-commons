@@ -8,7 +8,7 @@ import slicky.fields.ID
 import slicky.helpers.{TreeEntityMeta, TreeEntity}
 
 /*
-sbt "~rzepawCommons/testOnly slicky.entity.TreeEntityTest"
+sbt "~rzepaw-commons/testOnly slicky.entity.TreeEntityTest"
 */
 
 class TreeEntityTest

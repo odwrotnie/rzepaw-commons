@@ -9,7 +9,7 @@ import slicky.entity.Entity
 import slicky.entity.EntityMeta
 
 /*
-sbt "~rzepawCommons/testOnly slicky.SlickyTest"
+sbt "~rzepaw-commons/testOnly slicky.SlickyTest"
  */
 
 class SlickyTest

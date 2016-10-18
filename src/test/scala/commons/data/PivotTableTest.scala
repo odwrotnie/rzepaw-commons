@@ -8,7 +8,7 @@ import net.liftweb.json.Serialization.{read, write}
 import scala.util.Random
 
 /*
-sbt "~rzepawCommons/testOnly commons.data.PivotTableTest"
+sbt "~rzepaw-commons/testOnly commons.data.PivotTableTest"
  */
 
 class PivotTableTest

@@ -6,7 +6,7 @@ import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
 /*
-sbt "~rzepawCommons/testOnly commons.logger.GoogleMessagingTest"
+sbt "~rzepaw-commons/testOnly commons.logger.GoogleMessagingTest"
  */
 class GoogleMessagingTest
   extends FunSuite

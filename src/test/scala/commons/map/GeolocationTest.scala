@@ -5,7 +5,7 @@ import org.scalatest.FunSuite
 import slicky.Slicky._
 
 /*
-sbt "~rzepawCommons/testOnly commons.map.GeolocationTest"
+sbt "~rzepaw-commons/testOnly commons.map.GeolocationTest"
  */
 
 class GeolocationTest

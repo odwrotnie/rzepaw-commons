@@ -3,7 +3,7 @@ package commons.settings
 import org.scalatest.FlatSpec
 
 /*
-sbt "~rzepawCommons/testOnly commons.settings.SettingsTest"
+sbt "~rzepaw-commons/testOnly commons.settings.SettingsTest"
  */
 
 class SettingsTest

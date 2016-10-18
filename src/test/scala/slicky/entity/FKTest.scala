@@ -8,7 +8,7 @@ import slicky.fields._
 import scala.concurrent.Future
 
 /*
-sbt "~rzepawCommons/testOnly slicky.entity.FKTest"
+sbt "~rzepaw-commons/testOnly slicky.entity.FKTest"
  */
 
 class FKTest
