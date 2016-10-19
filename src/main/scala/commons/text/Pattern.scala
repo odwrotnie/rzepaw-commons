@@ -5,6 +5,7 @@ import scala.util.matching.Regex
 
 object Pattern {
 
+  lazy val NO_DIGITS_REGEX = "[^0-9]+".r
   lazy val INTEGER_REGEX = "\\d+".r
   lazy val DOUBLE_REGEX = "\\d+([\\.,]\\d+)?".r
 
@@ -20,6 +21,9 @@ object Pattern {
 
   def pickFirstString(s: String, text: String): Option[String] =
     pickFirst(s.r)(text)
+
+  def pickFirstNoDigits(text: String): Option[String] =
+    Try(pickFirst(NO_DIGITS_REGEX)(text).get).toOption
 
   def pickFirstInteger(text: String): Option[Int] =
     Try(pickFirst(INTEGER_REGEX)(text).get.toInt).toOption
