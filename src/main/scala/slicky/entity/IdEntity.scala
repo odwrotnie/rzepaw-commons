@@ -61,10 +61,10 @@ abstract class IdEntityMeta[IE <: IdEntity[IE]](implicit tag: TypeTag[IE])
   def byId(id: Option[ID[IE]]): DBIO[Option[IE]] = super.byIdent(id)
   def byIdGet(id: Option[ID[IE]]): DBIO[Option[IE]] = super.byIdentGet(id)
 
-  def byIdent(id: Long): DBIO[Option[IE]] = super.byIdent(ID[IE](id))
-  def byIdentGet(id: Long): DBIO[IE] = super.byIdentGet(ID[IE](id))
-  def byIdent(id: Option[Long]): DBIO[Option[IE]] = super.byIdent(id.map(l => ID[IE](l)))
-  def byIdentGet(id: Option[Long]): DBIO[Option[IE]] = super.byIdentGet(id.map(l => ID[IE](l)))
+  def byIdentNumber(id: Long): DBIO[Option[IE]] = super.byIdent(ID[IE](id))
+  def byIdentNumberGet(id: Long): DBIO[IE] = super.byIdentGet(ID[IE](id))
+  def byIdentNumber(id: Option[Long]): DBIO[Option[IE]] = super.byIdent(id.map(l => ID[IE](l)))
+  def byIdentNumberGet(id: Option[Long]): DBIO[Option[IE]] = super.byIdentGet(id.map(l => ID[IE](l)))
 
   //  private def cleanId(e: IE): IE = {
   //    val clone = e

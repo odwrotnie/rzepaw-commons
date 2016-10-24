@@ -24,8 +24,8 @@ trait AnyIdEntity
 trait AnyIdEntityMeta
   extends AnyIdentEntityMeta {
 
-  def byIdent(id: Long): DBIO[Option[AnyIdEntity]]
-  def byIdentGet(id: Long): DBIO[AnyIdEntity]
-  def byIdent(id: Option[Long]): DBIO[Option[AnyIdEntity]]
-  def byIdentGet(id: Option[Long]): DBIO[Option[AnyIdEntity]]
+  def byIdentNumber(id: Long): DBIO[Option[AnyIdEntity]]
+  def byIdentNumberGet(id: Long): DBIO[AnyIdEntity]
+  def byIdentNumber(id: Option[Long]): DBIO[Option[AnyIdEntity]]
+  def byIdentNumberGet(id: Option[Long]): DBIO[Option[AnyIdEntity]]
 }
