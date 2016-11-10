@@ -29,3 +29,11 @@ trait AnyIdEntityMeta
   def byIdentNumber(id: Option[Long]): DBIO[Option[AnyIdEntity]]
   def byIdentNumberGet(id: Option[Long]): DBIO[Option[AnyIdEntity]]
 }
+
+object AnyIdEntity {
+
+  def by(table: String, id: Long): DBIO[AnyIdEntity] = {
+    val meta = TblEntityMetaMap.metaId(table)
+    meta.byIdentNumberGet(id)
+  }
+}
