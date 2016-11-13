@@ -19,7 +19,7 @@ case class SMTPServer(address: String,
   }
 }
 
-case class EmailOut(smtp: SMTPServer)
+class EmailOut(smtp: SMTPServer)
   extends EmailMessage {
 
   sealed abstract class MailType
@@ -30,7 +30,9 @@ case class EmailOut(smtp: SMTPServer)
   var date = new DateTime(DateTime.now())
 
   var files: List[commons.email.Attachment] = Nil
-  var html: Option[NodeSeq] = None
+  def html: Option[String] = List(htmlXml.map(_.toString()), htmlString).flatten.headOption
+  var htmlXml: Option[NodeSeq] = None
+  var htmlString: Option[String] = None
   var identity: String = "?"
   var recipients: Seq[String] = Seq()
   var recipientsBCC: Seq[String] = Seq()
@@ -57,7 +59,7 @@ case class EmailOut(smtp: SMTPServer)
       case Plain =>
         new SimpleEmail().setMsg(text.get)
       case Rich =>
-        val htmlString = "<!doctype html>\n" + html.get.toString
+        val htmlString = "<!doctype html>\n" + html.get
         new HtmlEmail().setHtmlMsg(htmlString).setTextMsg(text.get)
       case MultiPart => {
         val mpe = new MultiPartEmail()

@@ -68,7 +68,7 @@ case class EmailIn(m: IMAPMessage)
 
   private lazy val strings: List[String] = content.filter(_.isInstanceOf[String]).map(_.asInstanceOf[String].trim)
   lazy val text: Option[String] = strings.find(!_.startsWith(HTML_START))
-  lazy val html: Option[NodeSeq] = strings.find(_.startsWith(HTML_START)).map(XML.loadString)
+  lazy val html: Option[String] = strings.find(_.startsWith(HTML_START))
   lazy val files: List[Attachment] = content.filter(_.isInstanceOf[Attachment]).map(_.asInstanceOf[Attachment])
 
   lazy val content = {

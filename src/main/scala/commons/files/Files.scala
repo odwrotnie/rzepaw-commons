@@ -4,6 +4,7 @@ import java.io.{File, FileWriter}
 import java.net.URL
 
 import scala.util.Try
+import scala.xml.{Elem, XML}
 
 object Files {
 
@@ -14,10 +15,18 @@ object Files {
     dir.listFiles().toList
   }
 
-  def textFromResources(path: String*): Option[String] = Try {
-    val is = getClass.getResourceAsStream(path.mkString("/", "/", ""))
+  def textFromResources(path: String*): String = {
+    val pathString = path.mkString("/", "/", "")
+    val is = getClass.getResourceAsStream(pathString)
     scala.io.Source.fromInputStream(is).mkString
-  }.toOption
+  }
+
+  def xmlFromResources(path: String*): Elem = {
+    val pathString = path.mkString("/", "/", "")
+    val uri = getClass.getResource(pathString).toURI
+    val file = new File(uri)
+    XML.loadFile(file)
+  }
 }
 
 case class TextFile(path: String) {
