@@ -59,7 +59,7 @@ class EmailOut(smtp: SMTPServer)
       case Plain =>
         new SimpleEmail().setMsg(text.get)
       case Rich =>
-        val htmlString = "<!doctype html>\n" + html.get
+        val htmlString = "<!doctype html>\n\n" + html.get
         new HtmlEmail().setHtmlMsg(htmlString).setTextMsg(text.get)
       case MultiPart => {
         val mpe = new MultiPartEmail()
