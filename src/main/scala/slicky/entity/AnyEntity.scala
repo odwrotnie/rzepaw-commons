@@ -56,6 +56,6 @@ object TblEntityMetaMap
   private var list: Set[AnyEntityMeta] = Set()
   private[entity] def add(aem: AnyEntityMeta): Unit = {
     list += aem
-    info(s"Added $aem to the list: ${ list.mkString(", ") }")
+    info(s"Added $aem to the list")
   }
 }
