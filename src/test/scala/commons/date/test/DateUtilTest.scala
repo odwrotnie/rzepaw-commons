@@ -86,7 +86,7 @@ class DateUtilTest
   }
 
   "ISO date" should "parse" in {
-    val formatter = ISODateTimeFormat.basicDateTime()
+    val formatter = ISODateTimeFormat.dateTimeParser()
     val date = formatter.parseDateTime("2016-10-31T23:00:00.000Z")
   }
 
