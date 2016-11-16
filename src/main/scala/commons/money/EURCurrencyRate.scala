@@ -21,14 +21,14 @@ object EURCurrencyRate {
     rate.flatMap(s => Try(s.toDouble).toOption)
   }
 
-  def calculate(from: String, to: String)(value: Double): Option[Double] = for {
+  def calculate(from: String, to: String)(value: Long): Option[Long] = for {
     fromRate <- if (from == BASE_CURRENCY.slug) Some(1d) else rate(from)
     toRate <- if (to == BASE_CURRENCY.slug) Some(1d) else rate(to)
   } yield {
-    val euro = value / fromRate
-    toRate * euro
+    val euro = value.toDouble / fromRate
+    math.round(toRate * euro)
   }
 
-  def calculate(from: Currency, to: Currency)(value: Double): Option[Double] =
+  def calculate(from: Currency, to: Currency)(value: Long): Option[Long] =
     calculate(from.slug, to.slug)(value)
 }
