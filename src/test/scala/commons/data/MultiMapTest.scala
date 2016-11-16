@@ -1,6 +1,5 @@
 package commons.data
 
-import commons.text.MapPrinter
 import org.scalatest.FlatSpec
 
 /*

@@ -2,7 +2,6 @@ package commons.data
 
 import org.scalatest.FlatSpec
 import net.liftweb.json._
-import net.liftweb.json.JsonDSL._
 import net.liftweb.json.Serialization.{read, write}
 
 import scala.util.Random

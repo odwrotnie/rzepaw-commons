@@ -1,9 +1,9 @@
 package commons.date.test
 
-import commons.date.{Hour, Day, DateUtil}
+import commons.date.{DateUtil, Day, Hour}
 import commons.logger.Logger
-import org.joda.time.{Interval, Duration}
-import org.joda.time.format.DateTimeFormat
+import org.joda.time.{Duration, Interval}
+import org.joda.time.format.{DateTimeFormat, ISODateTimeFormat}
 import org.ocpsoft.prettytime.PrettyTime
 import org.scalatest.{FlatSpec, FunSuite}
 
@@ -83,6 +83,11 @@ class DateUtilTest
       val hr = DateUtil.humanReadable(dt)
       info(s"Human readable $dt: $hr")
     }
+  }
+
+  "ISO date" should "parse" in {
+    val formatter = ISODateTimeFormat.basicDateTime()
+    val date = formatter.parseDateTime("2016-10-31T23:00:00.000Z")
   }
 
 //  "Human readable duration" should "work" in {
