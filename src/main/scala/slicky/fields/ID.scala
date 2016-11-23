@@ -34,4 +34,9 @@ object ID {
   //    any.map(any => ID[E](any.id))
   def apply[E <: IdEntity[E]](any: Option[{ def id: Option[Long] }])(implicit tag: TypeTag[E]): Option[ID[E]] =
     for {a <- any; id <- a.id} yield ID[E](id)
+
+  def extract[E <: IdEntity[E]](id: Option[ID[E]]): DBIO[Option[E]] = id match {
+    case Some(id) => id.entity.map(p => Some(p))
+    case None => DBIO.successful(None)
+  }
 }
