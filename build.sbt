@@ -74,6 +74,8 @@ val SPRAY_JSON_VERSION = "1.2.6"
 
 val AKKA_VERSION = "2.4.9"
 
+val AKKA_HTTP_VERSION = "10.0.0"
+
 libraryDependencies += "io.spray" %% "spray-client" % SPRAY_VERSION
 
 libraryDependencies += "io.spray" %% "spray-io" % SPRAY_VERSION
@@ -86,9 +88,9 @@ libraryDependencies += "io.spray" %%  "spray-json" % SPRAY_JSON_VERSION
 
 libraryDependencies += "com.typesafe.akka" %% "akka-actor" % AKKA_VERSION
 
-libraryDependencies += "com.typesafe.akka" %% "akka-http-core" % AKKA_VERSION
+libraryDependencies += "com.typesafe.akka" %% "akka-http-core" % AKKA_HTTP_VERSION
 
-libraryDependencies += "com.typesafe.akka" %% "akka-http-xml-experimental" % AKKA_VERSION
+libraryDependencies += "com.typesafe.akka" %% "akka-http-xml" % AKKA_HTTP_VERSION
 
 libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "1.0.2"
 
