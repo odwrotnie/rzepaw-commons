@@ -3,11 +3,11 @@ package commons.money
 object CurrencyEnum extends Enumeration {
 
   abstract class Currency(val name: String, val slug: String,
-                      val short: String, val p: String,
-                      val left: Boolean = true) extends Val(slug) {
+                          val short: String, val p: String,
+                          val left: Boolean = true) extends Val(slug) {
     def amount(a: Long): CurrencyAmount = CurrencyAmount(a, this)
     def euroAmount(a: Long): Option[CurrencyAmount] = EURCurrencyRate.calculate(CurrencyEnum.EUR, this)(a).map(amount)
-    def words(v: Long): String = ""
+    def words(v: Long): String = s"${ v.toFloat/100 } $short"
     override def toString = short
   }
 
