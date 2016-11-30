@@ -2,22 +2,21 @@ package commons.money
 
 object CurrencyEnum extends Enumeration {
 
-  case class Currency(val name: String, val slug: String,
+  abstract class Currency(val name: String, val slug: String,
                       val short: String, val p: String,
                       val left: Boolean = true) extends Val(slug) {
     def amount(a: Long): CurrencyAmount = CurrencyAmount(a, this)
     def euroAmount(a: Long): Option[CurrencyAmount] = EURCurrencyRate.calculate(CurrencyEnum.EUR, this)(a).map(amount)
-    def words: String = ??? // implement with CurrencyPrinter trait (like PLN)
+    def words(v: Long): String = ""
     override def toString = short
   }
 
-  private def short(slug: String): Currency = new Currency(slug, slug, slug, slug)
+  private def short(slug: String): Currency = new Currency(slug, slug, slug, slug) with DefaultCurrencyPrinter
 
-  // TODO Rozszerzenie powoduje błąd - https://basecamp.com/2452878/projects/4324935/todos/232298203#events_todo_232298203
   val PLN = new Currency("Złoty", "PLN", "zł", "gr", left = false) with PLNCurrencyPrinter
-  val EUR = Currency("Euro", "EUR", "€", "¢")
-  val USD = Currency("US Dollar", "USD", "$", "¢")
-  val GBP = Currency("Pound", "GBP", "£", "p")
+  val EUR = new Currency("Euro", "EUR", "€", "¢") with DefaultCurrencyPrinter
+  val USD = new Currency("US Dollar", "USD", "$", "¢") with DefaultCurrencyPrinter
+  val GBP = new Currency("Pound", "GBP", "£", "p") with DefaultCurrencyPrinter
   val JPY = short("JPY")
   val BGN = short("BGN")
   val CZK = short("CZK")
