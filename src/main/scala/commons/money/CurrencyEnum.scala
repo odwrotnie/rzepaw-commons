@@ -7,13 +7,14 @@ object CurrencyEnum extends Enumeration {
                       val left: Boolean = true) extends Val(slug) {
     def amount(a: Long): CurrencyAmount = CurrencyAmount(a, this)
     def euroAmount(a: Long): Option[CurrencyAmount] = EURCurrencyRate.calculate(CurrencyEnum.EUR, this)(a).map(amount)
+    def words: String = ??? // implement with CurrencyPrinter trait (like PLN)
     override def toString = short
   }
 
   private def short(slug: String): Currency = new Currency(slug, slug, slug, slug)
 
   // TODO Rozszerzenie powoduje błąd - https://basecamp.com/2452878/projects/4324935/todos/232298203#events_todo_232298203
-  val PLN = Currency("Złoty", "PLN", "zł", "gr", left = false) // with PLNCurrencyPrinter
+  val PLN = new Currency("Złoty", "PLN", "zł", "gr", left = false) with PLNCurrencyPrinter
   val EUR = Currency("Euro", "EUR", "€", "¢")
   val USD = Currency("US Dollar", "USD", "$", "¢")
   val GBP = Currency("Pound", "GBP", "£", "p")
