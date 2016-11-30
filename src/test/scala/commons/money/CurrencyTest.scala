@@ -20,7 +20,7 @@ class CurrencyTest
   }
 
   s"$value PLN" should s"be $words" in {
-    val ca = CurrencyAmount(value, CurrencyEnum.PLN)
+    val ca = CurrencyEnum.PLN.words(value)
     assert(ca.words == words)
   }
 

@@ -3,8 +3,8 @@ package commons.money
 import commons.money.CurrencyEnum.Currency
 import commons.text.Pattern
 
-case class CurrencyAmount(val amount: Long,
-                          val currency: Currency = CurrencyEnum.PLN) {
+case class CurrencyAmount(amount: Long,
+                          currency: Currency = CurrencyEnum.PLN) {
 
   def plus(ca: CurrencyAmount): Option[CurrencyAmount] = {
     ca.to(currency).map(ca => currency.amount(amount + ca.amount))

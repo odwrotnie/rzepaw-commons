@@ -7,7 +7,7 @@ object CurrencyEnum extends Enumeration {
                           val left: Boolean = true) extends Val(slug) {
     def amount(a: Long): CurrencyAmount = CurrencyAmount(a, this)
     def euroAmount(a: Long): Option[CurrencyAmount] = EURCurrencyRate.calculate(CurrencyEnum.EUR, this)(a).map(amount)
-    def words(v: Long): String = s"${ v.toFloat/100 } $short"
+    def words(value: Long): String
     override def toString = short
   }
 

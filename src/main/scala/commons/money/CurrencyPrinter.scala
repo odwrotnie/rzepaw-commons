@@ -8,9 +8,9 @@ trait CurrencyPrinter {
 
   protected def w(v: Long): String
 
-  def digits(value: Double) = append("%.2f" format value, short)
+  def digits(value: Long): String = append("%.2f" format value, short)
 
-  def words(value: Double) = {
+  def words(value: Long): String = {
     val before = w(value.toLong)
     val after = w(((value * 100.0f) % 100).toLong)
     List(before, after).filterNot(_.isEmpty).zip(List(short, p)).
