@@ -8,7 +8,7 @@ trait CurrencyPrinter {
 
   protected def w(v: Long): String
 
-  def digits(value: Long): String = append("%.2f" format value, short)
+  def digits(value: Long): String = append("%.2f" format (value.toFloat / 100), short)
 
   def words(value: Long): String = {
     val before = w(value.toLong)

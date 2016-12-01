@@ -32,7 +32,7 @@ class CurrencyTest
   "Currency rate of EUR" should "be equal" in {
     val eur2eur = EURCurrencyRate.calculate("EUR", "EUR") _
     assert(eur2eur(123).isDefined)
-    assert(eur2eur(123).get == 1.23)
+    assert(eur2eur(123).get == 123)
   }
 
   "1 EUR in PLN" should "should be greater than 1" in {
