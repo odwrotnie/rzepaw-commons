@@ -16,7 +16,7 @@ object Rand {
   }
 
   def one[T](s: Iterable[T]): T = {
-    require(s.nonEmpty, "The iterable is empty")
+    require(s.nonEmpty, "Rand.one - the iterable is empty")
     s.toSeq(Random.nextInt(s.size))
   }
 
