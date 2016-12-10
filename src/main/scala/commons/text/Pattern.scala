@@ -50,4 +50,9 @@ object Pattern {
 
   def pickAllEmails(text: String): List[String] =
     pickAll(EMAIL_REGEX)(text)
+
+  // VALIDATE
+
+  def validateEmail(text: String): Boolean =
+    text.matches(EMAIL_PATTERN)
 }
