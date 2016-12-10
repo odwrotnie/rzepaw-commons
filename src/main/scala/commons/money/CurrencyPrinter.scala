@@ -11,8 +11,8 @@ trait CurrencyPrinter {
   def digits(value: Long): String = append("%.2f" format (value.toFloat / 100), short)
 
   def words(value: Long): String = {
-    val before = w(value.toLong)
-    val after = w(((value * 100.0f) % 100).toLong)
+    val before = w(value / 100)
+    val after = w(value % 100)
     List(before, after).filterNot(_.isEmpty).zip(List(short, p)).
       flatMap(t => List(t._1, t._2)).mkString(" ").trim
   }

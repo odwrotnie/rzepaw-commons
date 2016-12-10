@@ -3,8 +3,7 @@ package commons.money
 trait PLNCurrencyPrinter
   extends CurrencyPrinter {
 
-  def w(cents: Long) = {
-    val v = cents.toDouble / 100
+  def w(v: Long) = {
     def w(number: Long, thousandPow: Int) = {
 
       assert(number >= 0 && number < 1000, "Number should contain 3 digits (%s)" format number)

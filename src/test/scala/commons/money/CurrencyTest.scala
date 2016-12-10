@@ -35,15 +35,20 @@ class CurrencyTest
     assert(eur2eur(123).get == 123)
   }
 
-  "1 EUR in PLN" should "should be greater than 1" in {
+  "1 EUR in PLN" should "be greater than 1" in {
     val eur2pln = EURCurrencyRate.calculate("EUR", "PLN") _
     assert(eur2pln(100).isDefined)
     assert(eur2pln(100).get > 2)
   }
 
-  "1 USD in PLN" should "should be greater than 1" in {
+  "1 USD in PLN" should "be greater than 1" in {
     val usd2pln = EURCurrencyRate.calculate("USD", "PLN") _
     assert(usd2pln(100).isDefined)
     assert(usd2pln(100).get > 2)
+  }
+
+  "Decimals" should "work fine" in {
+    val w = CurrencyEnum.PLN.amount(1708).words
+    info(w)
   }
 }
