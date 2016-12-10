@@ -48,6 +48,8 @@ object TblEntityMetaMap
   def meta(table: String): AnyEntityMeta = map.getOrElse(table, throw new Exception(s"No Meta Entity: $table"))
   def metaId(table: String): AnyIdEntityMeta = mapId.getOrElse(table, throw new Exception(s"No Meta Entity: $table"))
 
+  def anyIdEntity(table: String, idNumber: Long): DBIO[AnyIdEntity] = metaId(table).byIdentNumberGet(idNumber)
+
   lazy val map: Map[String, AnyEntityMeta] = list.map(meta => meta.tableName -> meta).toMap
   lazy val mapId: Map[String, AnyIdEntityMeta] = listId.map(meta => meta.tableName -> meta).toMap
 
