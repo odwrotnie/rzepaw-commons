@@ -1,10 +1,9 @@
 package commons.data
 
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics
+abstract class PivotTable[ROW, COL, AGG <: AnyVal](val rows: Iterable[ROW],
+                                                   val cols: Iterable[COL]) {
 
-case class PivotTable[ROW, COL, AGG <: AnyVal](rows: Iterable[ROW],
-                                               cols: Iterable[COL],
-                                               _agg: (ROW, COL) => AGG) {
+  def _agg(r: ROW, c: COL): AGG
 
   val COL_SEPARATOR = " "
   val COL_HEAD_SEPARATOR = " | "
