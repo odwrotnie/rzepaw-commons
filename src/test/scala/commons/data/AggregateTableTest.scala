@@ -10,12 +10,12 @@ import scala.util.Random
 sbt "~rzepaw-commons/testOnly commons.data.PivotTableTest"
  */
 
-class PivotTableTest
+class AggregateTableTest
   extends FlatSpec {
 
   implicit val formats = Serialization.formats(NoTypeHints)
 
-  val pt = PivotTable[String, Int, Int](
+  val pt = AggregateTable[String, Int, Int](
     List("A", "B", "C"),
     1 to 5,
     (r: String, c: Int) => Random.nextInt(1000))

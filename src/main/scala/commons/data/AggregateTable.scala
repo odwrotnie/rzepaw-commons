@@ -1,7 +1,7 @@
 package commons.data
 
-abstract class PivotTable[ROW, COL, AGG <: AnyVal](val rows: Iterable[ROW],
-                                                   val cols: Iterable[COL]) {
+abstract class AggregateTable[ROW, COL, AGG <: AnyVal](val rows: Iterable[ROW],
+                                                       val cols: Iterable[COL]) {
 
   def _agg(r: ROW, c: COL): AGG
 

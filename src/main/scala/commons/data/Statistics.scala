@@ -31,7 +31,7 @@ abstract class Statistics[T](list: Seq[T],
     label -> stats(label)
   }.toMap
 
-  lazy val pivotTable = new PivotTable[T, String, Double](list, labels) {
-    override def _agg(t: T, label: String): Double = value(t)(label)
+  lazy val aggregateTable = new AggregateTable[String, T, Double](labels, list) {
+    override def _agg(label: String, t: T): Double = value(t)(label)
   }
 }
