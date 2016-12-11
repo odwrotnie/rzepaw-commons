@@ -24,7 +24,7 @@ case class DescStats(values: Iterable[Double]) {
   // For box plot - https://en.wikipedia.org/wiki/Box_plot
   lazy val whiskerLow: Double = q1 - 1.5 * iqr
   lazy val whiskerHigh: Double = q3 + 1.5 * iqr
-  lazy val outliers: Iterable[Double] = values.filter(_ < whiskerLow).filter(_ > whiskerHigh)
+  lazy val outliers: Iterable[Double] = values.filter(o => o < whiskerLow || o > whiskerHigh)
 
   lazy val deciles: Map[Int, Double] = (1 to 9) map { i => i -> statistics.getPercentile(10 * i) } toMap
   lazy val decilesString: String =  (1 to 9) map { i => s"$i: ${statistics.getPercentile(10 * i)}" } mkString ", "
