@@ -9,6 +9,7 @@ case class DescStats(values: Iterable[Double]) {
   lazy val mean: Double = statistics.getMean
   lazy val sum: Double = statistics.getSum
   lazy val stdDev: Double = statistics.getStandardDeviation
+  lazy val coeffOfVariation: Double = stdDev / mean // Coefficient of variation
   lazy val variance: Double = statistics.getPopulationVariance
   lazy val min: Double = statistics.getMin
   lazy val max: Double = statistics.getMax
