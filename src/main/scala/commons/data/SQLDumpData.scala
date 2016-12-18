@@ -30,6 +30,12 @@ import scala.collection.mutable.ListBuffer
   * API: http://jsqlparser.sourceforge.net/docs/
   * Example: http://jsqlparser.sourceforge.net/example.php
   * Old website: http://jsqlparser.sourceforge.net/home.php
+  *
+  * !!! JEST JAKIS PROBLEM Z IF IF - https://github.com/JSQLParser/JSqlParser/issues/100
+  * NAJPROSCIEJ USUNAC TE LINIE
+  *
+  * !!! PROBLEMY PRZY REPLACE
+  * NAJLEPIEJ USUNAC TE LINIE
   */
 object SQLDumpData {
 
@@ -45,37 +51,37 @@ object SQLDumpData {
 
     var tableInserts = new mutable.HashMap[String, ListBuffer[List[Any]]]()
 
-    override def visit(truncate: Truncate): Unit = ???
+    override def visit(truncate: Truncate): Unit = {}
 
-    override def visit(drop: Drop): Unit = ???
+    override def visit(drop: Drop): Unit = {}
 
-    override def visit(replace: Replace): Unit = ???
+    override def visit(replace: Replace): Unit = {}
 
-    override def visit(createView: CreateView): Unit = ???
+    override def visit(createView: CreateView): Unit = {}
 
-    override def visit(createTable: CreateTable): Unit = ???
+    override def visit(createTable: CreateTable): Unit = {}
 
-    override def visit(createIndex: CreateIndex): Unit = ???
+    override def visit(createIndex: CreateIndex): Unit = {}
 
     override def visit(stmts: Statements): Unit = stmts.getStatements foreach { stmt =>
       stmt.accept(this)
     }
 
-    override def visit(alter: Alter): Unit = ???
+    override def visit(alter: Alter): Unit = {}
 
-    override def visit(alterView: AlterView): Unit = ???
+    override def visit(alterView: AlterView): Unit = {}
 
-    override def visit(merge: Merge): Unit = ???
+    override def visit(merge: Merge): Unit = {}
 
-    override def visit(set: SetStatement): Unit = ???
+    override def visit(set: SetStatement): Unit = {}
 
-    override def visit(execute: Execute): Unit = ???
+    override def visit(execute: Execute): Unit = {}
 
     override def visit(select: Select): Unit = {}
 
-    override def visit(delete: Delete): Unit = ???
+    override def visit(delete: Delete): Unit = {}
 
-    override def visit(update: Update): Unit = ???
+    override def visit(update: Update): Unit = {}
 
     override def visit(insert: Insert): Unit = {
       val ilv = new ILV

@@ -66,7 +66,7 @@ libraryDependencies += "com.wix" %% "accord-core" % "0.5"
 
 libraryDependencies += "com.h2database" % "h2" % "1.3.175"
 
-libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.+"
+libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.40"
 
 libraryDependencies += "io.reactivex" % "rxjava-reactive-streams" % "1.0.1"
 
