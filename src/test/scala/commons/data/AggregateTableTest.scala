@@ -15,10 +15,11 @@ class AggregateTableTest
 
   implicit val formats = Serialization.formats(NoTypeHints)
 
-  val pt = AggregateTable[String, Int, Int](
+  val pt = new AggregateTable[String, Int, Int](
     List("A", "B", "C"),
-    1 to 5,
-    (r: String, c: Int) => Random.nextInt(1000))
+    1 to 5) {
+    override def _agg(r: String, c: Int): Int = Random.nextInt(1000)
+  }
 
   val ds = DescStats(List(1, 1, 1, 5))
 

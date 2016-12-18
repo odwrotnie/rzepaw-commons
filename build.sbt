@@ -12,6 +12,8 @@ resolvers += "Typesafe Releases" at "http://repo.typesafe.com/typesafe/maven-rel
 
 libraryDependencies += "commons-lang" % "commons-lang" % "2.6"
 
+libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0"
+
 libraryDependencies += "joda-time" % "joda-time" % "2.8.2"
 
 libraryDependencies += "de.jollyday" % "jollyday" % "0.5.1"
@@ -97,3 +99,5 @@ libraryDependencies += "com.typesafe.akka" %% "akka-http-xml" % AKKA_HTTP_VERSIO
 libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "1.0.2"
 
 libraryDependencies += "org.pegdown" % "pegdown" % "1.6.0"
+
+libraryDependencies += "com.github.jsqlparser" % "jsqlparser" % "0.9.6"
