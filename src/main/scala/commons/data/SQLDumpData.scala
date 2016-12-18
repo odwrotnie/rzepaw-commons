@@ -25,6 +25,12 @@ import scala.collection.JavaConversions._
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
+/**
+  * Library: https://github.com/JSQLParser/JSqlParser
+  * API: http://jsqlparser.sourceforge.net/docs/
+  * Example: http://jsqlparser.sourceforge.net/example.php
+  * Old website: http://jsqlparser.sourceforge.net/home.php
+  */
 object SQLDumpData {
 
   def apply(sql: String): mutable.HashMap[String, ListBuffer[List[Any]]] = {
