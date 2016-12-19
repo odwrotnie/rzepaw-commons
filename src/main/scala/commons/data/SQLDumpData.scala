@@ -37,14 +37,22 @@ import scala.collection.mutable.ListBuffer
   * !!! PROBLEMY PRZY REPLACE
   * NAJLEPIEJ USUNAC TE LINIE
   */
-object SQLDumpData {
+case class SQLDumpData(sql: String) {
 
-  def apply(sql: String): mutable.HashMap[String, ListBuffer[List[Any]]] = {
+  lazy val tableInsertsMap: mutable.HashMap[String, ListBuffer[List[Any]]] = {
     val stmts = CCJSqlParserUtil.parseStatements(sql)
     val sv = new SV
     stmts.accept(sv)
     sv.tableInserts
   }
+
+  def inserts(table: String): List[List[Any]] = tableInsertsMap.get(table).get.toList
+
+  def map[T](table: String, m: List[Any] => T): List[T] = inserts(table).map(m)
+
+  override def toString: String = tableInsertsMap.keySet map { key =>
+    s"$key: ${ tableInsertsMap.get(key).toList.flatten.size }"
+  } mkString(", ")
 
   class SV
     extends StatementVisitor {
@@ -85,8 +93,7 @@ object SQLDumpData {
 
     override def visit(insert: Insert): Unit = {
       val ilv = new ILV
-      println(insert)
-      val tableName = insert.getTable.getName
+      val tableName = insert.getTable.getName.replace("`", "")
       insert.getItemsList.accept(ilv)
       tableInserts.get(tableName) match {
         case Some(lb) =>
@@ -100,7 +107,7 @@ object SQLDumpData {
   class ILV
     extends ItemsListVisitor {
 
-    var result = collection.mutable.ListBuffer[List[Any]]()
+    val result = collection.mutable.ListBuffer[List[Any]]()
 
     override def visit(subSelect: SubSelect): Unit = ???
 
