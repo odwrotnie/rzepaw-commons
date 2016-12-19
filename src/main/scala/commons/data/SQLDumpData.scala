@@ -99,7 +99,7 @@ case class SQLDumpData(sql: String) {
         case Some(lb) =>
           lb += ilv.result.toList
         case None =>
-          tableInserts += (tableName -> ListBuffer[List[Any]](ilv.result.toList))
+          tableInserts += (tableName -> ilv.result)
       }
     }
   }
