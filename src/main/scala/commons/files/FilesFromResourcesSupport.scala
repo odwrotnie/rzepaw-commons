@@ -3,10 +3,13 @@ package commons.files
 import java.io.{File, FileWriter}
 import java.net.URL
 
+import scala.io.Codec
 import scala.util.Try
 import scala.xml.{Elem, XML}
 
-object Files {
+trait FilesFromResourcesSupport {
+
+  def codec = Codec.UTF8
 
   def listFromResources(directoryInResources: String): List[File] = {
     val dirUrl: URL = getClass.getResource(directoryInResources)
@@ -18,7 +21,7 @@ object Files {
   def textFromResources(path: String*): String = {
     val pathString = path.mkString("/", "/", "")
     val is = getClass.getResourceAsStream(pathString)
-    scala.io.Source.fromInputStream(is).mkString
+    scala.io.Source.fromInputStream(is)(codec).getLines().mkString("\n")
   }
 
   def xmlFromResources(path: String*): Elem = {
@@ -26,24 +29,5 @@ object Files {
     val uri = getClass.getResource(pathString).toURI
     val file = new File(uri)
     XML.loadFile(file)
-  }
-}
-
-case class TextFile(path: String) {
-
-  val fw = new FileWriter(path, true)
-
-  def append(string: String) {
-    fw.append(string)
-  }
-
-  def appendln(line: String) {
-    append(line)
-    append("\n")
-  }
-
-  def close {
-    fw.flush()
-    fw.close()
   }
 }
