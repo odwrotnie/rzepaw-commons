@@ -13,8 +13,12 @@ trait CurrencyPrinter {
   def words(value: Long): String = {
     val before = w(value / 100)
     val after = w(value % 100)
-    List(before, after).filterNot(_.isEmpty).zip(List(short, p)).
-      flatMap(t => List(t._1, t._2)).mkString(" ").trim
+    List(before, after)
+      .zip(List(short, p))
+      .filterNot(_._1.isEmpty)
+      .flatMap(t => List(t._1, t._2))
+      .mkString(" ")
+      .trim
   }
 
   protected def append(s: String, cur: String) = {

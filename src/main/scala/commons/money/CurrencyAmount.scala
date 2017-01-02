@@ -16,7 +16,7 @@ case class CurrencyAmount(amount: Long,
     }
   def toEuro: Option[CurrencyAmount] = to(CurrencyEnum.EUR)
 
-  def words = currency match {
+  def words: String = currency match {
     case cp: CurrencyPrinter => cp.words(amount)
     case _ => toString
   }

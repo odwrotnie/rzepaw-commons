@@ -2,7 +2,7 @@ package commons.email
 
 import java.io.File
 
-import commons.files.Files
+import commons.files.FilesFromResourcesSupport
 import commons.logger.Logger
 import org.scalatest.FunSuite
 
@@ -14,7 +14,8 @@ sbt "~rzepaw-commons/testOnly commons.email.EmailTest"
 
 class EmailTest
   extends FunSuite
-    with Logger {
+    with Logger
+    with FilesFromResourcesSupport {
 
   ignore("Receive some emails") {
     val i = IMAPServer("imap.gmail.com", "wextmail@gmail.com", "wextmail2014", "Inbox")
@@ -32,7 +33,7 @@ class EmailTest
   ignore("Send an email") {
     val s = SMTPServer("smtp.gmail.com", "wextmail@gmail.com", "wextmail2014")
     val e = new EmailOut(s)
-    val html: String = Files.textFromResources("email", "email.html")
+    val html: String = textFromResources("email", "email.html")
     e.subjectRaw = "WEXT - Scaffold email"
     e.text = Some("PLAIN TEXT")
     e.htmlString = Some(html)
