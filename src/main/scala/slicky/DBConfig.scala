@@ -1,10 +1,13 @@
 package slicky
 
 import javax.naming.InitialContext
-import commons.settings.{Properties, SystemProperties, JNDI}
-import slick.driver.{JdbcProfile, MySQLDriver, H2Driver, JdbcDriver}
+
+import com.typesafe.scalalogging.LazyLogging
+import commons.settings.{JNDI, Properties, SystemProperties}
+import slick.driver.{H2Driver, JdbcDriver, JdbcProfile, MySQLDriver}
 import com.typesafe.slick.driver.ms.SQLServerDriver
 import slick.jdbc.JdbcBackend._
+
 import scala.util.Try
 
 abstract class DBConfig {
@@ -14,7 +17,7 @@ abstract class DBConfig {
   val DB_PASS = "slick" :: "db" :: "password" :: Nil
   val DB_DRIVER = "slick" :: "db" :: "driver" :: Nil
   val JNDI_NAME = "default-data-source"
-  val DEFAULT_CONNECTION = "jdbc:h2:mem:db;DB_CLOSE_DELAY=-1;MVCC=TRUE"
+  val DEFAULT_CONNECTION = "jdbc:h2:mem:db;DB_CLOSE_DELAY=-1;MVCC=TRUE;MODE=MySQL"
 
   def databaseDriver: Option[(DatabaseDef, JdbcProfile)] = for {
     db <- database
@@ -60,9 +63,12 @@ object PropertiesDBConfig
 }
 
 object DefaultDBConfig
-  extends SimpleDBConfig {
+  extends SimpleDBConfig
+    with LazyLogging {
   lazy val connectionString: Option[String] = Some(DEFAULT_CONNECTION)
   override def user: Option[String] = Some("sa")
   override def password: Option[String] = Some("")
   lazy val driverClass: Option[String] = Some("org.h2.Driver")
+  // H2 Server
+  org.h2.tools.Server.createTcpServer("-tcpAllowOthers").start()
 }
