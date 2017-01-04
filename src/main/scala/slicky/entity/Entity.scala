@@ -3,6 +3,8 @@ package slicky.entity
 import slicky.Slicky
 import slicky.Slicky._
 import driver.api._
+import slick.profile.SqlProfile.ColumnOption.SqlType
+
 import scala.concurrent.Future
 
 abstract class Entity[E <: Entity[E]](val meta: EntityMeta[E])
@@ -18,7 +20,10 @@ abstract class Entity[E <: Entity[E]](val meta: EntityMeta[E])
 abstract class EntityMeta[E <: Entity[E]]
   extends AnyEntityMeta {
 
-  abstract class EntityTable(tag: Tag) extends Table[E](tag, tableName)
+  abstract class EntityTable(tag: Tag) extends Table[E](tag, tableName) {
+    val SHORT_VARCHAR_COLUMN = O.Length(255)
+    val LONG_TEXT_COLUMN = SqlType("TEXT")
+  }
 
   class Tbl
   def table: TableQuery[_ <: EntityTable]
