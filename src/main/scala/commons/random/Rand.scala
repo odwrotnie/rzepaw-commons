@@ -8,7 +8,8 @@ import scala.util.Random
 
 object Rand {
 
-  def int(max: Int) = Random.nextInt(max)
+  def int(min: Int = 0, max: Int = Int.MaxValue) = (min + math.abs(Random.nextInt())) % max
+  def long(min: Long = 0, max: Long = Long.MaxValue) = (min + math.abs(Random.nextLong())) % max
 
   def oneOptional[T](s: Seq[T]): Option[T] = {
     if (s.isEmpty) None
