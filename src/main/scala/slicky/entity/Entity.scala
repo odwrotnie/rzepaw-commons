@@ -21,8 +21,9 @@ abstract class EntityMeta[E <: Entity[E]]
   extends AnyEntityMeta {
 
   abstract class EntityTable(tag: Tag) extends Table[E](tag, tableName) {
-    val SHORT_VARCHAR_COLUMN = O.Length(255)
-    val LONG_TEXT_COLUMN = SqlType("TEXT")
+    val STRING_COLUMN = O.Length(255)
+    val TEXT_COLUMN = SqlType("TEXT")
+    val FILE_COLUMN_SIZE = SqlType("MEDIUMBLOB")
   }
 
   class Tbl
