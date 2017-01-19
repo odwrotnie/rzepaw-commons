@@ -1,9 +1,10 @@
 package commons.data
 
-abstract class Statistics[T](list: Seq[T],
-                             labels: String*) {
+trait Statistics[T] {
 
-  def value(t: T)(label: String): Double
+  val list: Seq[T]
+  val labels: Map[String, T => Double]
+  def value(t: T)(label: String): Double = labels.get(label).get(t)
 
   // BY LABEL
 
@@ -17,21 +18,21 @@ abstract class Statistics[T](list: Seq[T],
 
   // BY T
 
-  def valuesMap(t: T): Map[String, Double] = labels.map { label =>
+  def valuesMap(t: T): Map[String, Double] = labels.keys.map { label =>
     label -> value(t)(label)
   }.toMap
 
   // WHOLE
 
-  lazy val valuesMap: Map[String, Seq[Double]] = labels.map { label =>
+  lazy val valuesMap: Map[String, Seq[Double]] = labels.keys.map { label =>
     label -> values(label)
   }.toMap
 
-  lazy val statsMap: Map[String, DescStats] = labels.map { label =>
+  lazy val statsMap: Map[String, DescStats] = labels.keys.map { label =>
     label -> stats(label)
   }.toMap
 
-  lazy val aggregateTable = new AggregateTable[String, T, Double](labels, list) {
+  lazy val aggregateTable = new AggregateTable[String, T, Double](labels.keys, list) {
     override def _agg(label: String, t: T): Double = value(t)(label)
   }
 }
