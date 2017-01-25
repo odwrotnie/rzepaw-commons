@@ -7,7 +7,7 @@ import net.liftweb.json.Serialization.{read, write}
 import scala.util.Random
 
 /*
-sbt "~rzepaw-commons/testOnly commons.data.PivotTableTest"
+sbt "~rzepaw-commons/testOnly commons.data.AggregateTableTest"
  */
 
 class AggregateTableTest
@@ -15,10 +15,11 @@ class AggregateTableTest
 
   implicit val formats = Serialization.formats(NoTypeHints)
 
-  val pt = new AggregateTable[String, Int, Int](
-    List("A", "B", "C"),
+  val pt = new AggregateTable[Int, Int, Int](
+    1 to 3,
     1 to 5) {
-    override def _agg(r: String, c: Int): Int = Random.nextInt(1000)
+    override def _rowcol(r: Int, c: Int): Int = r+c
+    override def _agg(cols: Iterable[Int]): Int = cols.sum
   }
 
   val ds = DescStats(List(1, 1, 1, 5))

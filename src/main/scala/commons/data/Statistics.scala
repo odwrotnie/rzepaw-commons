@@ -33,6 +33,7 @@ trait Statistics[T] {
   }.toMap
 
   lazy val aggregateTable = new AggregateTable[String, T, Double](labels.keys, list) {
-    override def _agg(label: String, t: T): Double = value(t)(label)
+    override def _rowcol(label: String, t: T): Double = value(t)(label)
+    override def _agg(cols: Iterable[Double]): Double = cols.sum
   }
 }
