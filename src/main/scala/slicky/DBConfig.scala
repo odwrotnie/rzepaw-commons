@@ -3,10 +3,10 @@ package slicky
 import javax.naming.InitialContext
 
 import com.typesafe.scalalogging.LazyLogging
-import commons.settings.{JNDI, Properties, SystemProperties}
-import slick.driver.{H2Driver, JdbcDriver, JdbcProfile, MySQLDriver}
-import com.typesafe.slick.driver.ms.SQLServerDriver
+import commons.settings.Properties
+import slick.jdbc._
 import slick.jdbc.JdbcBackend._
+
 
 import scala.util.Try
 
@@ -25,9 +25,9 @@ abstract class DBConfig {
   } yield (db, dr)
   def driverClass: Option[String]
   lazy val driver: Option[JdbcProfile] = driverClass map {
-    case "h2" | "org.h2.Driver" => H2Driver
-    case "mysql" | "com.mysql.jdbc.Driver" => MySQLDriver
-    case "mssql" | "com.typesafe.slick.driver.ms.SQLServerDriver" => SQLServerDriver
+    case "h2" | "org.h2.Driver" => H2Profile
+    case "mysql" | "com.mysql.jdbc.Driver" => MySQLProfile
+    case "mssql" | "com.typesafe.slick.driver.ms.SQLServerDriver" => SQLServerProfile
     case d => throw new Exception(s"No such driver specified in DBConfig - $d")
   }
 

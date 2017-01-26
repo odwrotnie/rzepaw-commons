@@ -3,7 +3,7 @@ package slicky.entity
 import slicky.Slicky
 import slicky.Slicky._
 import driver.api._
-import slick.profile.SqlProfile.ColumnOption.SqlType
+import slick.sql.SqlProfile.ColumnOption.SqlType
 
 import scala.concurrent.Future
 
@@ -24,6 +24,7 @@ abstract class EntityMeta[E <: Entity[E]]
     val STRING_COLUMN = O.Length(255)
     val TEXT_COLUMN = SqlType("TEXT")
     val FILE_COLUMN_SIZE = SqlType("MEDIUMBLOB")
+    val TIMESTAMP_COLUMN = SqlType("timestamp default now()")
   }
 
   class Tbl

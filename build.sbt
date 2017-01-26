@@ -58,9 +58,9 @@ libraryDependencies += "org.clapper" %% "classutil" % "1.0.11"
 
 // SLICKY
 
-libraryDependencies += "com.typesafe.slick" %% "slick" % "3.1.1"
+libraryDependencies += "com.typesafe.slick" %% "slick" % "3.2.0-M2"
 
-libraryDependencies += "com.typesafe.slick" %% "slick-extensions" % "3.1.0"
+//libraryDependencies += "com.typesafe.slick" %% "slick-extensions" % "3.1.0"
 
 libraryDependencies += "com.wix" %% "accord-core" % "0.5"
 
