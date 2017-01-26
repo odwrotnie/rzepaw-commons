@@ -25,11 +25,12 @@ abstract class AggregateTable[ROW, COL, AGG <: AnyVal](val rows: Iterable[ROW],
   //    col <- cols
   //  } yield rowcol(row, col)
 
-  lazy val _rows: Map[String, List[AGG]] = rows.toList.map { row =>
-    rowToString(row) -> cols.toList.map { col =>
-      rowcol(row, col)
-    }
-  }.toMap// ++ ("asdf" -> colsAgg)
+  lazy val _rows: Map[String, List[AGG]] = rows.zip(rowsAgg).toList.map {
+    case (row, agg) =>
+      rowToString(row) -> (cols.toList.map { col =>
+        rowcol(row, col)
+      } :+ agg)
+  }.toMap + ("Agg." -> colsAgg)
 
   def toString(a: Any): String = a match {
     case r: ROW => rowToString(r)
