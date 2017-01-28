@@ -25,6 +25,8 @@ abstract class EntityMeta[E <: Entity[E]]
     val TEXT_COLUMN = SqlType("TEXT")
     val FILE_COLUMN_SIZE = SqlType("MEDIUMBLOB")
     val TIMESTAMP_COLUMN = SqlType("timestamp default now()")
+    val DATETIME_COLUMN = SqlType("DATETIME")
+    val DATE_COLUMN = SqlType("DATE")
   }
 
   class Tbl
