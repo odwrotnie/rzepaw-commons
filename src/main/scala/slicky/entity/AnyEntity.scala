@@ -22,7 +22,8 @@ trait AnyEntityMeta {
   val tableName: String = Slugify(getClass.getSimpleName, "_").toUpperCase
   def table: TableQuery[_ <: EntityTable]
 
-  def count: Int = table.size.result.await
+  def isEmpty: DBIO[Boolean] = table.size.result.map(_ <= 0)
+  def count: DBIO[Int] = table.size.result
   def stream: Stream[AnyEntity]
 
   def page(pageNum: Int, pageSize: Int): Future[Seq[AnyEntity]]

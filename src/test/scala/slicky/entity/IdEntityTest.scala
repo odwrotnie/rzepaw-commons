@@ -59,6 +59,17 @@ class IdEntityTest
 //    assert(in1.id == in2.id)
 //  }
 
+  "Get or insert" should "get" in {
+    val x = IdName("asdf").insert.await
+    val y = IdName.getOrInsert(IdName.table.filter(_.name === "asdf"), IdName("asdf")).await
+    assert(x.identNumber == y.identNumber)
+  }
+
+  "Get or insert" should "insert" in {
+    val y = IdName.getOrInsert(IdName.table.filter(_.name === "NOTPRESENTFORSURE"), IdName("NOTPRESENTFORSURE")).await
+    assert(y.identNumber > 0)
+  }
+
   val queryAsdf = IdName.table.filter(_.name === "asdf")
   val queryQwer = IdName.table.filter(_.name === "qwer")
   var id = -1l
