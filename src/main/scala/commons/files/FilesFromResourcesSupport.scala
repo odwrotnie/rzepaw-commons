@@ -3,11 +3,14 @@ package commons.files
 import java.io.{File, FileWriter}
 import java.net.URL
 
+import com.typesafe.scalalogging.LazyLogging
+
 import scala.io.Codec
 import scala.util.Try
 import scala.xml.{Elem, XML}
 
-trait FilesFromResourcesSupport {
+trait FilesFromResourcesSupport
+  extends LazyLogging {
 
   def codec = Codec.UTF8
 
@@ -16,7 +19,9 @@ trait FilesFromResourcesSupport {
     val dirUrl: URL = getClass.getResource(pathString)
     val dir = new File(dirUrl.toURI)
     require(dir.isDirectory)
-    dir.listFiles().toList
+    val files = dir.listFiles().toList
+    logger.debug(s"Files in resources${ pathString }: ${ files.mkString(", ") }")
+    files
   }
 
   def textFromResources(path: String*): String = {
