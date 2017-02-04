@@ -48,6 +48,7 @@ object TblEntityMetaMap
 
   def meta(table: String): AnyEntityMeta = map.getOrElse(table, throw new Exception(s"No Meta Entity: $table"))
   def metaId(table: String): AnyIdEntityMeta = mapId.getOrElse(table, throw new Exception(s"No Meta Entity: $table"))
+//  def metaSlug(table: String): AnySlugEntityMeta = ??? //mapId.getOrElse(table, throw new Exception(s"No Meta Entity: $table"))
 
   def anyIdEntity(table: String, idNumber: Long): DBIO[AnyIdEntity] = metaId(table).byIdentNumberGet(idNumber)
 
