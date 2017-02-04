@@ -11,8 +11,9 @@ trait FilesFromResourcesSupport {
 
   def codec = Codec.UTF8
 
-  def listFromResources(directoryInResources: String): List[File] = {
-    val dirUrl: URL = getClass.getResource(directoryInResources)
+  def listFromResources(path: String*): List[File] = {
+    val pathString = path.mkString("/", "/", "")
+    val dirUrl: URL = getClass.getResource(pathString)
     val dir = new File(dirUrl.toURI)
     require(dir.isDirectory)
     dir.listFiles().toList

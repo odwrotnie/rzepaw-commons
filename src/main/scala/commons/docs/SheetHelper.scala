@@ -61,4 +61,6 @@ case class SheetHelper(sheet: Sheet, dropFirstRows: Int = 0)
   def rows: Stream[Row] = sheet.rowIterator.toStream.drop(dropFirstRows)
   def rowHelpers: Stream[RowHelper] = rows.map(row => RowHelper(row, this))
   def rows[R](convert: (RowHelper => R)): Stream[R] = rowHelpers.map(convert)
+
+  override def toString: String = s"Sheet $name"
 }

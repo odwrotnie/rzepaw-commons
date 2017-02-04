@@ -53,7 +53,9 @@ object Slicky
     def await: T = Await.result({
       val f = under
       f.onFailure {
-        case t => error(s"Await error: ${ t.getMessage }")
+        case t =>
+          error(s"Await error: ${ t.getMessage }")
+          t.printStackTrace()
       }
       f
     }, DURATION)
