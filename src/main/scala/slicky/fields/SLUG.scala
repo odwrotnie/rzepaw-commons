@@ -33,8 +33,8 @@ object SLUG {
   def apply[E <: SlugEntity[E]](slug: String)(implicit tag: TypeTag[E]): SLUG[E] = new SLUG[E](slug)
   def apply[E <: SlugEntity[E]](any: { def slug: String })(implicit tag: TypeTag[E]): SLUG[E] = new SLUG[E](any.slug)
   def apply[E <: SlugEntity[E]](any: { def slug: Option[String] })(implicit tag: TypeTag[E]): Option[SLUG[E]] = any.slug.map(s => new SLUG[E](s))
-  def apply[E <: SlugEntity[E]](any: Option[{ def slug: String }])(implicit tag: TypeTag[E]): Option[SLUG[E]] = any.map(any => new SLUG[E](any.slug))
-  // def apply[E <: SlugEntity[E]](any: Option[{ def slug: Option[String] }])(implicit tag: TypeTag[E]): Option[SLUG[E]] = for {a <- any; id <- a.slug} yield new SLUG[E](id)
+  // def apply[E <: SlugEntity[E]](any: Option[{ def slug: String }])(implicit tag: TypeTag[E]): Option[SLUG[E]] = any.map(any => new SLUG[E](any.slug))
+  def apply[E <: SlugEntity[E]](any: Option[{ def slug: Option[String] }])(implicit tag: TypeTag[E]): Option[SLUG[E]] = for {a <- any; id <- a.slug} yield new SLUG[E](id)
 
   def extract[E <: SlugEntity[E]](slug: Option[SLUG[E]]): DBIO[Option[E]] = slug match {
     case Some(slug) => slug.entity.map(p => Some(p))
