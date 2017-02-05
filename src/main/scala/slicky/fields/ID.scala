@@ -26,14 +26,11 @@ case class ID[E <: IdEntity[E]](value: Long)(implicit tag: TypeTag[E])
 }
 
 object ID {
-  def apply[E <: IdEntity[E]](any: { def id: Long })(implicit tag: TypeTag[E]): ID[E] =
-    ID[E](any.id)
-  def apply[E <: IdEntity[E]](any: { def id: Option[Long] })(implicit tag: TypeTag[E]): Option[ID[E]] =
-    any.id.map(id => ID[E](id))
-  //  def apply[E <: IdEntity[E]](any: Option[{ def id: Long }])(implicit tag: TypeTag[E]): Option[ID[E]] =
-  //    any.map(any => ID[E](any.id))
-  def apply[E <: IdEntity[E]](any: Option[{ def id: Option[Long] }])(implicit tag: TypeTag[E]): Option[ID[E]] =
-    for {a <- any; id <- a.id} yield ID[E](id)
+
+  def apply[E <: IdEntity[E]](any: { def id: Long })(implicit tag: TypeTag[E]): ID[E] = ID[E](any.id)
+  def apply[E <: IdEntity[E]](any: { def id: Option[Long] })(implicit tag: TypeTag[E]): Option[ID[E]] = any.id.map(id => ID[E](id))
+  //  def apply[E <: IdEntity[E]](any: Option[{ def id: Long }])(implicit tag: TypeTag[E]): Option[ID[E]] = any.map(any => ID[E](any.id))
+  def apply[E <: IdEntity[E]](any: Option[{ def id: Option[Long] }])(implicit tag: TypeTag[E]): Option[ID[E]] = for {a <- any; id <- a.id} yield ID[E](id)
 
   def extract[E <: IdEntity[E]](id: Option[ID[E]]): DBIO[Option[E]] = id match {
     case Some(id) => id.entity.map(p => Some(p))
