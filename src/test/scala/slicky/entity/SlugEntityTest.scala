@@ -38,8 +38,11 @@ class SlugEntityTest
 
     val slug1 = SLUG.generate[SlugName]
     val sn1 = SlugName("one", slug1).insert.await
-    val sn2 = SlugName("two", SLUG.generate[SlugName]).save.await
-    val sn3 = SlugName("three", SLUG.generate[SlugName]).save.await
+    val sn2 = SlugName("two", SLUG[SlugName]("")).insert.await
+    //val sn3 = SlugName("two", SLUG[SlugName]("")).save.await
+
+    assert(sn2.slugString.nonEmpty)
+//    assert(sn3.slugString.nonEmpty)
 
     SlugName.stream.foreach { e =>
       println(" - " + e)
@@ -47,20 +50,20 @@ class SlugEntityTest
 
     assert(SlugName.byIdentString(slug1.value).await.get.name == "one")
 
-//    sn1.name = "ONE"
-//    assert(sn1.update.await.name == "ONE")
-//    assert(SlugName.byIdentString(slug1.value).await.get.name == "ONE")
+    sn1.name = "ONE"
+    assert(sn1.update.await.name == "ONE")
+    assert(SlugName.byIdentString(slug1.value).await.get.name == "ONE")
   }
 
-//  "Update or insert with id" should "have id defined" in {
-//    val in1 = dbAwait(IdName("one").updateOrInsert(IdName.table.filter(_.name === "one")))
-//    println(IdName.stream.toList)
-//    val in2 = dbAwait(IdName("one").updateOrInsert(IdName.table.filter(_.name === "one")))
-//    println(IdName.stream.toList)
-//
-//    assert(in1.id.isDefined)
-//    assert(in1.id == in2.id)
-//  }
+  "Update or insert with slug" should "have slug defined" in {
+    val in1 = SlugName("one").updateOrInsert(SlugName.table.filter(_.name === "one")).await
+    println(SlugName.stream.toList)
+    val in2 = SlugName("one").updateOrInsert(SlugName.table.filter(_.name === "one")).await
+    println(SlugName.stream.toList)
+
+    assert(in1.slugString.nonEmpty)
+    assert(in1.slug == in2.slug)
+  }
 
 //  "Get or insert" should "get" in {
 //    val x = SlugName("asdf").insert.await

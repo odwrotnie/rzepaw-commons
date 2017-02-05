@@ -30,18 +30,19 @@ abstract class SlugEntityMeta[SE <: SlugEntity[SE]](implicit tag: TypeTag[SE])
 
   override def insert(ie: SE): DBIO[SE] = {
     val newSE = beforeInsert(ie)
-    val idAction = table += ie
     val withSlug = ie.slug.value match {
       case s if s.isEmpty => newSE.withSlug(SLUG.generate[SE])
       case s => newSE
     }
+    val idAction = table += withSlug
     idAction.map { _ =>
       afterInsert(withSlug)
       withSlug
     }
   }
 
-  override def save(se: SE): DBIO[SE] = byIdent(se.ident).flatMap {
+  override def save(se: SE): DBIO[SE] =
+    byIdent(se.ident).flatMap {
     case Some(se) =>
       val newSE = beforeSave(se)
       update(newSE).map { se =>
