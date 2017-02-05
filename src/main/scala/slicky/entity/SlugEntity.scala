@@ -15,6 +15,7 @@ abstract class SlugEntity[SE <: SlugEntity[SE]](override val meta: SlugEntityMet
   def withSlug(slug: SLUG[SE]): SE
   override def ident: SLUG[SE] = slug
 
+  def getOrInsertBySlug: DBIO[SE] = meta.getOrInsertBySlug(this)
   override def getOrInsert(query: Query[_, SE, Seq]): DBIO[SE] = meta.getOrInsert(query, this)
   override def updateOrInsert(query: Query[_, SE, Seq]): DBIO[SE] = meta.updateOrInsert(query, this)
 }
@@ -72,6 +73,8 @@ abstract class SlugEntityMeta[SE <: SlugEntity[SE]](implicit tag: TypeTag[SE])
   //    clone.getClass.getMethods.find(_.getName == "id_$eq").get.invoke(clone, None)
   //    clone
   //  }
+
+  def getOrInsertBySlug(e: SE): DBIO[SE] = getByIdentOrInsert(e)
 
   override def getOrInsert(query: Query[_, SE, Seq], e: SE): DBIO[SE] = {
     query.length.result.flatMap {

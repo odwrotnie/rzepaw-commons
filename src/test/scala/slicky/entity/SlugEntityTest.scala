@@ -39,10 +39,10 @@ class SlugEntityTest
     val slug1 = SLUG.generate[SlugName]
     val sn1 = SlugName("one", slug1).insert.await
     val sn2 = SlugName("two", SLUG[SlugName]("")).insert.await
-    //val sn3 = SlugName("two", SLUG[SlugName]("")).save.await
+    val sn3 = SlugName("two", SLUG[SlugName]("")).save.await
 
     assert(sn2.slugString.nonEmpty)
-//    assert(sn3.slugString.nonEmpty)
+    assert(sn3.slugString.nonEmpty)
 
     SlugName.stream.foreach { e =>
       println(" - " + e)
