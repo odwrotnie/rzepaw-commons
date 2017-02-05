@@ -8,8 +8,8 @@ trait AnySlugEntity
   extends AnyIdentEntity {
 
   def meta: AnySlugEntityMeta
-  def id: Option[AnySLUG]
-  def idString: Option[String] = id.map(_.value)
+  def slug: AnySLUG
+  def slugString: String = slug.value
   def ident: AnySLUG
   def identString: String = ident.value
 
@@ -24,16 +24,16 @@ trait AnySlugEntity
 trait AnySlugEntityMeta
   extends AnyIdentEntityMeta {
 
-  def byIdentSlug(slug: String): DBIO[Option[AnySlugEntity]]
-  def byIdentSlugGet(slug: String): DBIO[AnySlugEntity]
-  def byIdentSlug(slug: Option[String]): DBIO[Option[AnySlugEntity]]
-  def byIdentSlugGet(slug: Option[String]): DBIO[Option[AnySlugEntity]]
+  def byIdentString(slug: String): DBIO[Option[AnySlugEntity]]
+  def byIdentStringGet(slug: String): DBIO[AnySlugEntity]
+  def byIdentString(slug: Option[String]): DBIO[Option[AnySlugEntity]]
+  def byIdentStringGet(slug: Option[String]): DBIO[Option[AnySlugEntity]]
 }
 
 object AnySlugEntity {
 
   def by(table: String, slug: String): DBIO[AnySlugEntity] = {
     val meta = TblEntityMetaMap.metaSlug(table)
-    meta.byIdentSlugGet(slug)
+    meta.byIdentStringGet(slug)
   }
 }

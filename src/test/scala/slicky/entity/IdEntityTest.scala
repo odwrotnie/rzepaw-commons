@@ -17,6 +17,11 @@ class IdEntityTest
 
   IdName.table.schema.create.await
 
+  "IDs" should "equal" in {
+    assert(ID[IdName](123) == ID[IdName](123))
+    assert(ID[IdName](123) != ID[IdName](321))
+  }
+
   "Any entity" should "work" in {
     val anyEntity: AnyIdEntity = IdName("asdf")
     case class Klass[E <: AnyEntity](idEntity: E)

@@ -1,9 +1,11 @@
 package slicky.fields
 
+import commons.random.Lipsum
 import commons.reflection.Spiegel
 import slicky.Slicky._
 import driver.api._
 import slicky.entity._
+
 import scala.concurrent.Future
 import scala.reflect.runtime.universe._
 import scala.util
@@ -22,13 +24,18 @@ class SLUG[E <: SlugEntity[E]](val value: String)(implicit tag: TypeTag[E])
   lazy val entityOption: Option[DBIO[E]] = meta.map(_.bySlugGet(this))
   lazy val entity: DBIO[E] = entityOption.get
 
-  override def equals(obj: scala.Any): Boolean = value.equals(obj)
+  override def equals(obj: scala.Any): Boolean = obj match {
+    case id: SLUG[_] => value.equals(id.value)
+    case _ => false
+  }
   override def hashCode(): Int = value.hashCode
 
   override def toString = value.toString
 }
 
 object SLUG {
+
+  def generate[E <: SlugEntity[E]](implicit tag: TypeTag[E]) = new SLUG[E](Lipsum.alphanumeric(10))
 
   def apply[E <: SlugEntity[E]](slug: String)(implicit tag: TypeTag[E]): SLUG[E] = new SLUG[E](slug)
   def apply[E <: SlugEntity[E]](any: { def slug: String })(implicit tag: TypeTag[E]): SLUG[E] = new SLUG[E](any.slug)

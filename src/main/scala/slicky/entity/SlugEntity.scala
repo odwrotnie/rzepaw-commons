@@ -11,12 +11,9 @@ abstract class SlugEntity[SE <: SlugEntity[SE]](override val meta: SlugEntityMet
 
   self: SE =>
 
-  def id: Option[SLUG[SE]]
-  def withId(id: Option[SLUG[SE]]): SE
-  override def ident: SLUG[SE] = id match {
-    case Some(id) => id
-    case _ => throw new Exception(s"Entity $this has no id yet")
-  }
+  def slug: SLUG[SE]
+  def withSlug(slug: SLUG[SE]): SE
+  override def ident: SLUG[SE] = slug
 
   override def getOrInsert(query: Query[_, SE, Seq]): DBIO[SE] = meta.getOrInsert(query, this)
   override def updateOrInsert(query: Query[_, SE, Seq]): DBIO[SE] = meta.updateOrInsert(query, this)
@@ -26,34 +23,37 @@ abstract class SlugEntityMeta[SE <: SlugEntity[SE]](implicit tag: TypeTag[SE])
   extends IdentEntityMeta[SLUG[SE], SE]
     with AnySlugEntityMeta {
 
-  abstract class EntityTableWithId(tag: Tag) extends EntityTable(tag) { def id: Rep[SLUG[SE]] }
+  abstract class EntityTableWithSlug(tag: Tag) extends EntityTable(tag) { def slug: Rep[SLUG[SE]] }
 
-  override def table: TableQuery[_ <: EntityTableWithId]
-  override def byIdentQuery(ident: SLUG[SE]): Query[EntityTableWithId, SE, Seq] = table.filter(_.id === ident)
+  override def table: TableQuery[_ <: EntityTableWithSlug]
+  override def byIdentQuery(ident: SLUG[SE]): Query[EntityTableWithSlug, SE, Seq] = table.filter(_.slug === ident)
 
   override def insert(ie: SE): DBIO[SE] = {
-    require(ie.id.isEmpty, s"Inserting entity $ie with defined id: ${ ie.ident }")
     val newSE = beforeInsert(ie)
-    val idAction = (table returning table.map(_.id)) += ie
-    idAction.map { id: SLUG[SE] =>
-      val withId = newSE.withId(Some(id))
-      afterInsert(withId)
-      withId
+    val idAction = table += ie
+    val withSlug = ie.slug.value match {
+      case s if s.isEmpty => newSE.withSlug(SLUG.generate[SE])
+      case s => newSE
+    }
+    idAction.map { _ =>
+      afterInsert(withSlug)
+      withSlug
     }
   }
 
-  override def save(ie: SE): DBIO[SE] = {
-    val newSE = beforeSave(ie)
-    ie.id match {
-      case Some(id) => update(ie.ident, newSE).map { _ =>
-        afterSave(newSE)
-        newSE
+  override def save(se: SE): DBIO[SE] = byIdent(se.ident).flatMap {
+    case Some(se) =>
+      val newSE = beforeSave(se)
+      update(newSE).map { se =>
+        afterSave(se)
+        se
       }
-      case _ => insert(newSE).map { withId =>
-        afterSave(withId)
-        withId
+    case None =>
+      val newSE = beforeSave(se)
+      insert(newSE).map { se =>
+        afterSave(se)
+        se
       }
-    }
   }
 
   def bySlug(slug: SLUG[SE]): DBIO[Option[SE]] = super.byIdent(slug)
@@ -74,15 +74,15 @@ abstract class SlugEntityMeta[SE <: SlugEntity[SE]](implicit tag: TypeTag[SE])
 
   override def getOrInsert(query: Query[_, SE, Seq], e: SE): DBIO[SE] = {
     query.length.result.flatMap {
-      case i if i == 0 => insert(e.withId(None))
+      case i if i == 0 => insert(e.withSlug(SLUG[SE]("")))
       case i if i == 1 => super.getOrInsert(query, e)
     }
   }
 
   override def updateOrInsert(query: Query[_, SE, Seq], e: SE): DBIO[SE] = {
     query.length.result.flatMap {
-      case i if i == 0 => insert(e.withId(None))
-      case i if i == 1 => query.result.head flatMap { fromDb => update(e.withId(fromDb.id)) }
+      case i if i == 0 => insert(e.withSlug(SLUG[SE]("")))
+      case i if i == 1 => query.result.head flatMap { fromDb => update(e.withSlug(fromDb.slug)) }
       case i => super.updateOrInsert(query, e)
     }
   }
