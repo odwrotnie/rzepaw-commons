@@ -17,6 +17,8 @@ import scala.util.Try
 object Slicky
   extends Logger {
 
+  type RAW_ID = Long
+
   implicit lazy val futureEC = scala.concurrent.ExecutionContext.Implicits.global
 
   val DURATION = 60 seconds //Duration.Inf
