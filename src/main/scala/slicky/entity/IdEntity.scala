@@ -1,8 +1,10 @@
 package slicky.entity
 
+import com.typesafe.scalalogging.LazyLogging
 import slicky.Slicky._
 import driver.api._
 import slicky.fields.ID
+
 import scala.reflect.runtime.universe._
 
 abstract class IdEntity[IE <: IdEntity[IE]](override val meta: IdEntityMeta[IE])
@@ -24,7 +26,8 @@ abstract class IdEntity[IE <: IdEntity[IE]](override val meta: IdEntityMeta[IE])
 
 abstract class IdEntityMeta[IE <: IdEntity[IE]](implicit tag: TypeTag[IE])
   extends IdentEntityMeta[ID[IE], IE]
-    with AnyIdEntityMeta {
+    with AnyIdEntityMeta
+    with LazyLogging {
 
   abstract class EntityTableWithId(tag: Tag) extends EntityTable(tag) { def id: Rep[ID[IE]] }
 
