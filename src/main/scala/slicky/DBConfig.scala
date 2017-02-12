@@ -62,6 +62,9 @@ object PropertiesDBConfig
   override def toString = super.toString + s": connection: $connectionString, driver: $driverClass, user: $user, password: $password"
 }
 
+/**
+  * URL: jdbc:h2:tcp://155.133.45.93/mem:db
+  */
 object DefaultDBConfig
   extends SimpleDBConfig
     with LazyLogging {
