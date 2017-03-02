@@ -1,15 +1,19 @@
 package slicky
 
 import java.sql.Timestamp
+
 import commons.logger.Logger
 import commons.settings.ResourceProperties
 import org.joda.time.DateTime
 import slick.jdbc.JdbcBackend._
 import slick.backend.DatabasePublisher
+import slick.basic.DatabaseConfig
 import slick.lifted.CanBeQueryCondition
 import slicky.entity._
 import slick.driver._
+import slick.jdbc.JdbcProfile
 import slicky.fields.ID
+
 import scala.concurrent._
 import scala.concurrent.duration._
 import scala.util.Try
@@ -23,13 +27,15 @@ object Slicky
 
   val DURATION = 60 seconds //Duration.Inf
 
-  var dbConfig: DBConfig = List(PropertiesDBConfig, DefaultDBConfig).find(_.databaseDriver.isDefined).head
+  def CONFIG_ROOT = "model"
+  lazy val dbConfig: DatabaseConfig[JdbcProfile] = DatabaseConfig.forConfig[JdbcProfile](CONFIG_ROOT)
+  lazy val profile: JdbcProfile = dbConfig.profile
+
   infoAsciiArt("DB Configured")
   info(s"DB Config: $dbConfig")
 
-  val databaseDriver = dbConfig.databaseDriver.get
-  val db = databaseDriver._1
-  val driver = databaseDriver._2
+  lazy val db: profile.api.Database = dbConfig.db
+  val driver = profile
   import driver.api._
 
   // Wait for the result
