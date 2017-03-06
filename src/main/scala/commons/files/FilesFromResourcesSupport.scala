@@ -17,6 +17,7 @@ trait FilesFromResourcesSupport
   def listFromResources(path: String*): List[File] = {
     val pathString = path.mkString("/", "/", "")
     val dirUrl: URL = getClass.getResource(pathString)
+    // logger.debug(s"List from resources: $pathString / dir URL: $dirUrl")
     val dir = new File(dirUrl.toURI)
     require(dir.isDirectory)
     val files = dir.listFiles().toList
