@@ -2,6 +2,7 @@ package slicky
 
 import java.sql.Timestamp
 
+import com.typesafe.config.{Config, ConfigFactory}
 import commons.logger.Logger
 import commons.settings.ResourceProperties
 import org.joda.time.DateTime
@@ -28,7 +29,10 @@ object Slicky
   val DURATION = 60 seconds //Duration.Inf
 
   def CONFIG_ROOT = "model"
-  lazy val dbConfig: DatabaseConfig[JdbcProfile] = DatabaseConfig.forConfig[JdbcProfile](CONFIG_ROOT)
+  val rootConfig = ConfigFactory.load
+  val mode: String = rootConfig.getString("configuration.mode")
+  val config = rootConfig.getConfig(mode)
+  lazy val dbConfig: DatabaseConfig[JdbcProfile] = DatabaseConfig.forConfig[JdbcProfile]("model", config)
   lazy val profile: JdbcProfile = dbConfig.profile
 
   infoAsciiArt("DB Configured")

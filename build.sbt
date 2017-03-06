@@ -4,6 +4,8 @@ version := "0.1-SNAPSHOT"
 
 scalaVersion := "2.11.8"
 
+val slickVersion = "3.2.0"
+
 
 resolvers += "Typesafe Releases" at "http://repo.typesafe.com/typesafe/maven-releases/"
 
@@ -58,7 +60,7 @@ libraryDependencies += "org.clapper" %% "classutil" % "1.0.11"
 
 // SLICKY
 
-libraryDependencies += "com.typesafe.slick" %% "slick" % "3.2.0-RC1"
+libraryDependencies += "com.typesafe.slick" %% "slick" % slickVersion
 
 //libraryDependencies += "com.typesafe.slick" %% "slick-extensions" % "3.1.0"
 
@@ -69,6 +71,9 @@ libraryDependencies += "com.h2database" % "h2" % "1.3.175"
 libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.40"
 
 libraryDependencies += "io.reactivex" % "rxjava-reactive-streams" % "1.0.1"
+
+libraryDependencies += "com.typesafe.slick" %% "slick-hikaricp" % slickVersion
+
 
 // SPRAY
 
