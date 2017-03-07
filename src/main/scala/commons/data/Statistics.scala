@@ -24,6 +24,10 @@ trait Statistics[T] {
 
   // WHOLE
 
+  lazy val nameMap: Map[String, T] = labels.keys.map { label =>
+    label ->
+  }.toMap
+
   lazy val valuesMap: Map[String, Seq[Double]] = labels.keys.map { label =>
     label -> values(label)
   }.toMap
