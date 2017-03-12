@@ -6,6 +6,8 @@ scalaVersion := "2.11.8"
 
 val slickVersion = "3.2.0"
 
+lazy val configuration = RootProject(uri("https://github.com/odwrotnie/configuration.git"))
+lazy val rzepawCommons = project.in(file(".")).dependsOn(configuration)
 
 resolvers += "Typesafe Releases" at "http://repo.typesafe.com/typesafe/maven-releases/"
 

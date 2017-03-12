@@ -6,6 +6,7 @@ import com.typesafe.config.{Config, ConfigFactory}
 import commons.logger.Logger
 import commons.settings.ResourceProperties
 import org.joda.time.DateTime
+import rzepaw.configuration.Configuration
 import slick.jdbc.JdbcBackend._
 import slick.backend.DatabasePublisher
 import slick.basic.DatabaseConfig
@@ -20,7 +21,8 @@ import scala.concurrent.duration._
 import scala.util.Try
 
 object Slicky
-  extends Logger {
+  extends Logger
+    with Configuration {
 
   type RAW_ID = Long
 
@@ -32,6 +34,9 @@ object Slicky
   val rootConfig = ConfigFactory.load
   val mode: String = rootConfig.getString("configuration.mode")
   val config = rootConfig.getConfig(mode)
+
+//  println("Config: " + config.get)
+
   lazy val dbConfig: DatabaseConfig[JdbcProfile] = DatabaseConfig.forConfig[JdbcProfile]("model", config)
   lazy val profile: JdbcProfile = dbConfig.profile
 
