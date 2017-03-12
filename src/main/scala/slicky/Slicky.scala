@@ -30,14 +30,18 @@ object Slicky
 
   val DURATION = 60 seconds //Duration.Inf
 
-  def CONFIG_ROOT = "model"
-  val rootConfig = ConfigFactory.load
-  val mode: String = rootConfig.getString("configuration.mode")
-  val config = rootConfig.getConfig(mode)
+//  def CONFIG_ROOT = "model"
+//  val rootConfig = ConfigFactory.load
+//  val mode: String = rootConfig.getString("configuration.mode")
+//  val config = rootConfig.getConfig(mode)
+//
+//  println("Config       : " + config.getString("model.db.dataSourceClass"))
+//  println("Configuration: " + configuration.getString("model.db.dataSourceClass"))
+//
+//  1/0
 
-//  println("Config: " + config.get)
-
-  lazy val dbConfig: DatabaseConfig[JdbcProfile] = DatabaseConfig.forConfig[JdbcProfile]("model", config)
+  lazy val dbConfig: DatabaseConfig[JdbcProfile] =
+    DatabaseConfig.forConfig[JdbcProfile]("model", configuration)
   lazy val profile: JdbcProfile = dbConfig.profile
 
   infoAsciiArt("DB Configured")
