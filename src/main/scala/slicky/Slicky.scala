@@ -30,15 +30,30 @@ object Slicky
 
   val DURATION = 60 seconds //Duration.Inf
 
-//  def CONFIG_ROOT = "model"
-//  val rootConfig = ConfigFactory.load
-//  val mode: String = rootConfig.getString("configuration.mode")
-//  val config = rootConfig.getConfig(mode)
-//
-//  println("Config       : " + config.getString("model.db.dataSourceClass"))
-//  println("Configuration: " + configuration.getString("model.db.dataSourceClass"))
-//
-//  1/0
+  //  def CONFIG_ROOT = "model"
+  //  val rootConfig = ConfigFactory.load
+  //  val mode: String = rootConfig.getString("configuration.mode")
+  //  val config = rootConfig.getConfig(mode)
+  //
+  //  println("Config       : " + config.getString("model.db.dataSourceClass"))
+  //  println("Configuration: " + configuration.getString("model.db.dataSourceClass"))
+  //
+  //  1/0
+
+  // TODO Dodac konfiguracje serwera jak jest mem
+  //  /**
+  //    * URL: jdbc:h2:tcp://155.133.45.93/mem:db
+  //    */
+  //  object DefaultDBConfig
+  //    extends SimpleDBConfig
+  //      with LazyLogging {
+  //    lazy val connectionString: Option[String] = Some(DEFAULT_CONNECTION)
+  //    override def user: Option[String] = Some("sa")
+  //    override def password: Option[String] = Some("")
+  //    lazy val driverClass: Option[String] = Some("org.h2.Driver")
+  //    // H2 Server
+  //    org.h2.tools.Server.createTcpServer("-tcpAllowOthers").start()
+  //  }
 
   lazy val dbConfig: DatabaseConfig[JdbcProfile] =
     DatabaseConfig.forConfig[JdbcProfile]("model", configuration)
