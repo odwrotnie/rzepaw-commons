@@ -8,7 +8,9 @@ import scala.reflect.runtime.universe._
 
 abstract class TreeEntity[TE <: TreeEntity[TE]](meta: TreeEntityMeta[TE])(implicit tag: TypeTag[TE])
   extends IdEntity[TE](meta) {
+
   self: TE =>
+
   def parentId: Option[ID[TE]]
   def parentId_=(id: Option[ID[TE]]): Unit
 
