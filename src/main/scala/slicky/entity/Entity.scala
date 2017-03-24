@@ -43,6 +43,11 @@ abstract class EntityMeta[E <: Entity[E]]
     e
   }
 
+  def random: DBIO[Option[E]] = {
+    val rand = SimpleFunction.nullary[Double]("rand")
+    table.sortBy(x => rand).result.headOption
+  }
+
   def getOrInsert(query: Query[_, E, Seq], e: E): DBIO[E] = query.length.result.flatMap {
     case i if i == 0 => insert(e)
     case i if i == 1 => query.result.head
