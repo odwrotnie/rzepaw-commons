@@ -13,7 +13,7 @@ import slick.basic.DatabaseConfig
 import slick.lifted.CanBeQueryCondition
 import slicky.entity._
 import slick.driver._
-import slick.jdbc.JdbcProfile
+import slick.jdbc.{H2Profile, JdbcProfile}
 import slicky.fields.ID
 
 import scala.concurrent._
@@ -58,6 +58,12 @@ object Slicky
   lazy val dbConfig: DatabaseConfig[JdbcProfile] =
     DatabaseConfig.forConfig[JdbcProfile]("model", configuration)
   lazy val profile: JdbcProfile = dbConfig.profile
+
+//  if (profile.isInstanceOf[H2Profile]) {
+//    org.h2.tools.Server.createTcpServer("-tcpAllowOthers").start()
+//  } else {
+//
+//  }
 
   infoAsciiArt("DB Configured")
   info(s"DB Config: $dbConfig")
