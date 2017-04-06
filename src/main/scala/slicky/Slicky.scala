@@ -59,11 +59,9 @@ object Slicky
     DatabaseConfig.forConfig[JdbcProfile]("model", configuration)
   lazy val profile: JdbcProfile = dbConfig.profile
 
-//  if (profile.isInstanceOf[H2Profile]) {
-//    org.h2.tools.Server.createTcpServer("-tcpAllowOthers").start()
-//  } else {
-//
-//  }
+  if (profile.isInstanceOf[H2Profile]) {
+    org.h2.tools.Server.createTcpServer("-tcpAllowOthers").start()
+  }
 
   infoAsciiArt("DB Configured")
   info(s"DB Config: $dbConfig")
