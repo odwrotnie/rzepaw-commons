@@ -2,8 +2,8 @@ package slicky.entity
 
 import slicky.Slicky
 import slicky.Slicky._
-import driver.api._
 import slick.sql.SqlProfile.ColumnOption.SqlType
+import driver.api._
 
 import scala.concurrent.Future
 

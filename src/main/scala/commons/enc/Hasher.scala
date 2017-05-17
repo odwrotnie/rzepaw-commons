@@ -1,20 +1,24 @@
 package commons.enc
 
-// TODO https://github.com/Nycto/Hasher
+import java.util
 
 import scala.language.postfixOps
 
 object Hasher {
 
-  // TODO https://github.com/Nycto/Hasher
+  def bytesDigest(bytes: Array[Byte]): String =
+    new java.math.BigInteger(1, bytes).toString(16)
+
+  def encryptToString(word: String): String =
+    bytesDigest(encrypt(word))
+
   def encrypt(word: String): Array[Byte] = {
-    // word.md5.bytes
-    Array[Byte]()
+    val m = java.security.MessageDigest.getInstance("MD5")
+    val b = word.getBytes("UTF-8")
+    m.update(b, 0, b.length)
+    m.digest()
   }
 
-  // TODO https://github.com/Nycto/Hasher
-  def equal(hashed: Array[Byte], word: String): Boolean = {
-    // word.md5 hash= hashed
-    true
-  }
+  def equal(hashed: Array[Byte], word: String): Boolean =
+    util.Arrays.equals(encrypt(word), hashed)
 }

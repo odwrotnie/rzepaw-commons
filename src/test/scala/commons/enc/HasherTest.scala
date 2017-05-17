@@ -13,6 +13,9 @@ class HasherTest
     val incorrectPassword = "W"
     val hashed = Hasher.encrypt(correctPassword)
 
+    println("Hashed: " + Hasher.encryptToString(correctPassword))
+    println("Correct: " + Hasher.encryptToString(correctPassword))
+
     assert(Hasher.equal(hashed, correctPassword), s"Hashed password: $correctPassword should equal $hashed")
     assert(!Hasher.equal(hashed, incorrectPassword), s"Hashed password: $incorrectPassword should not equal $hashed")
   }
