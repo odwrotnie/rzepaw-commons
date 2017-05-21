@@ -2,7 +2,9 @@ package commons.email
 
 import org.apache.commons.mail._
 import org.joda.time.DateTime
-import scala.xml.{NodeSeq, Elem}
+import rzepaw.configuration.Configuration
+
+import scala.xml.{Elem, NodeSeq}
 
 case class SMTPServer(address: String,
                       username: String,
@@ -16,6 +18,19 @@ case class SMTPServer(address: String,
     email.setSmtpPort(465)
     email.setAuthenticator(new DefaultAuthenticator(username, password))
     email.setSSLOnConnect(true)
+  }
+}
+
+object SMTPServer
+  extends Configuration {
+
+  def forConfig: SMTPServer = {
+    val cfg = configuration.getConfig("smtp")
+    val address = cfg.getString("address")
+    val username = cfg.getString("username")
+    val password = cfg.getString("password")
+    val port = cfg.getInt("port")
+    SMTPServer(address, username, password, port)
   }
 }
 
