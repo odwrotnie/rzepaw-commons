@@ -9,15 +9,25 @@ import scala.xml.{Elem, NodeSeq}
 case class SMTPServer(address: String,
                       username: String,
                       password: String,
-                      port: Int = 587) {
+                      port: Int = 587,
+                      isSSL: Boolean = false,
+                      isTLS: Boolean = false,
+                      ignoreSmtpSslTrust: Boolean = false) {
 
   implicit def stringToSeq(single: String): Seq[String] = Seq(single)
   implicit def liftToOption[T](t: T): Option[T] = Some(t)
+
   def configure(email: Email) {
     email.setHostName(address)
-    email.setSmtpPort(465)
+    email.setSmtpPort(port)
+    email.setSslSmtpPort(port.toString)
     email.setAuthenticator(new DefaultAuthenticator(username, password))
-    email.setSSLOnConnect(true)
+    email.setSSLOnConnect(isSSL)
+    email.setStartTLSEnabled(isTLS)
+    if (ignoreSmtpSslTrust) {
+      val props = System.getProperties
+      props.put("mail.smtp.ssl.trust", "*")
+    }
   }
 }
 
@@ -25,12 +35,17 @@ object SMTPServer
   extends Configuration {
 
   def forConfig: SMTPServer = {
-    val cfg = configuration.getConfig("smtp")
+    val cfg = configuration.getConfig("email.smtp")
     val address = cfg.getString("address")
     val username = cfg.getString("username")
     val password = cfg.getString("password")
     val port = cfg.getInt("port")
-    SMTPServer(address, username, password, port)
+    val isSSL = cfg.getBoolean("is.ssl")
+    val isTLS = cfg.getBoolean("is.tls")
+    val ignoreSmtpSslTrust = cfg.getBoolean("ignore.smtp.ssl.trust")
+    SMTPServer(address, username, password, port,
+      isSSL = isSSL, isTLS = isTLS,
+      ignoreSmtpSslTrust = ignoreSmtpSslTrust)
   }
 }
 

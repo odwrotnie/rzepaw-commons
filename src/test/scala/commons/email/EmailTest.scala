@@ -1,7 +1,5 @@
 package commons.email
 
-import java.io.File
-
 import commons.files.FilesFromResourcesSupport
 import commons.logger.Logger
 import org.scalatest.FunSuite
@@ -30,14 +28,16 @@ class EmailTest
     }
   }
 
-  ignore("Send an email") {
-    val s = SMTPServer("smtp.gmail.com", "wextmail@gmail.com", "wextmail2014")
+  test("Send an email") {
+    //val s = SMTPServer("smtp.gmail.com", "wextmail@gmail.com", "wextmail2014")
+    val s = SMTPServer.forConfig
+    println(s"SMTP: $s")
     val e = new EmailOut(s)
     val html: String = textFromResources("email", "email.html")
     e.subjectRaw = "WEXT - Scaffold email"
     e.text = Some("PLAIN TEXT")
     e.htmlString = Some(html)
-    e.senderAddress = "wextmail@gmail.com"
+    e.senderAddress = s.username
     e.recipients = Seq("wext@subeli.com")
     e.send
   }
