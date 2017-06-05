@@ -105,6 +105,8 @@ class EmailOut(smtp: SMTPServer)
       }
     }
 
+    email.setCharset(org.apache.commons.mail.EmailConstants.UTF_8)
+
     smtp.configure(email)
 
     recipients foreach (email.addTo(_))
