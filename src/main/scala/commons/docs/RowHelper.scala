@@ -49,7 +49,11 @@ case class RowHelper(row: Row, sh: SheetHelper)
   def valueString(col: Int): Option[String] = {
     Option(row.getCell(col)) flatMap { c =>
       c.getCellType match {
-        case Cell.CELL_TYPE_STRING | Cell.CELL_TYPE_FORMULA => Try(c.getStringCellValue).toOption
+        case Cell.CELL_TYPE_STRING | Cell.CELL_TYPE_FORMULA => Try{
+          val s = c.getStringCellValue
+          require(s.nonEmpty)
+          s
+        }.toOption
         case Cell.CELL_TYPE_NUMERIC => Try(NumberToTextConverter.toText(c.getNumericCellValue)).toOption
         case Cell.CELL_TYPE_BLANK => None
         case _ => None
