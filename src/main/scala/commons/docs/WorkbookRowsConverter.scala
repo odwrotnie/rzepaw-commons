@@ -28,7 +28,7 @@ abstract class WorkbookRowsConverter[T](wb: WorkbookHelper)
     Some(convert(sh, rh))
   } catch {
     case x: Throwable =>
-      logger.warn(s"Convertion of fow $rh in sheet $sh error: ${ x.getMessage }")
+      logger.warn(s"Convertion of row $rh in sheet $sh error: ${ x.getMessage }")
       None
   }
 }
