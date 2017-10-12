@@ -79,6 +79,7 @@ case class RowHelper(row: Row, sh: SheetHelper)
   def valueDateByLabel(col: String, labelsIndex: Int = 0): Option[DateTime] = labelToIndexByHeaderRow(col, labelsIndex).flatMap(valueDate)
   //def valueDateByLabelRegex(colRegex: String, labelsIndex: Int = 0): Option[DateTime] = labelToIndexByHeaderRowRegex(colRegex, labelsIndex).flatMap(valueDate)
 
+//  def cells: Stream[Cell] = row.cellIterator()
   def cell(col: Int): Option[Cell] = Option(row.getCell(col))
   def cell(col: String): Option[Cell] = letterToIndex(col).flatMap(cell)
 
