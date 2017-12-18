@@ -48,5 +48,6 @@ case class SheetRegionHelper(sheet: Sheet, rowOffset: Int, colOffset: Int, maxRo
     sh.valueNumeric(r, col)
   }
 
-  override def toString = s"Sheet region, row offset: $rowOffset, column offset: $colOffset"
+  override def toString = s"Sheet region, row offset: $rowOffset, column offset: $colOffset " +
+    s"(0:0=${ valueString(0, 0) }, 0:1=${ valueString(0, 1) }, 1:0=${ valueString(1, 0) })"
 }
